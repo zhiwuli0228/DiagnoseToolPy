@@ -1,0 +1,24 @@
+change_id: add-ai-diagnosis-module
+created: 2026-05-19
+status: implemented
+type: feature
+affected_modules:
+  - diagnose_tool/core/llm_config
+  - diagnose_tool/core/llm_client
+  - diagnose_tool/analyzer/diagnosis
+  - diagnose_tool/api/routes_diagnosis
+  - frontend/src/api/diagnosisApi
+  - frontend/src/pages/AIDiagnosisPage
+spec_driven: true
+hard_constraints:
+  - AI diagnosis is assistive; never present as confirmed root cause
+  - No mandatory external database
+  - File system is source of truth
+  - Analyzer/casebase/retrieval must not depend on FastAPI
+  - Retrieval must work without embeddings (disabled by default)
+out_of_scope:
+  - Bugfix prompt generation
+  - Test suggestion generation
+  - Monitoring suggestion generation
+  - Multi-LLM comparison
+  - Vector retrieval integration

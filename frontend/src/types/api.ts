@@ -24,3 +24,8 @@ export interface HealthResponse {
 export interface ApiError {
   detail: string;
 }
+
+export interface DiagnosisResponse {
+  case_id: string;
+  diagnosis: string;
+}

@@ -5,6 +5,7 @@ import {
   FileSearchOutlined,
   FolderOutlined,
   SettingOutlined,
+  RobotOutlined,
 } from '@ant-design/icons';
 
 const { Sider, Content } = Layout;
@@ -24,6 +25,11 @@ const menuItems = [
     key: '/cases',
     icon: <FolderOutlined />,
     label: 'Casebase',
+  },
+  {
+    key: '/diagnosis',
+    icon: <RobotOutlined />,
+    label: 'AI Diagnosis',
   },
   {
     key: '/settings',

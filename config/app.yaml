@@ -8,3 +8,9 @@ paths:
   allowed_input_roots:
     - data/input
   data_dir: data
+llm:
+  enabled: false
+  model: "gpt-4o-mini"
+  base_url: "https://api.openai.com/v1"
+  api_key: ""
+  timeout: 60

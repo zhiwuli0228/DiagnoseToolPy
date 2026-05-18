@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import re
 import uuid
 from datetime import datetime
@@ -23,6 +24,8 @@ from diagnose_tool.casebase.case_models import (
     FaultCaseMetadata,
 )
 from diagnose_tool.casebase.case_writer import archive_case_from_task
+
+logger = logging.getLogger(__name__)
 
 
 def create_case_from_analysis(
@@ -127,7 +130,8 @@ def get_all_cases(
             try:
                 fault_case = load_case(case_dir)
                 cases.append(fault_case)
-            except Exception:
+            except Exception as exc:
+                logger.warning("Skipped case %s while listing: %s", case_dir, exc)
                 continue
 
     return cases

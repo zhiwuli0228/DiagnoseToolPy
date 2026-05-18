@@ -4,7 +4,7 @@ This file is the **project continuity snapshot**. Update it after every complete
 
 ## Current Phase
 
-React frontend shell implemented. Full UI business features remain.
+V0.3 AI Diagnosis Integration implemented. Remaining: full UI business features.
 
 ## Implemented
 
@@ -37,6 +37,11 @@ React frontend shell implemented. Full UI business features remain.
 - [x] Prompt context generator implemented
 - [x] Docker Compose deployment implemented
 - [x] React frontend shell implemented
+- [x] LLM provider configuration (llm_config.py)
+- [x] OpenAI-compatible LLM client (llm_client.py)
+- [x] AI diagnosis orchestrator (analyzer/diagnosis.py)
+- [x] POST /api/diagnosis endpoint
+- [x] Frontend AI diagnosis page (AIDiagnosisPage.tsx)
 
 ## Current Constraints
 
@@ -62,12 +67,17 @@ DiagnoseToolPy/
 
 ## Known Gaps
 
-- Full retrieval API endpoint not yet wired to UI.
+- Bugfix prompt generation not implemented.
+- Test suggestion generation not implemented.
+- Monitoring suggestion generation not implemented.
+- Vector retrieval not implemented.
 - Complete log analysis UI not implemented.
 - Complete case management UI not implemented.
 
 ## Next Recommended Work
 
-1. Wire retrieval to API endpoint.
-2. Implement complete log analysis UI.
-3. Implement complete case management UI.
+1. Implement complete log analysis UI.
+2. Implement complete case management UI.
+3. Implement bugfix prompt generation (V0.3 extended).
+4. Implement test suggestion generation (V0.3 extended).
+5. Implement monitoring suggestion generation (V0.3 extended).

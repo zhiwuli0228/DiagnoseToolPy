@@ -6,6 +6,7 @@ import TaskDetailPage from './pages/TaskDetailPage';
 import CasebasePage from './pages/CasebasePage';
 import CaseDetailPage from './pages/CaseDetailPage';
 import SettingsPage from './pages/SettingsPage';
+import AIDiagnosisPage from './pages/AIDiagnosisPage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="analysis/:taskId" element={<TaskDetailPage />} />
         <Route path="cases" element={<CasebasePage />} />
         <Route path="cases/:caseId" element={<CaseDetailPage />} />
+        <Route path="diagnosis" element={<AIDiagnosisPage />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
     </Routes>
