@@ -16,7 +16,7 @@ except ImportError:
     _BM25_AVAILABLE = False
     BM25Okapi = None
 
-ScoredCase = tuple[str, float]
+ScoredCase = tuple[str, float, dict]
 
 
 def search_bm25(query: RetrievalQuery, cases_dir: Path) -> list[ScoredCase]:
@@ -27,7 +27,7 @@ def search_bm25(query: RetrievalQuery, cases_dir: Path) -> list[ScoredCase]:
         cases_dir: Path to the cases directory.
 
     Returns:
-        List of (case_id, score) tuples sorted by descending score.
+        List of (case_id, score, metadata_dict) tuples sorted by descending score.
         Returns empty list if rank-bm25 is not installed.
     """
     if not _BM25_AVAILABLE:
@@ -50,7 +50,7 @@ def search_bm25(query: RetrievalQuery, cases_dir: Path) -> list[ScoredCase]:
         scores = bm25.get_scores(tokenized_query)
 
         results = [
-            (case_ids[i], float(scores[i]))
+            (case_ids[i], float(scores[i]), _load_case_metadata(cases_dir / case_ids[i]))
             for i in range(len(case_ids))
             if scores[i] > 0
         ]
@@ -59,6 +59,19 @@ def search_bm25(query: RetrievalQuery, cases_dir: Path) -> list[ScoredCase]:
     except Exception as e:
         logger.warning("BM25 search failed: %s", e)
         return []
+
+
+def _load_case_metadata(case_path: Path) -> dict:
+    """Load metadata.yaml for a case directory."""
+    metadata_path = case_path / "metadata.yaml"
+    if not metadata_path.exists():
+        return {}
+    try:
+        import yaml
+        with metadata_path.open("r", encoding="utf-8", errors="replace") as f:
+            return yaml.safe_load(f) or {}
+    except Exception:
+        return {}
 
 
 def _build_corpus(cases_dir: Path) -> tuple[list[list[str]], list[str]]:

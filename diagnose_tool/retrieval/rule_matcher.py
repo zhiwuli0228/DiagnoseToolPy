@@ -11,7 +11,7 @@ from diagnose_tool.retrieval.query_builder import RetrievalQuery
 
 logger = logging.getLogger(__name__)
 
-ScoredCase = tuple[str, float]
+ScoredCase = tuple[str, float, dict]
 
 
 def match_by_rules(query: RetrievalQuery, cases_dir: Path) -> list[ScoredCase]:
@@ -22,7 +22,7 @@ def match_by_rules(query: RetrievalQuery, cases_dir: Path) -> list[ScoredCase]:
         cases_dir: Path to the cases directory.
 
     Returns:
-        List of (case_id, score) tuples sorted by descending score.
+        List of (case_id, score, metadata_dict) tuples sorted by descending score.
     """
     if not any([query.components, query.fault_modes, query.exception_classes]):
         return []
@@ -51,7 +51,7 @@ def match_by_rules(query: RetrievalQuery, cases_dir: Path) -> list[ScoredCase]:
         score = _compute_rule_score(query, metadata)
         if score > 0:
             case_id = case_path.name
-            results.append((case_id, score))
+            results.append((case_id, score, metadata))
 
     results.sort(key=lambda x: x[1], reverse=True)
     return results

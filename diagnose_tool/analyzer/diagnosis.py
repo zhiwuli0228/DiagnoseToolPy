@@ -145,17 +145,15 @@ class DiagnosisOrchestrator:
         if query is None or not cases_dir.exists():
             return []
 
-        results: list[tuple[str, float, dict]] = []
-
         # Keyword search
         keyword_results = search_by_keywords(query, cases_dir)
-        for case_id, score in keyword_results:
-            results.append((case_id, score, {}))
+        for case_id, score, metadata in keyword_results:
+            results.append((case_id, score, metadata))
 
         # BM25 search (optional, skip if not available)
         try:
             bm25_results = search_bm25(query, cases_dir)
-            for case_id, score in bm25_results:
+            for case_id, score, metadata in bm25_results:
                 # Merge with existing or add
                 found = False
                 for i, (cid, sc, meta) in enumerate(results):
@@ -164,13 +162,13 @@ class DiagnosisOrchestrator:
                         found = True
                         break
                 if not found:
-                    results.append((case_id, score, {}))
+                    results.append((case_id, score, metadata))
         except Exception:
             pass
 
         # Rule matching
         rule_results = match_by_rules(query, cases_dir)
-        for case_id, score in rule_results:
+        for case_id, score, metadata in rule_results:
             found = False
             for i, (cid, sc, meta) in enumerate(results):
                 if cid == case_id:
@@ -178,7 +176,7 @@ class DiagnosisOrchestrator:
                     found = True
                     break
             if not found:
-                results.append((case_id, score, {}))
+                results.append((case_id, score, metadata))
 
         # Sort by descending score, return top results
         results.sort(key=lambda x: x[1], reverse=True)
