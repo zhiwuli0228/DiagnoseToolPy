@@ -13,6 +13,7 @@ import yaml
 from diagnose_tool.casebase.case_indexer import (
     CASES_DIR,
     add_case_to_index,
+    append_case_to_bm25_corpus,
     get_index,
 )
 from diagnose_tool.casebase.case_loader import load_case
@@ -35,6 +36,8 @@ def create_case_from_analysis(
 ) -> Path:
     case_dir = archive_case_from_task(task_output_path, case_metadata, cases_dir=cases_dir)
     add_case_to_index(case_metadata, cases_dir=cases_dir)
+    if case_metadata.status == CaseStatus.ARCHIVED:
+        append_case_to_bm25_corpus(case_dir)
     return case_dir
 
 
@@ -106,6 +109,7 @@ def create_manual_case(
 
     if status == CaseStatus.ARCHIVED:
         add_case_to_index(metadata, cases_dir=cases_dir)
+        append_case_to_bm25_corpus(case_dir)
 
     return FaultCase(
         metadata=metadata,

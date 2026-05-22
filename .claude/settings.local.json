@@ -4,7 +4,9 @@
       "Bash(uv run *)",
       "Bash(npm test *)",
       "Bash(npx vitest *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(uv pip *)",
+      "Bash(uv add *)"
     ]
   }
 }

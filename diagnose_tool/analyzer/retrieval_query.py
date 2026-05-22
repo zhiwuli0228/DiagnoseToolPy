@@ -3,10 +3,18 @@
 from __future__ import annotations
 
 import json
+import re
 
 from diagnose_tool.analyzer.classifier import ClassificationResult
 from diagnose_tool.analyzer.header_parser import ParsedLogRecord
 from diagnose_tool.analyzer.output_context import OutputContext
+
+# Pattern to match stack trace lines like "at com.demo.Class.method(File.java:123)"
+STACK_LINE_RE = re.compile(r"\bat\s+([\w.]+\.[\w<>]+)\([\w]+\.java:\d+\)")
+# Pattern to match "Caused by: com.example.SomeException"
+CAUSED_BY_RE = re.compile(r"Caused by:\s*([\w.]+\.(?:Exception|Error|RuntimeException))")
+# Pattern to match exception class names in log messages (e.g. "JedisConnectionException")
+EXCEPTION_CLASS_RE = re.compile(r"\b([A-Z]\w*(?:Exception|Error|RuntimeException))\b")
 
 
 def generate_retrieval_query(
@@ -53,6 +61,16 @@ def _build_retrieval_query(
             if 5 < len(msg) < 100:
                 log_templates.add(msg[:100])
 
+        # Extract exception classes and stack symbols from raw log lines
+        raw = record.raw
+        if record.level in ("ERROR", "WARN", "WARNING"):
+            for match in CAUSED_BY_RE.finditer(raw):
+                exception_classes.add(match.group(1))
+            for match in EXCEPTION_CLASS_RE.finditer(raw):
+                exception_classes.add(match.group(1))
+            for match in STACK_LINE_RE.finditer(raw):
+                stack_symbols.add(match.group(1))
+
     summary_parts = []
     if fault_modes:
         summary_parts.append(f"{', '.join(sorted(fault_modes))}类型的故障")
@@ -66,8 +84,8 @@ def _build_retrieval_query(
         "summary": summary,
         "components": sorted(components)[:10],
         "fault_modes": sorted(fault_modes),
-        "exception_classes": sorted(exception_classes),
+        "exception_classes": sorted(exception_classes)[:10],
         "keywords": sorted(keywords)[:20],
-        "stack_symbols": sorted(stack_symbols)[:10],
+        "stack_symbols": sorted(stack_symbols)[:20],
         "log_templates": sorted(log_templates)[:10],
     }

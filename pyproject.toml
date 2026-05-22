@@ -11,6 +11,7 @@ dependencies = [
     "pydantic-settings>=2.14.1",
     "pyyaml>=6.0.3",
     "uvicorn>=0.47.0",
+    "rank-bm25>=0.2.2",
 ]
 
 [dependency-groups]

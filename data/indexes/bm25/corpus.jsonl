@@ -1,0 +1,3 @@
+{"case_id": "CASE-001_orchestrated", "text_parts": ["Orchestrated Case", "", "# Case Draft\n"]}
+{"case_id": "CASE-20260523010752_redis-fault", "text_parts": ["Redis Fault", "", "redis", "connection", "ERROR: connection failed"]}
+{"case_id": "CASE-20260523010752_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}

@@ -18,6 +18,8 @@ except ImportError:
 
 ScoredCase = tuple[str, float, dict]
 
+BM25_CORPUS_FILE = Path("data/indexes/bm25/corpus.jsonl")
+
 
 def search_bm25(query: RetrievalQuery, cases_dir: Path) -> list[ScoredCase]:
     """Search cases using BM25 full-text search.
@@ -52,7 +54,6 @@ def search_bm25(query: RetrievalQuery, cases_dir: Path) -> list[ScoredCase]:
         results = [
             (case_ids[i], float(scores[i]), _load_case_metadata(cases_dir / case_ids[i]))
             for i in range(len(case_ids))
-            if scores[i] > 0
         ]
         results.sort(key=lambda x: x[1], reverse=True)
         return results
@@ -75,11 +76,51 @@ def _load_case_metadata(case_path: Path) -> dict:
 
 
 def _build_corpus(cases_dir: Path) -> tuple[list[list[str]], list[str]]:
-    """Build BM25 corpus from case files.
+    """Build BM25 corpus, preferring persisted JSONL if available."""
+    # Try loading from persisted corpus file first
+    corpus, case_ids = _load_corpus_from_jsonl(cases_dir / BM25_CORPUS_FILE.name)
+    if corpus:
+        return corpus, case_ids
+
+    # Fall back to rebuilding from case directories
+    return _rebuild_corpus_from_dirs(cases_dir)
+
+
+def _load_corpus_from_jsonl(corpus_file: Path) -> tuple[list[list[str]], list[str]]:
+    """Load BM25 corpus from a persisted JSONL file.
 
     Returns:
         Tuple of (tokenized_corpus, case_ids).
     """
+    import json
+
+    corpus: list[list[str]] = []
+    case_ids: list[str] = []
+
+    if not corpus_file.exists():
+        return [], []
+
+    with corpus_file.open("r", encoding="utf-8", errors="replace") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+                text_parts = entry.get("text_parts", [])
+                combined = " ".join(text_parts).lower()
+                tokens = [t for t in combined.split() if len(t) > 2]
+                if tokens:
+                    corpus.append(tokens)
+                    case_ids.append(entry.get("case_id", ""))
+            except Exception:
+                continue
+
+    return corpus, case_ids
+
+
+def _rebuild_corpus_from_dirs(cases_dir: Path) -> tuple[list[list[str]], list[str]]:
+    """Build BM25 corpus from case directories (fallback when no persisted corpus)."""
     corpus: list[list[str]] = []
     case_ids: list[str] = []
 

@@ -257,7 +257,7 @@ class TestBM25Search:
 
         assert len(results) >= 1
         assert results[0][0] == "CASE-001_bm25"
-        assert results[0][1] > 0
+        assert results[0][1] != 0  # BM25 can return negative scores; any non-zero score means a match
 
     def test_bm25_empty_when_not_available(self, tmp_path: Path):
         import diagnose_tool.retrieval.bm25_search as bm25_module
