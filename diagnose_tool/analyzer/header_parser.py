@@ -29,7 +29,9 @@ class ParsedLogRecord:
 
 
 TIMESTAMP_LEVEL_RE = re.compile(
-    r"^(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:[.,]\d{1,3})?)\s+(ERROR|WARN|WARNING|INFO|DEBUG|TRACE|FATAL)\s+"
+    r"^(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:[.,]\d{1,3})?)"
+    r"(?:\s+\[([^\]]+)\])?"       # optional thread bracket after timestamp, before level
+    r"\s+(ERROR|WARN|WARNING|INFO|DEBUG|TRACE|FATAL)\s+"
 )
 
 
@@ -56,7 +58,8 @@ def parse_log_record(raw: str, file_path: str | None = None, line_no: int | None
         )
 
     timestamp = ts_match.group(1)
-    level = ts_match.group(2)
+    thread = ts_match.group(2) or None
+    level = ts_match.group(3)
     remaining = raw[ts_match.end():]
 
     bracket_groups = list(scan_balanced_bracket_groups(remaining))
@@ -65,7 +68,7 @@ def parse_log_record(raw: str, file_path: str | None = None, line_no: int | None
             timestamp=timestamp,
             level=level,
             module=None,
-            thread=None,
+            thread=thread,  # already parsed from timestamp regex
             logger=None,
             message=remaining.strip() or None,
             raw=raw,

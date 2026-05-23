@@ -7,7 +7,10 @@
       "Bash(npm install *)",
       "Bash(uv pip *)",
       "Bash(uv add *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npm info *)",
+      "Bash(python -c ' *)",
+      "Bash(python)"
     ]
   }
 }

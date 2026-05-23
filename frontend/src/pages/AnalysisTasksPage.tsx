@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { Input, Button, Result, Spin, Alert, Card, Statistic, Row, Col, Collapse, Tag, Table, Tabs, Checkbox, ExpandableConfig } from 'antd';
-import { FileSearchOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import { useState, useRef } from 'react';
+import { Input, Button, Result, Spin, Alert, Card, Statistic, Row, Col, Collapse, Tag, Table, Tabs, Checkbox, message } from 'antd';
+import { FileSearchOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons';
+import JSZip from 'jszip';
 import type { ColumnsType } from 'antd/es/table';
-import { checkSourceDirectory, scanSourceDirectory, searchLogContent } from '../api/sourceApi';
+import { checkSourceDirectory, scanSourceDirectory, searchLogContent, uploadFiles } from '../api/sourceApi';
 import type { SourceCheckResponse, ScanResult, LogSearchResponse, LogSearchResult, AggregatedGroup } from '../types/api';
 
 function AnalysisTasksPage() {
@@ -11,6 +12,9 @@ function AnalysisTasksPage() {
   const [checkResult, setCheckResult] = useState<SourceCheckResponse | null>(null);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const zipInputRef = useRef<HTMLInputElement>(null);
+  const [extracting, setExtracting] = useState(false);
 
   // Search state
   const [searchLoading, setSearchLoading] = useState(false);
@@ -27,6 +31,7 @@ function AnalysisTasksPage() {
   const [includeThread, setIncludeThread] = useState(false);
   const [includeTime, setIncludeTime] = useState(false);
   const [messageOnly, setMessageOnly] = useState(false);
+  const [includeStack, setIncludeStack] = useState(true);
 
   const handleCheck = async () => {
     if (!path.trim()) return;
@@ -81,6 +86,7 @@ function AnalysisTasksPage() {
         include_thread: includeThread,
         include_time: includeTime,
         message_only: messageOnly,
+        include_stack: includeStack,
       });
       setSearchResults(result);
     } catch (err: unknown) {
@@ -102,6 +108,34 @@ function AnalysisTasksPage() {
     setter(keywords.filter((k) => k !== kw));
   };
 
+  const handleZipExtract = async (zipFile: File) => {
+    setExtracting(true);
+    try {
+      const zip = await JSZip.loadAsync(zipFile);
+      const files: File[] = [];
+      for (const [name, zipEntry] of Object.entries(zip.files)) {
+        if (!zipEntry.dir) {
+          const content = await zipEntry.async('blob');
+          // Use full path as filename to preserve directory structure in ZIP
+          const file = new File([content], name);
+          files.push(file);
+        }
+      }
+      if (files.length === 0) {
+        message.warning('ZIP包内没有文件');
+        return;
+      }
+      const result = await uploadFiles(files);
+      setPath(result.path);
+      message.success(`解压并上传成功：${result.file_count} 个文件`);
+    } catch {
+      message.error('ZIP解压失败');
+    } finally {
+      setExtracting(false);
+      if (zipInputRef.current) zipInputRef.current.value = '';
+    }
+  };
+
   const resultColumns: ColumnsType<LogSearchResult> = [
     { title: 'File', dataIndex: 'file_path', key: 'file_path', width: 200, ellipsis: true },
     { title: 'Line', dataIndex: 'line_no', key: 'line_no', width: 60 },
@@ -115,12 +149,67 @@ function AnalysisTasksPage() {
     <div>
       <h1>Analysis Tasks</h1>
       <Card style={{ marginBottom: 24 }}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          // @ts-ignore - webkitdirectory is non-standard but supported in Chromium-based browsers
+          webkitdirectory=""
+          // @ts-ignore
+          mozdirectory=""
+          style={{ display: 'none' }}
+          onChange={async (e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+              setLoading(true);
+              try {
+                const result = await uploadFiles(Array.from(files));
+                setPath(result.path);
+              } catch {
+                setError('Failed to upload files');
+              } finally {
+                setLoading(false);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+              }
+            }
+          }}
+        />
         <Input
           size="large"
           placeholder="Enter directory path (e.g., /data/diagnose/input)"
           value={path}
           onChange={(e) => setPath(e.target.value)}
           style={{ marginBottom: 16 }}
+          addonAfter={
+            <>
+              <Button
+                size="small"
+                icon={<UploadOutlined />}
+                onClick={() => zipInputRef.current?.click()}
+                loading={extracting}
+                style={{ marginRight: 4 }}
+              >
+                ZIP
+              </Button>
+              <Button
+                size="small"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                Browse...
+              </Button>
+            </>
+          }
+        />
+        <input
+          ref={zipInputRef}
+          type="file"
+          accept=".zip"
+          style={{ display: 'none' }}
+          onChange={async (e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+              await handleZipExtract(files[0]);
+            }
+          }}
         />
         <div style={{ display: 'flex', gap: 8 }}>
           <Button
@@ -278,6 +367,11 @@ function AnalysisTasksPage() {
                         </div>
                       )}
                     </div>
+                    <div style={{ marginBottom: 8 }}>
+                      <Checkbox checked={includeStack} onChange={(e) => setIncludeStack(e.target.checked)}>
+                        Include Stack Traces
+                      </Checkbox>
+                    </div>
                     <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch} loading={searchLoading}>
                       Search
                     </Button>
@@ -335,7 +429,7 @@ function AnalysisTasksPage() {
                               />
                             ),
                             rowExpandable: () => true,
-                          } as ExpandableConfig<AggregatedGroup>}
+                          } as object}
                           pagination={{ pageSize: 20 }}
                         />
                       ),

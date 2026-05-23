@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+from datetime import datetime
+from pathlib import Path
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel, Field
 
 from diagnose_tool.analyzer.log_search import search_log_content
@@ -32,6 +34,7 @@ class LogSearchRequest(BaseModel):
     include_thread: bool = False
     include_time: bool = False
     message_only: bool = False
+    include_stack: bool = True
 
 
 @router.post("/check")
@@ -57,6 +60,7 @@ def search_logs(request: LogSearchRequest) -> dict:
         keywords=request.keywords,
         exclude_keywords=request.exclude_keywords,
         max_lines=request.max_lines,
+        include_stack=request.include_stack,
     )
 
     if request.aggregate and result["results"]:
@@ -74,6 +78,44 @@ def search_logs(request: LogSearchRequest) -> dict:
         result["aggregated"] = [asdict(g) for g in aggregated]
 
     return result
+
+
+@router.post("/upload")
+async def upload_files(files: list[UploadFile] = File(...)) -> dict:
+    """Upload files to the server's upload directory.
+
+    Files are saved under data/input/uploads/{timestamp}/ preserving relative paths.
+    """
+    config = load_config()
+    upload_base = Path("data/input/uploads")
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    upload_dir = upload_base / timestamp
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    saved_count = 0
+    for file in files:
+        if not file.filename:
+            continue
+        file_path = upload_dir / file.filename
+        # Preserve directory structure from webkitRelativePath if present
+        if hasattr(file, 'webkitRelativePath') and file.webkitRelativePath:
+            rel = Path(file.webkitRelativePath)
+            if rel.parent and rel.parent.name:
+                file_path = upload_dir / file.webkitRelativePath
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        content = await file.read()
+        with file_path.open("wb") as f:
+            f.write(content)
+        saved_count += 1
+
+    # Register upload dir in allowed_input_roots dynamically if not already present
+    # Use the absolute path for validation
+    abs_upload_dir = upload_dir.resolve()
+    return {
+        "path": str(abs_upload_dir),
+        "file_count": saved_count,
+        "relative_path": f"data/input/uploads/{timestamp}",
+    }
 
 
 def _validate_source_path(path: str):

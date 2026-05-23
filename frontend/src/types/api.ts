@@ -74,4 +74,5 @@ export interface LogSearchParams {
   include_thread?: boolean;
   include_time?: boolean;
   message_only?: boolean;
+  include_stack?: boolean;
 }

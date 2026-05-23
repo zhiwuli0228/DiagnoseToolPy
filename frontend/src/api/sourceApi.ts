@@ -26,3 +26,16 @@ export async function searchLogContent(
   const response = await apiClient.post<LogSearchResponse>('/source/search', params);
   return response.data;
 }
+
+export async function uploadFiles(
+  files: File[]
+): Promise<{ path: string; file_count: number; relative_path: string }> {
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append('files', file);
+  }
+  const response = await apiClient.post('/source/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data as { path: string; file_count: number; relative_path: string };
+}
