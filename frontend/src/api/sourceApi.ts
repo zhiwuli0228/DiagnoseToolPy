@@ -1,5 +1,5 @@
 import apiClient from './client';
-import type { SourcePathRequest, SourceCheckResponse, ScanResult } from '../types/api';
+import type { SourcePathRequest, SourceCheckResponse, ScanResult, LogSearchParams, LogSearchResponse } from '../types/api';
 
 export async function checkSourceDirectory(
   path: string
@@ -17,5 +17,12 @@ export async function scanSourceDirectory(
   const response = await apiClient.post<ScanResult>('/source/scan', {
     path,
   } as SourcePathRequest);
+  return response.data;
+}
+
+export async function searchLogContent(
+  params: LogSearchParams
+): Promise<LogSearchResponse> {
+  const response = await apiClient.post<LogSearchResponse>('/source/search', params);
   return response.data;
 }

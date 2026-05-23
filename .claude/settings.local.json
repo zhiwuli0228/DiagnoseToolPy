@@ -6,7 +6,8 @@
       "Bash(npx vitest *)",
       "Bash(npm install *)",
       "Bash(uv pip *)",
-      "Bash(uv add *)"
+      "Bash(uv add *)",
+      "Bash(npx tsc *)"
     ]
   }
 }

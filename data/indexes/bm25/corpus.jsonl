@@ -1,3 +1,13 @@
-{"case_id": "CASE-001_orchestrated", "text_parts": ["Orchestrated Case", "", "# Case Draft\n"]}
 {"case_id": "CASE-20260523010752_redis-fault", "text_parts": ["Redis Fault", "", "redis", "connection", "ERROR: connection failed"]}
 {"case_id": "CASE-20260523010752_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}
+{"case_id": "CASE-20260523012136_redis-fault", "text_parts": ["Redis Fault", "", "redis", "connection", "ERROR: connection failed"]}
+{"case_id": "CASE-20260523012136_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}
+{"case_id": "CASE-20260523014427_redis-fault", "text_parts": ["Redis Fault", "", "redis", "connection", "ERROR: connection failed"]}
+{"case_id": "CASE-20260523014427_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}
+{"case_id": "CASE-20260523182558_redis-fault", "text_parts": ["Redis Fault", "", "redis", "connection", "ERROR: connection failed"]}
+{"case_id": "CASE-20260523182558_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}
+{"case_id": "CASE-20260523183754_redis-fault", "text_parts": ["Redis Fault", "", "redis", "connection", "ERROR: connection failed"]}
+{"case_id": "CASE-20260523183755_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}
+{"case_id": "CASE-001_orchestrated", "text_parts": ["Orchestrated Case", "", "# Case Draft\n"]}
+{"case_id": "CASE-20260523184520_redis-fault", "text_parts": ["Redis Fault", "", "redis", "connection", "ERROR: connection failed"]}
+{"case_id": "CASE-20260523184520_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}

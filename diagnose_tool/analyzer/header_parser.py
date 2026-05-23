@@ -29,7 +29,7 @@ class ParsedLogRecord:
 
 
 TIMESTAMP_LEVEL_RE = re.compile(
-    r"^(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?)\s+(ERROR|WARN|WARNING|INFO|DEBUG|TRACE|FATAL)\s+"
+    r"^(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:[.,]\d{1,3})?)\s+(ERROR|WARN|WARNING|INFO|DEBUG|TRACE|FATAL)\s+"
 )
 
 
@@ -80,9 +80,25 @@ def parse_log_record(raw: str, file_path: str | None = None, line_no: int | None
     logger = None
     message = None
     if len(bracket_groups) > 1:
+        # Find the logger group in remaining text and extract message from what follows.
+        # This avoids misinterpreting ']' characters inside the message as delimiters.
         logger_raw = bracket_groups[1]
-        bracket_content = _strip_brackets(logger_raw)
-        if bracket_content:
+        logger_pos = remaining.find(logger_raw)
+        if logger_pos >= 0:
+            msg_start = logger_pos + len(logger_raw)
+            message = remaining[msg_start:].strip() or None
+            # Extract logger name by stripping outer brackets only
+            inner = _strip_brackets(logger_raw)
+            # If there are more ']' characters, split on the first to separate logger from message
+            if message and "]" in inner:
+                parts = inner.split("]", 1)
+                logger = parts[0].strip()
+                message = (parts[1].strip() + (" " + message if message else "")).strip() or None
+            else:
+                logger = inner or None
+        else:
+            # Fallback: strip outer brackets and split on remaining ']'
+            bracket_content = _strip_brackets(logger_raw)
             if "]" in bracket_content:
                 idx = bracket_content.index("]")
                 logger = bracket_content[:idx].strip()
@@ -96,7 +112,12 @@ def parse_log_record(raw: str, file_path: str | None = None, line_no: int | None
                 else:
                     message = None
     if len(bracket_groups) > 2:
-        message = " ".join(bracket_groups[2:]).strip() or message
+        # Only join additional groups as continuation if the message from
+        # remaining is empty or blank — meaning there was no message text
+        # after the logger. If a message already exists, nested brackets
+        # in the message body produced spurious groups; don't overwrite.
+        if not message:
+            message = " ".join(bracket_groups[2:]).strip() or message
 
     if message is None and len(bracket_groups) == 1:
         first_group_end = remaining.find(bracket_groups[0])
@@ -188,6 +209,9 @@ def scan_balanced_bracket_groups(text: str) -> Iterator[str]:
                     depth -= 1
                 i += 1
             if depth == 0:
-                yield text[start:i]
+                group = text[start:i]
+                # Skip empty groups [] that are placeholders in real log formats
+                if group != "[]":
+                    yield group
         else:
             i += 1
