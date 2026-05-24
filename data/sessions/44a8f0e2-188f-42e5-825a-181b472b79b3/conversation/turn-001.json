@@ -1,0 +1,13 @@
+{
+  "turn_id": "001",
+  "user_context": {
+    "phenomenon": "error",
+    "stack": "stack trace",
+    "params": "param=x"
+  },
+  "evidence_refs": [],
+  "ai_question": "<think>用户只提供了占位符信息：\n- 问题现象：error（通用占位符）\n- 堆栈信息：stack trace（通用占位符）\n- 关键入参：param=x（通用占位符）\n\n这些信息实际上没有任何实质内容，我需要追问最基本的问题来开始诊断。\n\n最关键的初始问题是：\n1. 具体的错误信息是什么？\n2. 是什么场景/操作触发的？\n\n我应该生成1-2个具体、可操作的问题。\n</think>\n\n\n\n## 针对性追问\n\n**问题1：请提供具体的错误信息是什么？**\n\n例如：具体的错误代码、错误提示文字、或完整的异常类型。\n\n**问题2：这个错误是在什么操作或场景下出现的？**\n\n例如：启动时、登录时、调用某个API时、导入文件时等。",
+  "ai_diagnosis": null,
+  "mode": "user-priority",
+  "timestamp": "2026-05-24T10:19:17.109410+00:00"
+}

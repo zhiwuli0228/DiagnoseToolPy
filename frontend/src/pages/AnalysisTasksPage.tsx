@@ -1,12 +1,18 @@
 import { useState, useRef } from 'react';
-import { Input, Button, Result, Spin, Alert, Card, Statistic, Row, Col, Collapse, Tag, Table, Tabs, Checkbox, message } from 'antd';
-import { FileSearchOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons';
+import { Input, Button, Result, Spin, Alert, Card, Statistic, Row, Col, Collapse, Tag, Table, Tabs, Checkbox, message, Drawer, Space, Modal } from 'antd';
+import { FileSearchOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, UploadOutlined, ClusterOutlined, FullscreenOutlined, ThunderboltOutlined, FolderOpenOutlined, CopyOutlined, CheckCircleOutlined as CheckCircleFilled } from '@ant-design/icons';
 import JSZip from 'jszip';
 import type { ColumnsType } from 'antd/es/table';
 import { checkSourceDirectory, scanSourceDirectory, searchLogContent, uploadFiles } from '../api/sourceApi';
-import type { SourceCheckResponse, ScanResult, LogSearchResponse, LogSearchResult, AggregatedGroup } from '../types/api';
+import { createClusterTask, pollClusterTask } from '../api/clusterApi';
+import { diagnoseFromCluster, exportWorkspace, previewPrompt, isDegradedResponse, type DegradedResponse } from '../api/diagnosisApi';
+import type { SourceCheckResponse, ScanResult, LogSearchResponse, LogSearchResult, AggregatedGroup, ClusterStatusResponse, SelectionItem } from '../types/api';
+import { useDiagnosis } from '../context/DiagnosisContext';
+import ClusterProgress from '../components/ClusterProgress';
+import ClusterResultComponent from '../components/ClusterResult';
 
 function AnalysisTasksPage() {
+  const { selections, setSelections } = useDiagnosis();
   const [path, setPath] = useState('');
   const [loading, setLoading] = useState(false);
   const [checkResult, setCheckResult] = useState<SourceCheckResponse | null>(null);
@@ -32,6 +38,58 @@ function AnalysisTasksPage() {
   const [includeTime, setIncludeTime] = useState(false);
   const [messageOnly, setMessageOnly] = useState(false);
   const [includeStack, setIncludeStack] = useState(true);
+
+  // Cluster analysis state
+  const [clusterTaskId, setClusterTaskId] = useState<string | null>(null);
+  const [clusterStatus, setClusterStatus] = useState<ClusterStatusResponse | null>(null);
+  const [clusterLoading, setClusterLoading] = useState(false);
+
+  // Diagnosis drawer state
+  const [diagnosisLoading, setDiagnosisLoading] = useState(false);
+  const [diagnosisResult, setDiagnosisResult] = useState<string | undefined>(undefined);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  // Workspace export state
+  const [workspaceDir, setWorkspaceDir] = useState<string | null>(null);
+  const [exportSuccess, setExportSuccess] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+
+  // Preview prompt state
+  const [previewPromptModalOpen, setPreviewPromptModalOpen] = useState(false);
+  const [previewPromptContent, setPreviewPromptContent] = useState<string | null>(null);
+  const [previewExportType, setPreviewExportType] = useState<'search' | 'cluster' | null>(null);
+
+  // Directory picker state
+  const directoryInputRef = useRef<HTMLInputElement>(null);
+  const [pendingExportType, setPendingExportType] = useState<'search' | 'cluster' | 'degraded' | null>(null);
+
+  // Directory picker handlers
+  const handleDirectorySelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const dir = files[0].webkitRelativePath.split('/')[0];
+      if (dir && pendingExportType) {
+        if (pendingExportType === 'search') {
+          executeSearchExport(dir);
+        } else if (pendingExportType === 'cluster') {
+          executeClusterExport(dir);
+        } else if (pendingExportType === 'degraded') {
+          executeDegradedExport(dir);
+        }
+        setPendingExportType(null);
+      }
+    }
+    e.target.value = '';
+  };
+
+  const triggerDirectoryPicker = (exportType: 'search' | 'cluster' | 'degraded') => {
+    setPendingExportType(exportType);
+    directoryInputRef.current?.click();
+  };
+
+  // Degraded modal state
+  const [degradedModalOpen, setDegradedModalOpen] = useState(false);
+  const [degradedInfo, setDegradedInfo] = useState<DegradedResponse | null>(null);
 
   const handleCheck = async () => {
     if (!path.trim()) return;
@@ -97,6 +155,279 @@ function AnalysisTasksPage() {
     }
   };
 
+  const handleClusterAnalysis = async () => {
+    if (!path.trim()) return;
+    setClusterLoading(true);
+    setClusterStatus(null);
+    setClusterTaskId(null);
+
+    try {
+      const result = await createClusterTask(path);
+      setClusterTaskId(result.task_id);
+      // Start polling
+      pollClusterStatus(result.task_id);
+    } catch (err: unknown) {
+      const axiosError = err as { response?: { data?: { detail?: string } } };
+      message.error(axiosError.response?.data?.detail || 'Failed to start cluster analysis');
+      setClusterLoading(false);
+    }
+  };
+
+  const pollClusterStatus = async (taskId: string) => {
+    try {
+      const status = await pollClusterTask(taskId);
+      setClusterStatus(status);
+      if (status.status === 'done') {
+        setClusterLoading(false);
+      } else {
+        // Poll again after 2 seconds
+        setTimeout(() => pollClusterStatus(taskId), 2000);
+      }
+    } catch (err: unknown) {
+      const axiosError = err as { response?: { data?: { detail?: string } } };
+      message.error(axiosError.response?.data?.detail || 'Failed to poll cluster status');
+      setClusterLoading(false);
+    }
+  };
+
+  // Evidence basket handlers
+  const isSelected = (sel: SelectionItem) => {
+    return selections.some(s => {
+      if (s.type !== sel.type) return false;
+      if (sel.type === 'log' && s.id !== sel.id) return false;
+      if (sel.type === 'cluster' && s.cluster_index !== sel.cluster_index) return false;
+      if ((sel.type === 'group' || sel.type === 'group_all') && s.group_key !== sel.group_key) return false;
+      return true;
+    });
+  };
+
+  const toggleSelection = (sel: SelectionItem) => {
+    if (isSelected(sel)) {
+      setSelections(prev => prev.filter(s =>
+        !(s.type === sel.type &&
+          s.group_key === sel.group_key &&
+          s.id === sel.id &&
+          s.cluster_index === sel.cluster_index)
+      ));
+    } else {
+      setSelections(prev => [...prev, sel]);
+    }
+  };
+
+  // Select all logs in raw results
+  const selectAllLogs = () => {
+    const allLogSelections = searchResults?.results.map((record, idx) => ({
+      type: 'log' as const,
+      id: `${record.file_path}:${record.line_no}:${idx}`,
+    })) || [];
+    setSelections(prev => {
+      const existingLogs = prev.filter(s => s.type === 'log');
+      return [...prev.filter(s => s.type !== 'log'), ...allLogSelections.filter(
+        newSel => !existingLogs.some(oldSel => oldSel.id === newSel.id)
+      )];
+    });
+  };
+
+  // Deselect all logs
+  const deselectAllLogs = () => {
+    setSelections(prev => prev.filter(s => s.type !== 'log'));
+  };
+
+  // Invert log selection
+  const invertLogSelection = () => {
+    if (!searchResults?.results) return;
+    const currentLogSelections = selections.filter(s => s.type === 'log');
+    const allLogSelections = searchResults.results.map((record, idx) => ({
+      type: 'log' as const,
+      id: `${record.file_path}:${record.line_no}:${idx}`,
+    }));
+    const currentLogIds = new Set(currentLogSelections.map(s => s.id));
+    const newLogSelections = allLogSelections.filter(s => !currentLogIds.has(s.id));
+    setSelections(prev => [...prev.filter(s => s.type !== 'log'), ...newLogSelections]);
+  };
+
+  const handleClusterDiagnose = async () => {
+    if (!clusterTaskId) {
+      message.error('No cluster task available');
+      return;
+    }
+
+    // Filter selections to only include cluster selections
+    const clusterSelections = selections.filter(s => s.type === 'cluster');
+    if (clusterSelections.length === 0) {
+      message.error('No cluster selected');
+      return;
+    }
+
+    setDiagnosisLoading(true);
+    setDiagnosisResult(undefined);
+
+    try {
+      const result = await diagnoseFromCluster({
+        cache_key: clusterTaskId,
+        selections: clusterSelections,
+        options: {
+          include_stack: true,
+          include_timeline: true,
+          max_tokens: 2000,
+        },
+      });
+
+      // Check if degraded response
+      if (isDegradedResponse(result)) {
+        setDegradedInfo(result);
+        setDegradedModalOpen(true);
+        return;
+      }
+
+      setDiagnosisResult(result.diagnosis);
+      setDrawerVisible(true);
+    } catch (err: unknown) {
+      if (isDegradedResponse(err)) {
+        setDegradedInfo(err);
+        setDegradedModalOpen(true);
+      } else {
+        message.error(err instanceof Error ? err.message : 'Diagnosis failed');
+      }
+    } finally {
+      setDiagnosisLoading(false);
+    }
+  };
+
+  const handlePreviewPromptSearch = async () => {
+    if (!path.trim()) {
+      message.warning('请先选择日志目录');
+      return;
+    }
+
+    setExportLoading(true);
+
+    try {
+      const result = await previewPrompt({
+        cache_key: searchResults ? `search-${Date.now()}` : undefined,
+        selections: selections.filter(s => s.type === 'log' || s.type === 'group' || s.type === 'group_all'),
+      });
+
+      setPreviewExportType('search');
+      setPreviewPromptContent(result.prompt);
+      setPreviewPromptModalOpen(true);
+    } catch (err: unknown) {
+      message.error(err instanceof Error ? err.message : '预览失败');
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const handleExportFromPreview = () => {
+    setPreviewPromptModalOpen(false);
+    // Use the preview export type to determine which export function to use
+    const exportType = previewExportType || 'search';
+    triggerDirectoryPicker(exportType);
+  };
+
+  const executeSearchExport = async (dir: string) => {
+    setExportLoading(true);
+
+    try {
+      const result = await exportWorkspace({
+        cache_key: searchResults ? `search-${Date.now()}` : undefined,
+        workspace_dir: dir,
+        selections: selections.filter(s => s.type === 'log' || s.type === 'group' || s.type === 'group_all'),
+      });
+
+      setWorkspaceDir(result.workspace_dir);
+      setExportSuccess(true);
+      message.success('工作区已导出');
+    } catch (err: unknown) {
+      message.error(err instanceof Error ? err.message : '导出失败');
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const handlePreviewPromptCluster = async () => {
+    if (!clusterTaskId) {
+      message.warning('请先进行聚类分析');
+      return;
+    }
+
+    setExportLoading(true);
+
+    try {
+      const result = await previewPrompt({
+        cache_key: clusterTaskId,
+        selections: selections.filter(s => s.type === 'cluster'),
+      });
+
+      setPreviewExportType('cluster');
+      setPreviewPromptContent(result.prompt);
+      setPreviewPromptModalOpen(true);
+    } catch (err: unknown) {
+      message.error(err instanceof Error ? err.message : '预览失败');
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const handleExportFromPreviewCluster = () => {
+    setPreviewPromptModalOpen(false);
+    triggerDirectoryPicker('cluster');
+  };
+
+  const executeClusterExport = async (dir: string) => {
+    setExportLoading(true);
+
+    try {
+      const result = await exportWorkspace({
+        cache_key: clusterTaskId,
+        workspace_dir: dir,
+        selections: selections.filter(s => s.type === 'cluster'),
+      });
+
+      setWorkspaceDir(result.workspace_dir);
+      setExportSuccess(true);
+      message.success('工作区已导出');
+    } catch (err: unknown) {
+      message.error(err instanceof Error ? err.message : '导出失败');
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const handleCopyPrompt = async () => {
+    message.info('请手动复制 prompt.md 文件内容');
+  };
+
+  const handleExportFromDegraded = () => {
+    if (!degradedInfo) return;
+    triggerDirectoryPicker('degraded');
+  };
+
+  const executeDegradedExport = async (dir: string) => {
+    setExportLoading(true);
+    setDegradedModalOpen(false);
+
+    try {
+      const options = degradedInfo.workspace_export_options;
+      const result = await exportWorkspace({
+        session_id: options.session_id as string | undefined,
+        task_id: options.task_id as string | undefined,
+        cache_key: options.cache_key as string | undefined,
+        workspace_dir: dir,
+        user_context: options.user_context as any,
+        selections: options.selections as SelectionItem[] | undefined,
+      });
+
+      setWorkspaceDir(result.workspace_dir);
+      setExportSuccess(true);
+      message.success('工作区已导出');
+    } catch (err: unknown) {
+      message.error(err instanceof Error ? err.message : '导出失败');
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
   const addKeyword = (value: string, setter: (v: string[]) => void, currentList: string[]) => {
     const trimmed = value.trim();
     if (trimmed && !currentList.includes(trimmed)) {
@@ -147,6 +478,37 @@ function AnalysisTasksPage() {
 
   return (
     <div>
+      {/* Hidden directory picker */}
+      <input
+        ref={directoryInputRef}
+        type="file"
+        webkitdirectory="webkitdirectory"
+        style={{ display: 'none' }}
+        onChange={handleDirectorySelect}
+      />
+
+      {/* Preview Prompt Modal */}
+      <Modal
+        title="诊断 Prompt 预览"
+        open={previewPromptModalOpen}
+        onCancel={() => setPreviewPromptModalOpen(false)}
+        width={800}
+        footer={[
+          <Button key="close" onClick={() => setPreviewPromptModalOpen(false)}>
+            关闭
+          </Button>,
+          <Button key="export" type="primary" icon={<FolderOpenOutlined />} onClick={handleExportFromPreview}>
+            导出工作区
+          </Button>,
+        ]}
+      >
+        <div style={{ maxHeight: '60vh', overflow: 'auto' }}>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12 }}>
+            {previewPromptContent}
+          </pre>
+        </div>
+      </Modal>
+
       <h1>Analysis Tasks</h1>
       <Card style={{ marginBottom: 24 }}>
         <input
@@ -227,6 +589,14 @@ function AnalysisTasksPage() {
             disabled={!path.trim()}
           >
             Scan Directory
+          </Button>
+          <Button
+            icon={<ClusterOutlined />}
+            onClick={handleClusterAnalysis}
+            loading={clusterLoading}
+            disabled={!path.trim() || !!clusterTaskId}
+          >
+            异常聚类
           </Button>
         </div>
       </Card>
@@ -386,7 +756,34 @@ function AnalysisTasksPage() {
           )}
 
           {searchResults && (
-            <Card title={`Search Results (${searchResults.matched_count} matches, scanned ${searchResults.total_scanned_lines} lines in ${searchResults.files_scanned} files)${searchResults.truncated ? ' [TRUNCATED]' : ''}`}>
+            <Card
+              title={`Search Results (${searchResults.matched_count} matches, scanned ${searchResults.total_scanned_lines} lines in ${searchResults.files_scanned} files)${searchResults.truncated ? ' [TRUNCATED]' : ''}`}
+              extra={
+                <Space>
+                  <span style={{ fontSize: 12, color: '#666' }}>
+                    已选 {selections.length} 条证据
+                  </span>
+                  <Button
+                    size="small"
+                    icon={<FolderOpenOutlined />}
+                    onClick={handlePreviewPromptSearch}
+                    loading={exportLoading}
+                  >
+                    预览 Prompt
+                  </Button>
+                  <Button
+                    size="small"
+                    type="primary"
+                    icon={<ThunderboltOutlined />}
+                    onClick={() => {
+                      window.location.href = `/diagnosis-studio?path=${encodeURIComponent(path)}`;
+                    }}
+                  >
+                    进入诊断工作室
+                  </Button>
+                </Space>
+              }
+            >
               {searchResults.aggregated && searchResults.aggregated.length > 0 ? (
                 <Tabs
                   items={[
@@ -394,14 +791,43 @@ function AnalysisTasksPage() {
                       key: 'raw',
                       label: 'Raw Results',
                       children: (
-                        <Table
-                          dataSource={searchResults.results}
-                          columns={resultColumns}
-                          rowKey={(_, i) => `${_.file_path}-${_.line_no}-${i}`}
-                          size="small"
-                          scroll={{ x: 900 }}
-                          pagination={{ pageSize: 50 }}
-                        />
+                        <div>
+                          <div style={{ marginBottom: 8, display: 'flex', gap: 8 }}>
+                            <Button size="small" onClick={selectAllLogs}>全选</Button>
+                            <Button size="small" onClick={deselectAllLogs}>取消全选</Button>
+                            <Button size="small" onClick={invertLogSelection}>反选</Button>
+                          </div>
+                          <Table
+                            dataSource={searchResults.results}
+                            columns={[
+                              {
+                                title: (
+                                  <Checkbox
+                                    checked={searchResults.results.length > 0 && selections.filter(s => s.type === 'log').length === searchResults.results.length}
+                                    indeterminate={selections.filter(s => s.type === 'log').length > 0 && selections.filter(s => s.type === 'log').length < searchResults.results.length}
+                                    onChange={(e) => e.target.checked ? selectAllLogs() : deselectAllLogs()}
+                                  />
+                                ),
+                                key: 'selection',
+                                width: 60,
+                                render: (_, record: LogSearchResult, index: number) => {
+                                  const logId = `${record.file_path}:${record.line_no}:${index}`;
+                                  return (
+                                    <Checkbox
+                                      checked={isSelected({ type: 'log', id: logId })}
+                                      onChange={() => toggleSelection({ type: 'log', id: logId })}
+                                    />
+                                  );
+                                },
+                              },
+                              ...resultColumns,
+                            ]}
+                            rowKey={(_, i) => `${_.file_path}-${_.line_no}-${i}`}
+                            size="small"
+                            scroll={{ x: 900 }}
+                            pagination={{ pageSize: 50 }}
+                          />
+                        </div>
                       ),
                     },
                     {
@@ -411,6 +837,17 @@ function AnalysisTasksPage() {
                         <Table
                           dataSource={searchResults.aggregated}
                           columns={[
+                            {
+                              title: 'Select',
+                              key: 'selection',
+                              width: 80,
+                              render: (_, record: AggregatedGroup) => (
+                                <Checkbox
+                                  checked={isSelected({ type: 'group', group_key: record.key })}
+                                  onChange={() => toggleSelection({ type: 'group', group_key: record.key })}
+                                />
+                              ),
+                            },
                             { title: 'Count', dataIndex: 'count', key: 'count', width: 80, render: (v) => <b style={{ color: v > 1 ? '#cf1322' : undefined }}>{v}</b> },
                             { title: 'Key', dataIndex: 'key', key: 'key', ellipsis: true },
                             { title: 'Sample', dataIndex: 'sample_message', key: 'sample_message', ellipsis: true },
@@ -419,14 +856,41 @@ function AnalysisTasksPage() {
                           size="small"
                           expandable={{
                             expandedRowRender: (record: AggregatedGroup) => (
-                              <Table
-                                dataSource={record.matched_lines}
-                                columns={resultColumns}
-                                rowKey={(_, idx) => `exp-${_.file_path}-${_.line_no}-${idx}`}
-                                size="small"
-                                pagination={false}
-                                scroll={{ x: 900 }}
-                              />
+                              <div>
+                                <div style={{ marginBottom: 8 }}>
+                                  <Button
+                                    size="small"
+                                    type="link"
+                                    onClick={() => toggleSelection({ type: 'group_all', group_key: record.key })}
+                                  >
+                                    Select All in Group ({record.count})
+                                  </Button>
+                                </div>
+                                <Table
+                                  dataSource={record.matched_lines}
+                                  columns={[
+                                    {
+                                      title: 'Select',
+                                      key: 'selection',
+                                      width: 60,
+                                      render: (_, log: LogSearchResult, idx: number) => {
+                                        const logId = `${log.file_path}:${log.line_no}:${idx}`;
+                                        return (
+                                          <Checkbox
+                                            checked={isSelected({ type: 'log', id: logId })}
+                                            onChange={() => toggleSelection({ type: 'log', id: logId })}
+                                          />
+                                        );
+                                      },
+                                    },
+                                    ...resultColumns,
+                                  ]}
+                                  rowKey={(_, i) => `exp-${_.file_path}-${_.line_no}-${i}`}
+                                  size="small"
+                                  pagination={false}
+                                  scroll={{ x: 900 }}
+                                />
+                              </div>
                             ),
                             rowExpandable: () => true,
                           } as object}
@@ -437,18 +901,193 @@ function AnalysisTasksPage() {
                   ]}
                 />
               ) : (
-                <Table
-                  dataSource={searchResults.results}
-                  columns={resultColumns}
-                  rowKey={(_, i) => `${_.file_path}-${_.line_no}-${i}`}
-                  size="small"
-                  scroll={{ x: 900 }}
-                  pagination={{ pageSize: 50 }}
-                />
+                <div>
+                  <div style={{ marginBottom: 8, display: 'flex', gap: 8 }}>
+                    <Button size="small" onClick={selectAllLogs}>全选</Button>
+                    <Button size="small" onClick={deselectAllLogs}>取消全选</Button>
+                    <Button size="small" onClick={invertLogSelection}>反选</Button>
+                  </div>
+                  <Table
+                    dataSource={searchResults.results}
+                    columns={[
+                      {
+                        title: (
+                          <Checkbox
+                            checked={searchResults.results.length > 0 && selections.filter(s => s.type === 'log').length === searchResults.results.length}
+                            indeterminate={selections.filter(s => s.type === 'log').length > 0 && selections.filter(s => s.type === 'log').length < searchResults.results.length}
+                            onChange={(e) => e.target.checked ? selectAllLogs() : deselectAllLogs()}
+                          />
+                        ),
+                        key: 'selection',
+                        width: 60,
+                        render: (_, record: LogSearchResult, index: number) => {
+                          const logId = `${record.file_path}:${record.line_no}:${index}`;
+                          return (
+                            <Checkbox
+                              checked={isSelected({ type: 'log', id: logId })}
+                              onChange={() => toggleSelection({ type: 'log', id: logId })}
+                            />
+                          );
+                        },
+                      },
+                      ...resultColumns,
+                    ]}
+                    rowKey={(_, i) => `${_.file_path}-${_.line_no}-${i}`}
+                    size="small"
+                    scroll={{ x: 900 }}
+                    pagination={{ pageSize: 50 }}
+                  />
+                </div>
               )}
             </Card>
           )}
         </>
+      )}
+
+      {/* Cluster Analysis Results */}
+      {clusterStatus && (
+        <Card title="异常聚类分析" style={{ marginTop: 24 }}
+          extra={
+            <Space>
+              <Button
+                size="small"
+                icon={<FolderOpenOutlined />}
+                onClick={handlePreviewPromptCluster}
+                loading={exportLoading}
+              >
+                预览 Prompt
+              </Button>
+              <Button
+                type="primary"
+                size="small"
+                disabled={!selections.some(s => s.type === 'cluster')}
+                onClick={handleClusterDiagnose}
+                loading={diagnosisLoading}
+              >
+                诊断选中聚类
+              </Button>
+            </Space>
+          }
+        >
+          {clusterStatus.status !== 'done' && (
+            <ClusterProgress
+              status={clusterStatus.status}
+              progress={clusterStatus.progress}
+              currentStep={clusterStatus.current_step}
+            />
+          )}
+          {clusterStatus.status === 'done' && clusterStatus.clusters && (
+            <ClusterResultComponent
+              clusters={clusterStatus.clusters}
+              taskId={clusterTaskId || ''}
+              onSelect={toggleSelection}
+              selectedItems={selections}
+            />
+          )}
+        </Card>
+      )}
+
+      {/* Diagnosis Result Drawer */}
+      <Drawer
+        title="AI 诊断结果"
+        placement="right"
+        width={600}
+        open={drawerVisible}
+        onClose={() => setDrawerVisible(false)}
+        extra={
+          <Space>
+            <Button
+              size="small"
+              icon={<FullscreenOutlined />}
+              onClick={() => {
+                // Open in new window
+                const newWindow = window.open('', '_blank', 'width=800,height=600');
+                if (newWindow) {
+                  newWindow.document.write(`
+                    <html>
+                      <head><title>AI 诊断结果</title></head>
+                      <body style="padding: 20px; font-family: monospace; white-space: pre-wrap;">
+                        ${diagnosisResult}
+                      </body>
+                    </html>
+                  `);
+                  newWindow.document.close();
+                }
+              }}
+            >
+              新窗口
+            </Button>
+          </Space>
+        }
+      >
+        {diagnosisResult ? (
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 13 }}>
+            {diagnosisResult}
+          </pre>
+        ) : (
+          <div style={{ textAlign: 'center', padding: 40 }}>
+            <Spin tip="正在生成诊断..." />
+          </div>
+        )}
+      </Drawer>
+
+      {/* Degraded Response Modal */}
+      <Modal
+        title="AI 诊断暂不可用"
+        open={degradedModalOpen}
+        onCancel={() => setDegradedModalOpen(false)}
+        footer={[
+          <Button key="retry" type="primary" onClick={() => setDegradedModalOpen(false)}>
+            关闭
+          </Button>,
+          <Button key="export" icon={<FolderOpenOutlined />} onClick={handleExportFromDegraded}>
+            导出工作区
+          </Button>,
+        ]}
+      >
+        <Alert
+          message="LLM 服务暂不可用"
+          description={degradedInfo?.message || 'AI 诊断服务暂时无法使用。您可以导出工作区到本地目录，使用 OpenCode 手动完成诊断。'}
+          type="warning"
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
+      </Modal>
+
+      {/* Export Success Modal */}
+      <Modal
+        title="工作区导出成功"
+        open={exportSuccess}
+        onCancel={() => setExportSuccess(false)}
+        footer={[
+          <Button key="copy" icon={<CopyOutlined />} onClick={handleCopyPrompt}>
+            复制 Prompt
+          </Button>,
+        ]}
+      >
+        <Alert
+          message="工作区已成功导出"
+          description={
+            <div>
+              <p>工作区目录：{workspaceDir}</p>
+              <p>请在 OpenCode 中打开该目录，完成诊断后将结果保存为 result.md。</p>
+            </div>
+          }
+          type="success"
+          showIcon
+        />
+      </Modal>
+
+      {/* Floating button to show diagnosis result when drawer is closed */}
+      {diagnosisResult && !drawerVisible && (
+        <Button
+          type="primary"
+          icon={<FileSearchOutlined />}
+          style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 1001 }}
+          onClick={() => setDrawerVisible(true)}
+        >
+          查看诊断结果
+        </Button>
       )}
     </div>
   );

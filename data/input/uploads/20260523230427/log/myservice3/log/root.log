@@ -1,0 +1,89 @@
+2026-05-05 10:20:00.940 [http-nio-8080-exec-1] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=23ms, traceId=TRACE-myservice3-NORMAL-0000
+2026-05-05 10:20:05.256 [http-nio-8080-exec-2] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=20ms, traceId=TRACE-myservice3-NORMAL-0001
+2026-05-05 10:20:10.337 [http-nio-8080-exec-3] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=14ms, traceId=TRACE-myservice3-NORMAL-0002
+2026-05-05 10:20:15.815 [http-nio-8080-exec-4] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=15ms, traceId=TRACE-myservice3-NORMAL-0003
+2026-05-05 10:20:20.888 [http-nio-8080-exec-5] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=28ms, traceId=TRACE-myservice3-NORMAL-0004
+2026-05-05 10:20:25.239 [http-nio-8080-exec-6] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=8ms, traceId=TRACE-myservice3-NORMAL-0005
+2026-05-05 10:20:30.481 [http-nio-8080-exec-7] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=4ms, traceId=TRACE-myservice3-NORMAL-0006
+2026-05-05 10:20:35.401 [http-nio-8080-exec-8] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=29ms, traceId=TRACE-myservice3-NORMAL-0007
+2026-05-05 10:20:40.793 [http-nio-8080-exec-9] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=19ms, traceId=TRACE-myservice3-NORMAL-0008
+2026-05-05 10:20:45.591 [http-nio-8080-exec-10] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=5ms, traceId=TRACE-myservice3-NORMAL-0009
+2026-05-05 10:20:50.300 [http-nio-8080-exec-11] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=15ms, traceId=TRACE-myservice3-NORMAL-0010
+2026-05-05 10:20:55.020 [http-nio-8080-exec-12] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=8ms, traceId=TRACE-myservice3-NORMAL-0011
+2026-05-05 10:21:00.546 [http-nio-8080-exec-13] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=8ms, traceId=TRACE-myservice3-NORMAL-0012
+2026-05-05 10:21:05.178 [http-nio-8080-exec-14] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=13ms, traceId=TRACE-myservice3-NORMAL-0013
+2026-05-05 10:21:10.997 [http-nio-8080-exec-15] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=29ms, traceId=TRACE-myservice3-NORMAL-0014
+2026-05-05 10:21:15.508 [http-nio-8080-exec-16] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=17ms, traceId=TRACE-myservice3-NORMAL-0015
+2026-05-05 10:21:20.789 [http-nio-8080-exec-17] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=25ms, traceId=TRACE-myservice3-NORMAL-0016
+2026-05-05 10:21:25.157 [http-nio-8080-exec-18] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=22ms, traceId=TRACE-myservice3-NORMAL-0017
+2026-05-05 10:21:30.929 [http-nio-8080-exec-19] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=19ms, traceId=TRACE-myservice3-NORMAL-0018
+2026-05-05 10:21:35.894 [http-nio-8080-exec-20] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=26ms, traceId=TRACE-myservice3-NORMAL-0019
+2026-05-05 10:21:40.011 [http-nio-8080-exec-1] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=14ms, traceId=TRACE-myservice3-NORMAL-0020
+2026-05-05 10:21:45.944 [http-nio-8080-exec-2] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=18ms, traceId=TRACE-myservice3-NORMAL-0021
+2026-05-05 10:21:50.202 [http-nio-8080-exec-3] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=19ms, traceId=TRACE-myservice3-NORMAL-0022
+2026-05-05 10:21:55.631 [http-nio-8080-exec-4] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=7ms, traceId=TRACE-myservice3-NORMAL-0023
+2026-05-05 10:22:00.299 [http-nio-8080-exec-5] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=24ms, traceId=TRACE-myservice3-NORMAL-0024
+2026-05-05 10:22:05.080 [http-nio-8080-exec-6] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=19ms, traceId=TRACE-myservice3-NORMAL-0025
+2026-05-05 10:22:10.558 [http-nio-8080-exec-7] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=14ms, traceId=TRACE-myservice3-NORMAL-0026
+2026-05-05 10:22:15.410 [http-nio-8080-exec-8] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=24ms, traceId=TRACE-myservice3-NORMAL-0027
+2026-05-05 10:22:20.802 [http-nio-8080-exec-9] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=26ms, traceId=TRACE-myservice3-NORMAL-0028
+2026-05-05 10:22:25.346 [http-nio-8080-exec-10] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=27ms, traceId=TRACE-myservice3-NORMAL-0029
+2026-05-05 10:22:30.979 [http-nio-8080-exec-11] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=24ms, traceId=TRACE-myservice3-NORMAL-0030
+2026-05-05 10:22:35.542 [http-nio-8080-exec-12] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=18ms, traceId=TRACE-myservice3-NORMAL-0031
+2026-05-05 10:22:40.587 [http-nio-8080-exec-13] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=23ms, traceId=TRACE-myservice3-NORMAL-0032
+2026-05-05 10:22:45.011 [http-nio-8080-exec-14] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=29ms, traceId=TRACE-myservice3-NORMAL-0033
+2026-05-05 10:22:50.988 [http-nio-8080-exec-15] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=10ms, traceId=TRACE-myservice3-NORMAL-0034
+2026-05-05 10:22:55.887 [http-nio-8080-exec-16] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=11ms, traceId=TRACE-myservice3-NORMAL-0035
+2026-05-05 10:23:00.874 [http-nio-8080-exec-17] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=26ms, traceId=TRACE-myservice3-NORMAL-0036
+2026-05-05 10:23:05.024 [http-nio-8080-exec-18] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=11ms, traceId=TRACE-myservice3-NORMAL-0037
+2026-05-05 10:23:10.453 [http-nio-8080-exec-19] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=21ms, traceId=TRACE-myservice3-NORMAL-0038
+2026-05-05 10:23:15.926 [http-nio-8080-exec-20] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=13ms, traceId=TRACE-myservice3-NORMAL-0039
+2026-05-05 10:23:20.504 [http-nio-8080-exec-1] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=8ms, traceId=TRACE-myservice3-NORMAL-0040
+2026-05-05 10:23:25.730 [http-nio-8080-exec-2] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=13ms, traceId=TRACE-myservice3-NORMAL-0041
+2026-05-05 10:23:30.823 [http-nio-8080-exec-3] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=2ms, traceId=TRACE-myservice3-NORMAL-0042
+2026-05-05 10:23:35.743 [http-nio-8080-exec-4] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=6ms, traceId=TRACE-myservice3-NORMAL-0043
+2026-05-05 10:23:40.253 [http-nio-8080-exec-5] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=26ms, traceId=TRACE-myservice3-NORMAL-0044
+2026-05-05 10:23:45.134 [http-nio-8080-exec-6] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=14ms, traceId=TRACE-myservice3-NORMAL-0045
+2026-05-05 10:23:50.061 [http-nio-8080-exec-7] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=20ms, traceId=TRACE-myservice3-NORMAL-0046
+2026-05-05 10:23:55.341 [http-nio-8080-exec-8] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=21ms, traceId=TRACE-myservice3-NORMAL-0047
+2026-05-05 10:24:00.612 [http-nio-8080-exec-9] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=26ms, traceId=TRACE-myservice3-NORMAL-0048
+2026-05-05 10:24:05.867 [http-nio-8080-exec-10] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=26ms, traceId=TRACE-myservice3-NORMAL-0049
+2026-05-05 10:24:10.753 [http-nio-8080-exec-11] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=18ms, traceId=TRACE-myservice3-NORMAL-0050
+2026-05-05 10:24:15.769 [http-nio-8080-exec-12] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=12ms, traceId=TRACE-myservice3-NORMAL-0051
+2026-05-05 10:24:20.489 [http-nio-8080-exec-13] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=27ms, traceId=TRACE-myservice3-NORMAL-0052
+2026-05-05 10:24:25.296 [http-nio-8080-exec-14] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=22ms, traceId=TRACE-myservice3-NORMAL-0053
+2026-05-05 10:24:30.566 [http-nio-8080-exec-15] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=5ms, traceId=TRACE-myservice3-NORMAL-0054
+2026-05-05 10:24:35.341 [http-nio-8080-exec-16] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=4ms, traceId=TRACE-myservice3-NORMAL-0055
+2026-05-05 10:24:40.637 [http-nio-8080-exec-17] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=27ms, traceId=TRACE-myservice3-NORMAL-0056
+2026-05-05 10:24:45.910 [http-nio-8080-exec-18] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=11ms, traceId=TRACE-myservice3-NORMAL-0057
+2026-05-05 10:24:50.708 [http-nio-8080-exec-19] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=7ms, traceId=TRACE-myservice3-NORMAL-0058
+2026-05-05 10:24:55.912 [http-nio-8080-exec-20] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=4ms, traceId=TRACE-myservice3-NORMAL-0059
+2026-05-05 10:25:00.435 [http-nio-8080-exec-1] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=16ms, traceId=TRACE-myservice3-NORMAL-0060
+2026-05-05 10:25:05.844 [http-nio-8080-exec-2] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=18ms, traceId=TRACE-myservice3-NORMAL-0061
+2026-05-05 10:25:10.641 [http-nio-8080-exec-3] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=2ms, traceId=TRACE-myservice3-NORMAL-0062
+2026-05-05 10:25:15.530 [http-nio-8080-exec-4] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=8ms, traceId=TRACE-myservice3-NORMAL-0063
+2026-05-05 10:25:20.608 [http-nio-8080-exec-5] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=4ms, traceId=TRACE-myservice3-NORMAL-0064
+2026-05-05 10:25:25.296 [http-nio-8080-exec-6] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=4ms, traceId=TRACE-myservice3-NORMAL-0065
+2026-05-05 10:25:30.230 [http-nio-8080-exec-7] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=5ms, traceId=TRACE-myservice3-NORMAL-0066
+2026-05-05 10:25:35.341 [http-nio-8080-exec-8] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=18ms, traceId=TRACE-myservice3-NORMAL-0067
+2026-05-05 10:25:40.372 [http-nio-8080-exec-9] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=11ms, traceId=TRACE-myservice3-NORMAL-0068
+2026-05-05 10:25:45.651 [http-nio-8080-exec-10] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=25ms, traceId=TRACE-myservice3-NORMAL-0069
+2026-05-05 10:25:50.212 [http-nio-8080-exec-11] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=11ms, traceId=TRACE-myservice3-NORMAL-0070
+2026-05-05 10:25:55.001 [http-nio-8080-exec-12] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=21ms, traceId=TRACE-myservice3-NORMAL-0071
+2026-05-05 10:26:00.673 [http-nio-8080-exec-13] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=17ms, traceId=TRACE-myservice3-NORMAL-0072
+2026-05-05 10:26:05.612 [http-nio-8080-exec-14] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=7ms, traceId=TRACE-myservice3-NORMAL-0073
+2026-05-05 10:26:10.151 [http-nio-8080-exec-15] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=15ms, traceId=TRACE-myservice3-NORMAL-0074
+2026-05-05 10:26:15.313 [http-nio-8080-exec-16] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=7ms, traceId=TRACE-myservice3-NORMAL-0075
+2026-05-05 10:26:20.809 [http-nio-8080-exec-17] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=3ms, traceId=TRACE-myservice3-NORMAL-0076
+2026-05-05 10:26:25.625 [http-nio-8080-exec-18] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=30ms, traceId=TRACE-myservice3-NORMAL-0077
+2026-05-05 10:26:30.484 [http-nio-8080-exec-19] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=11ms, traceId=TRACE-myservice3-NORMAL-0078
+2026-05-05 10:26:35.572 [http-nio-8080-exec-20] INFO  com.example.web.AccessLog - request completed, method=GET, uri=/api/v1/health, status=200, cost=5ms, traceId=TRACE-myservice3-NORMAL-0079
+2026-05-05 10:27:00.015 [jvm-monitor] WARN  com.example.monitor.JvmMonitor - OldGen usage high, oldUsed=7450MB, oldMax=8192MB, fullGcCount=12, traceId=TD-JVM-20260505-0005
+2026-05-05 10:27:03.021 [GC Thread] WARN  com.example.monitor.GcLogBridge - Full GC pause detected, cause=Allocation Failure, pause=4821ms, before=7901MB, after=7712MB, traceId=TD-JVM-20260505-0005
+2026-05-05 10:27:08.017 [http-nio-8080-exec-19] ERROR com.example.web.GlobalExceptionHandler - Request failed due to memory pressure, uri=/api/v1/report/export, traceId=TD-JVM-20260505-0005
+java.lang.OutOfMemoryError: Java heap space
+	at java.base/java.util.Arrays.copyOf(Arrays.java:3541)
+	at java.base/java.io.ByteArrayOutputStream.ensureCapacity(ByteArrayOutputStream.java:100)
+	at java.base/java.io.ByteArrayOutputStream.write(ByteArrayOutputStream.java:130)
+	at com.example.report.ReportExportService.exportLargeReport(ReportExportService.java:203)
+	at com.example.web.ReportController.export(ReportController.java:77)

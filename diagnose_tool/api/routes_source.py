@@ -63,6 +63,8 @@ def search_logs(request: LogSearchRequest) -> dict:
         include_stack=request.include_stack,
     )
 
+    # Build group_keys mapping from aggregated results if available
+    group_keys: dict[int, str] = {}
     if request.aggregate and result["results"]:
         from diagnose_tool.analyzer.log_aggregator import (
             aggregate_log_lines,
@@ -76,6 +78,31 @@ def search_logs(request: LogSearchRequest) -> dict:
         )
         aggregated = aggregate_log_lines(result["results"], opts)
         result["aggregated"] = [asdict(g) for g in aggregated]
+
+        # Build group_keys: map result index to group key
+        # matched_lines contains the same dict objects as result["results"], so we can
+        # use identity check (is) instead of value comparison to avoid path format issues
+        results_list = result["results"]
+        results_index = {id(res): idx for idx, res in enumerate(results_list)}
+        for g in aggregated:
+            for line_dict in g.matched_lines:
+                idx = results_index.get(id(line_dict))
+                if idx is not None:
+                    group_keys[idx] = g.key
+
+    # Store matched lines in cache for later diagnosis
+    if result["results"]:
+        from diagnose_tool.analyzer.evidence_cache import EvidenceCacheManager
+        from diagnose_tool.core.config import load_config
+
+        config = load_config()
+        cache_mgr = EvidenceCacheManager(config.data_dir)
+        cache_key = cache_mgr.create_search_cache(
+            request.path,
+            result["results"],
+            group_keys,
+        )
+        result["cache_key"] = cache_key
 
     return result
 

@@ -10,7 +10,7 @@ paths:
     - data/input/uploads
   data_dir: data
 llm:
-  enabled: false
+  enabled: true
   model: MiniMax-M2.7
   base_url: https://api.minimaxi.com/v1
   api_key: ""

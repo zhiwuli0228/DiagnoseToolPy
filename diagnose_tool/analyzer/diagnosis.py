@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 from pathlib import Path
+from typing import Literal
 
 from diagnose_tool.core.llm_client import LLMClient
 from diagnose_tool.core.llm_config import AppLLMConfig
@@ -132,6 +133,109 @@ class DiagnosisOrchestrator:
 
         return case_id, diagnosis_text
 
+    def run_with_context(
+        self,
+        task_id: str,
+        user_context: dict[str, str],
+        mode: Literal["user-priority", "log-priority"] = "user-priority",
+    ) -> tuple[str, str]:
+        """Run AI diagnosis with user-provided context.
+
+        Args:
+            task_id: The identifier of the analysis task.
+            user_context: Dict with keys: phenomenon, stack, params.
+            mode: Priority mode - "user-priority" or "log-priority".
+
+        Returns:
+            A tuple of (case_id, diagnosis_text).
+
+        Raises:
+            TaskNotFoundError: When ``data/output/{task_id}`` does not exist.
+            EvidenceNotFoundError: When ``evidence-pack.md`` not found.
+            LLMClientError: When the LLM API call fails.
+        """
+        task_output = self._data_dir / "output" / task_id
+
+        if not task_output.exists():
+            raise TaskNotFoundError(f"Task output directory not found: {task_output}")
+
+        evidence_pack_path = task_output / "evidence-pack.md"
+        if not evidence_pack_path.exists():
+            raise EvidenceNotFoundError(
+                f"Evidence pack not found: {evidence_pack_path}"
+            )
+
+        # Read evidence pack
+        evidence_pack = _read_file(evidence_pack_path)
+
+        # Read retrieval query if present
+        retrieval_query_path = task_output / "retrieval-query.json"
+        retrieval_query: RetrievalQuery | None = None
+        if retrieval_query_path.exists():
+            try:
+                retrieval_query = build_retrieval_query(retrieval_query_path)
+            except Exception:
+                retrieval_query = None
+
+        # Build retrieval context — similar cases
+        cases_dir = self._data_dir / "cases"
+        similar_cases = self._query_similar_cases(retrieval_query, cases_dir)
+
+        if retrieval_query is not None:
+            prompt_context = generate_prompt_context(
+                retrieval_query,
+                similar_cases,
+                max_cases=3,
+            )
+        else:
+            prompt_context = (
+                "## Historical Case References\n\n"
+                "No retrieval query available.\n\n"
+                "*Note: Analyze the current issue independently.*\n"
+            )
+
+        # Build user context string
+        user_context_md = _build_user_context_md(user_context)
+
+        # Build prompt based on priority mode
+        if mode == "user-priority":
+            prompt_parts = [
+                "# User Provided Context\n\n" + user_context_md,
+                "# Log Evidence\n\n" + evidence_pack,
+                "# Similar Historical Cases\n\n" + prompt_context,
+            ]
+        else:  # log-priority
+            prompt_parts = [
+                "# Log Evidence\n\n" + evidence_pack,
+                "# User Provided Context\n\n" + user_context_md,
+                "# Similar Historical Cases\n\n" + prompt_context,
+            ]
+
+        full_prompt = "\n\n".join(prompt_parts)
+
+        # Call LLM
+        messages = [{"role": "user", "content": full_prompt}]
+        diagnosis_text = self._llm.chat(messages=messages)
+
+        # Determine case_id and ensure case directory exists
+        case_id = task_id
+        case_dir = cases_dir / case_id
+        case_dir.mkdir(parents=True, exist_ok=True)
+
+        # Write ai-diagnosis.md
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        diagnosis_md = _build_diagnosis_md(
+            timestamp=timestamp,
+            task_id=task_id,
+            source_evidence_paths=_format_source_paths(task_output),
+            diagnosis_content=diagnosis_text,
+        )
+
+        ai_diagnosis_path = case_dir / "ai-diagnosis.md"
+        ai_diagnosis_path.write_text(diagnosis_md, encoding="utf-8")
+
+        return case_id, diagnosis_text
+
     def _query_similar_cases(
         self,
         query: RetrievalQuery | None,
@@ -144,6 +248,8 @@ class DiagnosisOrchestrator:
         """
         if query is None or not cases_dir.exists():
             return []
+
+        results: list[tuple[str, float, dict]] = []
 
         # Keyword search
         keyword_results = search_by_keywords(query, cases_dir)
@@ -254,3 +360,29 @@ def _format_source_paths(task_output: Path) -> str:
     evidence_pack = f"- Evidence pack: `output/{task_output.name}/evidence-pack.md`"
     retrieval_query = f"- Retrieval query: `output/{task_output.name}/retrieval-query.json`"
     return f"{evidence_pack}\n{retrieval_query}"
+
+
+def _build_user_context_md(user_context: dict[str, str]) -> str:
+    """Build user context as markdown.
+
+    Args:
+        user_context: Dict with keys: phenomenon, stack, params.
+
+    Returns:
+        Formatted markdown string.
+    """
+    parts = []
+
+    if user_context.get("phenomenon"):
+        parts.append(f"## 问题现象\n\n{user_context['phenomenon']}")
+
+    if user_context.get("stack"):
+        parts.append(f"## 堆栈信息\n\n```\n{user_context['stack']}\n```")
+
+    if user_context.get("params"):
+        parts.append(f"## 关键入参\n\n{user_context['params']}")
+
+    if not parts:
+        return "（用户未提供额外上下文）"
+
+    return "\n\n".join(parts)

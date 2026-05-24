@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -69,7 +70,8 @@ def load_llm_config(config_path: str | Path = DEFAULT_CONFIG_PATH) -> AppLLMConf
     enabled = bool(llm_section.get("enabled", False))
     model = str(llm_section.get("model", "gpt-4o-mini"))
     base_url = str(llm_section.get("base_url", "https://api.openai.com/v1"))
-    api_key = str(llm_section.get("api_key", ""))
+    # Check LLM_API_KEY env var first, fall back to YAML config
+    api_key = os.environ.get("LLM_API_KEY") or str(llm_section.get("api_key", ""))
 
     timeout_raw = llm_section.get("timeout", 60)
     if isinstance(timeout_raw, bool) or not isinstance(timeout_raw, int):

@@ -1,0 +1,230 @@
+2026-05-05 10:20:00.003 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00000, cost=65ms, traceId=TRACE-MYSERVICE1-COLLECT-0000
+2026-05-05 10:20:02.628 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00001, cost=12ms, traceId=TRACE-MYSERVICE1-COLLECT-0001
+2026-05-05 10:20:04.740 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00002, cost=59ms, traceId=TRACE-MYSERVICE1-COLLECT-0002
+2026-05-05 10:20:06.173 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00003, cost=24ms, traceId=TRACE-MYSERVICE1-COLLECT-0003
+2026-05-05 10:20:08.732 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00004, cost=43ms, traceId=TRACE-MYSERVICE1-COLLECT-0004
+2026-05-05 10:20:10.232 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00005, cost=71ms, traceId=TRACE-MYSERVICE1-COLLECT-0005
+2026-05-05 10:20:12.598 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00006, cost=38ms, traceId=TRACE-MYSERVICE1-COLLECT-0006
+2026-05-05 10:20:14.201 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00007, cost=101ms, traceId=TRACE-MYSERVICE1-COLLECT-0007
+2026-05-05 10:20:16.539 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00008, cost=78ms, traceId=TRACE-MYSERVICE1-COLLECT-0008
+2026-05-05 10:20:18.691 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00009, cost=64ms, traceId=TRACE-MYSERVICE1-COLLECT-0009
+2026-05-05 10:20:20.886 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00010, cost=68ms, traceId=TRACE-MYSERVICE1-COLLECT-0010
+2026-05-05 10:20:22.355 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00011, cost=63ms, traceId=TRACE-MYSERVICE1-COLLECT-0011
+2026-05-05 10:20:24.154 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00012, cost=70ms, traceId=TRACE-MYSERVICE1-COLLECT-0012
+2026-05-05 10:20:26.541 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00013, cost=120ms, traceId=TRACE-MYSERVICE1-COLLECT-0013
+2026-05-05 10:20:28.485 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00014, cost=104ms, traceId=TRACE-MYSERVICE1-COLLECT-0014
+2026-05-05 10:20:30.810 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00015, cost=107ms, traceId=TRACE-MYSERVICE1-COLLECT-0015
+2026-05-05 10:20:32.020 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00016, cost=44ms, traceId=TRACE-MYSERVICE1-COLLECT-0016
+2026-05-05 10:20:34.250 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00017, cost=24ms, traceId=TRACE-MYSERVICE1-COLLECT-0017
+2026-05-05 10:20:36.074 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00018, cost=41ms, traceId=TRACE-MYSERVICE1-COLLECT-0018
+2026-05-05 10:20:38.387 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00019, cost=23ms, traceId=TRACE-MYSERVICE1-COLLECT-0019
+2026-05-05 10:20:40.542 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00020, cost=95ms, traceId=TRACE-MYSERVICE1-COLLECT-0020
+2026-05-05 10:20:42.123 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00021, cost=98ms, traceId=TRACE-MYSERVICE1-COLLECT-0021
+2026-05-05 10:20:44.452 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00022, cost=21ms, traceId=TRACE-MYSERVICE1-COLLECT-0022
+2026-05-05 10:20:46.315 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00023, cost=49ms, traceId=TRACE-MYSERVICE1-COLLECT-0023
+2026-05-05 10:20:48.739 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00024, cost=88ms, traceId=TRACE-MYSERVICE1-COLLECT-0024
+2026-05-05 10:20:50.494 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00025, cost=80ms, traceId=TRACE-MYSERVICE1-COLLECT-0025
+2026-05-05 10:20:52.636 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00026, cost=48ms, traceId=TRACE-MYSERVICE1-COLLECT-0026
+2026-05-05 10:20:54.133 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00027, cost=45ms, traceId=TRACE-MYSERVICE1-COLLECT-0027
+2026-05-05 10:20:56.504 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00028, cost=90ms, traceId=TRACE-MYSERVICE1-COLLECT-0028
+2026-05-05 10:20:58.553 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00029, cost=18ms, traceId=TRACE-MYSERVICE1-COLLECT-0029
+2026-05-05 10:21:00.569 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00030, cost=69ms, traceId=TRACE-MYSERVICE1-COLLECT-0030
+2026-05-05 10:21:02.574 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00031, cost=61ms, traceId=TRACE-MYSERVICE1-COLLECT-0031
+2026-05-05 10:21:04.653 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00032, cost=12ms, traceId=TRACE-MYSERVICE1-COLLECT-0032
+2026-05-05 10:21:06.771 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00033, cost=111ms, traceId=TRACE-MYSERVICE1-COLLECT-0033
+2026-05-05 10:21:08.749 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00034, cost=37ms, traceId=TRACE-MYSERVICE1-COLLECT-0034
+2026-05-05 10:21:10.321 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00035, cost=68ms, traceId=TRACE-MYSERVICE1-COLLECT-0035
+2026-05-05 10:21:12.294 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00036, cost=31ms, traceId=TRACE-MYSERVICE1-COLLECT-0036
+2026-05-05 10:21:14.125 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00037, cost=39ms, traceId=TRACE-MYSERVICE1-COLLECT-0037
+2026-05-05 10:21:16.117 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00038, cost=96ms, traceId=TRACE-MYSERVICE1-COLLECT-0038
+2026-05-05 10:21:18.419 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00039, cost=119ms, traceId=TRACE-MYSERVICE1-COLLECT-0039
+2026-05-05 10:21:20.453 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00040, cost=70ms, traceId=TRACE-MYSERVICE1-COLLECT-0040
+2026-05-05 10:21:22.785 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00041, cost=85ms, traceId=TRACE-MYSERVICE1-COLLECT-0041
+2026-05-05 10:21:24.360 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00042, cost=59ms, traceId=TRACE-MYSERVICE1-COLLECT-0042
+2026-05-05 10:21:26.670 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00043, cost=19ms, traceId=TRACE-MYSERVICE1-COLLECT-0043
+2026-05-05 10:21:28.227 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00044, cost=97ms, traceId=TRACE-MYSERVICE1-COLLECT-0044
+2026-05-05 10:21:30.792 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00045, cost=67ms, traceId=TRACE-MYSERVICE1-COLLECT-0045
+2026-05-05 10:21:32.453 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00046, cost=22ms, traceId=TRACE-MYSERVICE1-COLLECT-0046
+2026-05-05 10:21:34.295 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00047, cost=43ms, traceId=TRACE-MYSERVICE1-COLLECT-0047
+2026-05-05 10:21:36.878 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00048, cost=70ms, traceId=TRACE-MYSERVICE1-COLLECT-0048
+2026-05-05 10:21:38.842 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00049, cost=28ms, traceId=TRACE-MYSERVICE1-COLLECT-0049
+2026-05-05 10:20:58.112 [cache-refresh-worker-1] INFO  com.example.cache.CacheRefreshTask - Start refresh local cache, cacheGroup=DEVICE_TOPOLOGY, region=REGION-001, traceId=TD-REDIS-20260505-0001
+2026-05-05 10:21:02.431 [cache-refresh-worker-1] WARN  com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-20260505-0001
+2026-05-05 10:21:14.238 [cache-refresh-worker-1] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:15.239 [cache-refresh-worker-2] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:16.240 [cache-refresh-worker-3] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:17.241 [cache-refresh-worker-4] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:18.242 [cache-refresh-worker-1] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:19.243 [cache-refresh-worker-2] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:20.244 [cache-refresh-worker-3] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:21.245 [cache-refresh-worker-4] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:22.246 [cache-refresh-worker-1] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:23.247 [cache-refresh-worker-2] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:24.248 [cache-refresh-worker-3] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:25.249 [cache-refresh-worker-4] ERROR com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: Could not get a resource from the pool
+	at redis.clients.jedis.util.Pool.getResource(Pool.java:84)
+	at redis.clients.jedis.JedisPool.getResource(JedisPool.java:377)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:68)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+	at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+Caused by: java.util.NoSuchElementException: Timeout waiting for idle object, borrowMaxWaitDuration=30000ms
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:326)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:233)
+	... 6 common frames omitted
+2026-05-05 10:21:31.417 [cache-refresh-worker-1] WARN  com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-20260505-0001
+redis.clients.jedis.exceptions.JedisConnectionException: java.net.SocketTimeoutException: Read timed out
+	at redis.clients.jedis.util.RedisInputStream.ensureFill(RedisInputStream.java:205)
+	at redis.clients.jedis.Protocol.process(Protocol.java:165)
+	at redis.clients.jedis.Protocol.read(Protocol.java:230)
+	at redis.clients.jedis.Connection.readProtocolWithCheckingBroken(Connection.java:352)
+	at redis.clients.jedis.Jedis.get(Jedis.java:4979)
+	at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:72)
+	at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+	at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:278)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1099)
+	... 8 common frames omitted
+2026-05-05 10:21:35.902 [http-nio-8080-exec-47] WARN  com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-20260505-0001
+java.util.concurrent.TimeoutException: Query device cache timeout
+	at com.example.device.DeviceQueryService.queryDevice(DeviceQueryService.java:88)
+	at com.example.web.DeviceController.query(DeviceController.java:41)
+2026-05-05 10:21:36.902 [http-nio-8080-exec-48] WARN  com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-20260505-0001
+java.util.concurrent.TimeoutException: Query device cache timeout
+	at com.example.device.DeviceQueryService.queryDevice(DeviceQueryService.java:88)
+	at com.example.web.DeviceController.query(DeviceController.java:41)
+2026-05-05 10:21:37.902 [http-nio-8080-exec-49] WARN  com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-20260505-0001
+java.util.concurrent.TimeoutException: Query device cache timeout
+	at com.example.device.DeviceQueryService.queryDevice(DeviceQueryService.java:88)
+	at com.example.web.DeviceController.query(DeviceController.java:41)
+2026-05-05 10:21:38.902 [http-nio-8080-exec-50] WARN  com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-20260505-0001
+java.util.concurrent.TimeoutException: Query device cache timeout
+	at com.example.device.DeviceQueryService.queryDevice(DeviceQueryService.java:88)
+	at com.example.web.DeviceController.query(DeviceController.java:41)
+2026-05-05 10:21:39.902 [http-nio-8080-exec-51] WARN  com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-20260505-0001
+java.util.concurrent.TimeoutException: Query device cache timeout
+	at com.example.device.DeviceQueryService.queryDevice(DeviceQueryService.java:88)
+	at com.example.web.DeviceController.query(DeviceController.java:41)

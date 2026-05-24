@@ -6,9 +6,12 @@ import {
   FolderOutlined,
   SettingOutlined,
   RobotOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
+import AIDiagnosisButton from '../AIDiagnosisButton';
+import { useDiagnosis } from '../../context/DiagnosisContext';
 
-const { Sider, Content } = Layout;
+const { Sider, Content, Header } = Layout;
 
 const menuItems = [
   {
@@ -27,6 +30,11 @@ const menuItems = [
     label: 'Casebase',
   },
   {
+    key: '/diagnosis-studio',
+    icon: <ThunderboltOutlined />,
+    label: '诊断工作室',
+  },
+  {
     key: '/diagnosis',
     icon: <RobotOutlined />,
     label: 'AI Diagnosis',
@@ -41,6 +49,7 @@ const menuItems = [
 function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { selections, removeSelection, clearSelections, loading } = useDiagnosis();
 
   const selectedKey = menuItems.find(
     (item) => location.pathname.startsWith(item.key) && item.key !== '/'
@@ -49,6 +58,10 @@ function AppLayout() {
     : location.pathname === '/'
     ? '/'
     : '/';
+
+  const handleDiagnose = () => {
+    navigate('/diagnosis-studio?start=1');
+  };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -75,6 +88,24 @@ function AppLayout() {
         />
       </Sider>
       <Layout>
+        <Header
+          style={{
+            background: '#fff',
+            padding: '0 24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            borderBottom: '1px solid #f0f0f0',
+          }}
+        >
+          <AIDiagnosisButton
+            selections={selections}
+            onRemove={removeSelection}
+            onClear={clearSelections}
+            onDiagnose={handleDiagnose}
+            loading={loading}
+          />
+        </Header>
         <Content style={{ margin: 24 }}>
           <Outlet />
         </Content>

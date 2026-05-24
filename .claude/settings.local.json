@@ -10,7 +10,27 @@
       "Bash(npx tsc *)",
       "Bash(npm info *)",
       "Bash(python -c ' *)",
-      "Bash(python)"
+      "Bash(python)",
+      "Bash(openspec new *)",
+      "Bash(openspec status *)",
+      "Bash(openspec instructions *)",
+      "Bash(npm run *)",
+      "Bash(openspec list *)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \"18080\")",
+      "Bash(taskkill //F //PID 28864)",
+      "Bash(taskkill //F //PID 204968)",
+      "Bash(curl -s http://localhost:18080/api/source/health)",
+      "Bash(tasklist)",
+      "Bash(findstr \"204968\")",
+      "Bash(wmic process *)",
+      "Bash(curl -s http://localhost:18081/api/source/health)",
+      "Bash(curl *)",
+      "Bash(powershell *)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('cache_key:', d.get\\('cache_key','NOT FOUND'\\)\\)\")",
+      "Bash(findstr \":18080.*LISTEN\")",
+      "Bash(git checkout *)",
+      "Bash(python -m py_compile diagnose_tool/api/routes_cluster.py)"
     ]
   }
 }
