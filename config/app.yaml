@@ -6,12 +6,12 @@ server:
   port: 18080
 paths:
   allowed_input_roots:
-    - data/input
-    - data/input/uploads
+  - data/input/uploads
+  - E:/009workspace/claudecode/DiagnoseToolPy/data/input
   data_dir: data
 llm:
   enabled: true
   model: MiniMax-M2.7
   base_url: https://api.minimaxi.com/v1
-  api_key: ""
+  api_key: ''
   timeout: 60

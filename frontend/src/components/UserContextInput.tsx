@@ -1,5 +1,6 @@
 import { Card, Input, Typography, Alert, Space } from 'antd';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -19,6 +20,7 @@ export default function UserContextInput({
   onChange,
   onStackLong,
 }: UserContextInputProps) {
+  const { t } = useTranslation();
   const [stackLines, setStackLines] = useState(0);
 
   const handlePhenomenonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -42,21 +44,21 @@ export default function UserContextInput({
   const getPlaceholder = (type: string) => {
     switch (type) {
       case 'phenomenon':
-        return '描述问题的具体表现，例如：\n- 服务偶发超时，错误率约 2%\n- 订单接口响应时间从 100ms 增长到 5000ms\n- 凌晨 3 点出现大量 GC 日志';
+        return t('diagnosis.problemPhenomenonPlaceholder');
       case 'stack':
-        return '粘贴异常堆栈信息（可选），例如：\nat com.demo.OrderService.query(OrderService.java:42)\nat com.demo.OrderController.get(OrderController.java:30)';
+        return t('diagnosis.stackInfoPlaceholder');
       case 'params':
-        return '提供关键入参信息（可选），例如：\norderId=12345\nuserId=789\nproductId=SKU-001';
+        return t('diagnosis.keyParamsPlaceholder');
       default:
         return '';
     }
   };
 
   return (
-    <Card title="问题描述" size="small">
+    <Card title={t('diagnosis.problemPhenomenon')} size="small">
       <Space direction="vertical" style={{ width: '100%' }} size="small">
         <div>
-          <Title level={5} style={{ marginBottom: 8 }}>## 现象</Title>
+          <Title level={5} style={{ marginBottom: 8 }}>## {t('userContext.phenomenon')}</Title>
           <TextArea
             placeholder={getPlaceholder('phenomenon')}
             value={value.phenomenon}
@@ -67,7 +69,7 @@ export default function UserContextInput({
         </div>
 
         <div>
-          <Title level={5} style={{ marginBottom: 8 }}>## 堆栈（可选）</Title>
+          <Title level={5} style={{ marginBottom: 8 }}>## {t('userContext.stackOptional')}</Title>
           <TextArea
             placeholder={getPlaceholder('stack')}
             value={value.stack}
@@ -77,7 +79,7 @@ export default function UserContextInput({
           />
           {stackLines > 30 && (
             <Alert
-              message="检测到较长堆栈，系统将自动精简以节省 token"
+              message={t('userContext.longStackAlert')}
               type="info"
               showIcon
               style={{ marginTop: 8 }}
@@ -86,7 +88,7 @@ export default function UserContextInput({
         </div>
 
         <div>
-          <Title level={5} style={{ marginBottom: 8 }}>## 入参（可选）</Title>
+          <Title level={5} style={{ marginBottom: 8 }}>## {t('userContext.paramsOptional')}</Title>
           <TextArea
             placeholder={getPlaceholder('params')}
             value={value.params}

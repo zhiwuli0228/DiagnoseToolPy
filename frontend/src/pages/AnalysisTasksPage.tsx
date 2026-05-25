@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Input, Button, Result, Spin, Alert, Card, Statistic, Row, Col, Collapse, Tag, Table, Tabs, Checkbox, message, Drawer, Space, Modal } from 'antd';
 import { FileSearchOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, UploadOutlined, ClusterOutlined, FullscreenOutlined, ThunderboltOutlined, FolderOpenOutlined, CopyOutlined, CheckCircleOutlined as CheckCircleFilled } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import JSZip from 'jszip';
 import type { ColumnsType } from 'antd/es/table';
 import { checkSourceDirectory, scanSourceDirectory, searchLogContent, uploadFiles } from '../api/sourceApi';
@@ -12,6 +14,8 @@ import ClusterProgress from '../components/ClusterProgress';
 import ClusterResultComponent from '../components/ClusterResult';
 
 function AnalysisTasksPage() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const { selections, setSelections } = useDiagnosis();
   const [path, setPath] = useState('');
   const [loading, setLoading] = useState(false);
@@ -296,7 +300,7 @@ function AnalysisTasksPage() {
 
   const handlePreviewPromptSearch = async () => {
     if (!path.trim()) {
-      message.warning('请先选择日志目录');
+      message.warning(t('analysisTasks.pleaseSelectLogDir'));
       return;
     }
 
@@ -312,7 +316,7 @@ function AnalysisTasksPage() {
       setPreviewPromptContent(result.prompt);
       setPreviewPromptModalOpen(true);
     } catch (err: unknown) {
-      message.error(err instanceof Error ? err.message : '预览失败');
+      message.error(err instanceof Error ? err.message : t('analysisTasks.previewFailed'));
     } finally {
       setExportLoading(false);
     }
@@ -337,9 +341,9 @@ function AnalysisTasksPage() {
 
       setWorkspaceDir(result.workspace_dir);
       setExportSuccess(true);
-      message.success('工作区已导出');
+      message.success(t('analysisTasks.exportSuccess'));
     } catch (err: unknown) {
-      message.error(err instanceof Error ? err.message : '导出失败');
+      message.error(err instanceof Error ? err.message : t('analysisTasks.exportFailed'));
     } finally {
       setExportLoading(false);
     }
@@ -347,7 +351,7 @@ function AnalysisTasksPage() {
 
   const handlePreviewPromptCluster = async () => {
     if (!clusterTaskId) {
-      message.warning('请先进行聚类分析');
+      message.warning(t('analysisTasks.pleaseRunClusteringFirst'));
       return;
     }
 
@@ -363,7 +367,7 @@ function AnalysisTasksPage() {
       setPreviewPromptContent(result.prompt);
       setPreviewPromptModalOpen(true);
     } catch (err: unknown) {
-      message.error(err instanceof Error ? err.message : '预览失败');
+      message.error(err instanceof Error ? err.message : t('analysisTasks.previewFailed'));
     } finally {
       setExportLoading(false);
     }
@@ -386,16 +390,16 @@ function AnalysisTasksPage() {
 
       setWorkspaceDir(result.workspace_dir);
       setExportSuccess(true);
-      message.success('工作区已导出');
+      message.success(t('analysisTasks.exportSuccess'));
     } catch (err: unknown) {
-      message.error(err instanceof Error ? err.message : '导出失败');
+      message.error(err instanceof Error ? err.message : t('analysisTasks.exportFailed'));
     } finally {
       setExportLoading(false);
     }
   };
 
   const handleCopyPrompt = async () => {
-    message.info('请手动复制 prompt.md 文件内容');
+    message.info(t('analysisTasks.copyPromptManual'));
   };
 
   const handleExportFromDegraded = () => {
@@ -420,9 +424,9 @@ function AnalysisTasksPage() {
 
       setWorkspaceDir(result.workspace_dir);
       setExportSuccess(true);
-      message.success('工作区已导出');
+      message.success(t('analysisTasks.exportSuccess'));
     } catch (err: unknown) {
-      message.error(err instanceof Error ? err.message : '导出失败');
+      message.error(err instanceof Error ? err.message : t('analysisTasks.exportFailed'));
     } finally {
       setExportLoading(false);
     }
@@ -453,14 +457,14 @@ function AnalysisTasksPage() {
         }
       }
       if (files.length === 0) {
-        message.warning('ZIP包内没有文件');
+        message.warning(t('analysisTasks.noZipFiles'));
         return;
       }
       const result = await uploadFiles(files);
       setPath(result.path);
-      message.success(`解压并上传成功：${result.file_count} 个文件`);
+      message.success(t('analysisTasks.extractUploadSuccess', { count: result.file_count }));
     } catch {
-      message.error('ZIP解压失败');
+      message.error(t('analysisTasks.zipExtractFailed'));
     } finally {
       setExtracting(false);
       if (zipInputRef.current) zipInputRef.current.value = '';
@@ -489,16 +493,16 @@ function AnalysisTasksPage() {
 
       {/* Preview Prompt Modal */}
       <Modal
-        title="诊断 Prompt 预览"
+        title={t('analysisTasks.diagnosisPromptPreview')}
         open={previewPromptModalOpen}
         onCancel={() => setPreviewPromptModalOpen(false)}
         width={800}
         footer={[
           <Button key="close" onClick={() => setPreviewPromptModalOpen(false)}>
-            关闭
+            {t('analysisTasks.close')}
           </Button>,
           <Button key="export" type="primary" icon={<FolderOpenOutlined />} onClick={handleExportFromPreview}>
-            导出工作区
+            {t('analysisTasks.exportFromPreview')}
           </Button>,
         ]}
       >
@@ -509,7 +513,16 @@ function AnalysisTasksPage() {
         </div>
       </Modal>
 
-      <h1>Analysis Tasks</h1>
+      <h1>{t('analysisTasks.title')}</h1>
+      <div style={{ marginBottom: 16 }}>
+        <Button
+          type="primary"
+          icon={<ThunderboltOutlined />}
+          onClick={() => navigate('/diagnosis-studio?start=1')}
+        >
+          {t('analysisTasks.startDiagnosis')}
+        </Button>
+      </div>
       <Card style={{ marginBottom: 24 }}>
         <input
           ref={fileInputRef}
@@ -596,7 +609,7 @@ function AnalysisTasksPage() {
             loading={clusterLoading}
             disabled={!path.trim() || !!clusterTaskId}
           >
-            异常聚类
+            {t('analysisTasks.anomalyClustering')}
           </Button>
         </div>
       </Card>
@@ -761,7 +774,7 @@ function AnalysisTasksPage() {
               extra={
                 <Space>
                   <span style={{ fontSize: 12, color: '#666' }}>
-                    已选 {selections.length} 条证据
+                    {t('diagnosis.evidence.selectedCount', { count: selections.length })}
                   </span>
                   <Button
                     size="small"
@@ -769,7 +782,7 @@ function AnalysisTasksPage() {
                     onClick={handlePreviewPromptSearch}
                     loading={exportLoading}
                   >
-                    预览 Prompt
+                    {t('analysisTasks.previewPrompt')}
                   </Button>
                   <Button
                     size="small"
@@ -779,7 +792,7 @@ function AnalysisTasksPage() {
                       window.location.href = `/diagnosis-studio?path=${encodeURIComponent(path)}`;
                     }}
                   >
-                    进入诊断工作室
+                    {t('nav.diagnosisStudio')}
                   </Button>
                 </Space>
               }
@@ -793,9 +806,9 @@ function AnalysisTasksPage() {
                       children: (
                         <div>
                           <div style={{ marginBottom: 8, display: 'flex', gap: 8 }}>
-                            <Button size="small" onClick={selectAllLogs}>全选</Button>
-                            <Button size="small" onClick={deselectAllLogs}>取消全选</Button>
-                            <Button size="small" onClick={invertLogSelection}>反选</Button>
+                            <Button size="small" onClick={selectAllLogs}>{t('diagnosis.evidence.selectAll')}</Button>
+                            <Button size="small" onClick={deselectAllLogs}>{t('diagnosis.evidence.deselectAll')}</Button>
+                            <Button size="small" onClick={invertLogSelection}>{t('diagnosis.evidence.invertSelection')}</Button>
                           </div>
                           <Table
                             dataSource={searchResults.results}
@@ -903,9 +916,9 @@ function AnalysisTasksPage() {
               ) : (
                 <div>
                   <div style={{ marginBottom: 8, display: 'flex', gap: 8 }}>
-                    <Button size="small" onClick={selectAllLogs}>全选</Button>
-                    <Button size="small" onClick={deselectAllLogs}>取消全选</Button>
-                    <Button size="small" onClick={invertLogSelection}>反选</Button>
+                    <Button size="small" onClick={selectAllLogs}>{t('diagnosis.evidence.selectAll')}</Button>
+                    <Button size="small" onClick={deselectAllLogs}>{t('diagnosis.evidence.deselectAll')}</Button>
+                    <Button size="small" onClick={invertLogSelection}>{t('diagnosis.evidence.invertSelection')}</Button>
                   </div>
                   <Table
                     dataSource={searchResults.results}
@@ -946,7 +959,7 @@ function AnalysisTasksPage() {
 
       {/* Cluster Analysis Results */}
       {clusterStatus && (
-        <Card title="异常聚类分析" style={{ marginTop: 24 }}
+        <Card title={t('analysisTasks.clusterAnalysis')} style={{ marginTop: 24 }}
           extra={
             <Space>
               <Button
@@ -955,7 +968,7 @@ function AnalysisTasksPage() {
                 onClick={handlePreviewPromptCluster}
                 loading={exportLoading}
               >
-                预览 Prompt
+                {t('analysisTasks.previewPrompt')}
               </Button>
               <Button
                 type="primary"
@@ -964,7 +977,7 @@ function AnalysisTasksPage() {
                 onClick={handleClusterDiagnose}
                 loading={diagnosisLoading}
               >
-                诊断选中聚类
+                {t('analysisTasks.diagnoseSelectedClusters')}
               </Button>
             </Space>
           }
@@ -989,7 +1002,7 @@ function AnalysisTasksPage() {
 
       {/* Diagnosis Result Drawer */}
       <Drawer
-        title="AI 诊断结果"
+        title={t('analysisTasks.aiDiagnosisResult')}
         placement="right"
         width={600}
         open={drawerVisible}
@@ -1005,7 +1018,7 @@ function AnalysisTasksPage() {
                 if (newWindow) {
                   newWindow.document.write(`
                     <html>
-                      <head><title>AI 诊断结果</title></head>
+                      <head><title>${t('analysisTasks.aiDiagnosisResult')}</title></head>
                       <body style="padding: 20px; font-family: monospace; white-space: pre-wrap;">
                         ${diagnosisResult}
                       </body>
@@ -1015,7 +1028,7 @@ function AnalysisTasksPage() {
                 }
               }}
             >
-              新窗口
+              {t('analysisTasks.newWindow')}
             </Button>
           </Space>
         }
@@ -1026,28 +1039,28 @@ function AnalysisTasksPage() {
           </pre>
         ) : (
           <div style={{ textAlign: 'center', padding: 40 }}>
-            <Spin tip="正在生成诊断..." />
+            <Spin tip={t('analysisTasks.generatingDiagnosis')} />
           </div>
         )}
       </Drawer>
 
       {/* Degraded Response Modal */}
       <Modal
-        title="AI 诊断暂不可用"
+        title={t('analysisTasks.aiDiagnosisUnavailable')}
         open={degradedModalOpen}
         onCancel={() => setDegradedModalOpen(false)}
         footer={[
           <Button key="retry" type="primary" onClick={() => setDegradedModalOpen(false)}>
-            关闭
+            {t('analysisTasks.close')}
           </Button>,
           <Button key="export" icon={<FolderOpenOutlined />} onClick={handleExportFromDegraded}>
-            导出工作区
+            {t('analysisTasks.exportWorkspace')}
           </Button>,
         ]}
       >
         <Alert
-          message="LLM 服务暂不可用"
-          description={degradedInfo?.message || 'AI 诊断服务暂时无法使用。您可以导出工作区到本地目录，使用 OpenCode 手动完成诊断。'}
+          message={t('analysisTasks.llmServiceUnavailable')}
+          description={degradedInfo?.message || t('analysisTasks.llmServiceUnavailableDesc')}
           type="warning"
           showIcon
           style={{ marginBottom: 16 }}
@@ -1056,21 +1069,21 @@ function AnalysisTasksPage() {
 
       {/* Export Success Modal */}
       <Modal
-        title="工作区导出成功"
+        title={t('analysisTasks.workspaceExportSuccess')}
         open={exportSuccess}
         onCancel={() => setExportSuccess(false)}
         footer={[
           <Button key="copy" icon={<CopyOutlined />} onClick={handleCopyPrompt}>
-            复制 Prompt
+            {t('analysisTasks.copyPrompt')}
           </Button>,
         ]}
       >
         <Alert
-          message="工作区已成功导出"
+          message={t('analysisTasks.exportSuccessDesc')}
           description={
             <div>
-              <p>工作区目录：{workspaceDir}</p>
-              <p>请在 OpenCode 中打开该目录，完成诊断后将结果保存为 result.md。</p>
+              <p>{t('analysisTasks.workspaceDir')}: {workspaceDir}</p>
+              <p>{t('analysisTasks.openInOpenCode')}</p>
             </div>
           }
           type="success"
@@ -1086,7 +1099,7 @@ function AnalysisTasksPage() {
           style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 1001 }}
           onClick={() => setDrawerVisible(true)}
         >
-          查看诊断结果
+          {t('analysisTasks.viewDiagnosisResult')}
         </Button>
       )}
     </div>

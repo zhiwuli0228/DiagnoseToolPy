@@ -1,6 +1,7 @@
 import { Card, Typography, Space, Timeline, Input } from 'antd';
 import { UserOutlined, RobotOutlined } from '@ant-design/icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ConversationTurn } from '../types/api';
 import AIQuestionCard from './AIQuestionCard';
 import DiagnosisActionBar from './DiagnosisActionBar';
@@ -25,6 +26,7 @@ export default function ConversationThread({
   onEnd,
   loading = false,
 }: ConversationThreadProps) {
+  const { t } = useTranslation();
   const [replyText, setReplyText] = useState('');
 
   const handleSendReply = () => {
@@ -39,7 +41,7 @@ export default function ConversationThread({
     if (ctx.phenomenon) {
       parts.push(
         <div key="phenomenon">
-          <Text strong>## 现象</Text>
+          <Text strong>## {t('conversation.phenomenonLabel')}</Text>
           <div style={{ marginLeft: 8, marginBottom: 8 }}>{ctx.phenomenon}</div>
         </div>
       );
@@ -47,7 +49,7 @@ export default function ConversationThread({
     if (ctx.stack) {
       parts.push(
         <div key="stack">
-          <Text strong>## 堆栈</Text>
+          <Text strong>## {t('conversation.stackLabel')}</Text>
           <pre style={{ marginLeft: 8, marginBottom: 8, fontSize: 12, background: '#f5f5f5', padding: 8, borderRadius: 4 }}>
             {ctx.stack}
           </pre>
@@ -57,7 +59,7 @@ export default function ConversationThread({
     if (ctx.params) {
       parts.push(
         <div key="params">
-          <Text strong>## 入参</Text>
+          <Text strong>## {t('conversation.paramsLabel')}</Text>
           <div style={{ marginLeft: 8, marginBottom: 8, fontSize: 12 }}>{ctx.params}</div>
         </div>
       );
@@ -70,14 +72,14 @@ export default function ConversationThread({
       title={
         <Space>
           <RobotOutlined />
-          <span>诊断对话</span>
+          <span>{t('conversation.title')}</span>
         </Space>
       }
       size="small"
     >
       {turns.length === 0 && !currentQuestion ? (
         <div style={{ textAlign: 'center', color: '#888', padding: 24 }}>
-          输入问题描述和选择日志证据后，点击"开始诊断"发起对话
+          {t('conversation.inputHint')}
         </div>
       ) : (
         <>
@@ -91,7 +93,7 @@ export default function ConversationThread({
                 >
                   <Space>
                     <UserOutlined />
-                    <Text type="secondary">用户</Text>
+                    <Text type="secondary">{t('conversation.user')}</Text>
                   </Space>
                   <div style={{ marginTop: 8 }}>
                     {renderUserContext(turn.user_context)}
@@ -111,7 +113,7 @@ export default function ConversationThread({
                   >
                     <Space>
                       <RobotOutlined />
-                      <Text type="secondary">AI 诊断</Text>
+                      <Text type="secondary">{t('conversation.aiDiagnosis')}</Text>
                     </Space>
                     <div
                       style={{
@@ -138,7 +140,7 @@ export default function ConversationThread({
               />
               <div style={{ marginTop: 16 }}>
                 <TextArea
-                  placeholder="输入您的回复..."
+                  placeholder={t('conversation.enterReply')}
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   rows={3}

@@ -1,16 +1,19 @@
 import { Result, Button } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 function CasebasePage() {
+  const { t } = useTranslation();
+
   return (
     <div>
-      <h1>Casebase</h1>
+      <h1>{t('casebase.title')}</h1>
       <Result
         status="info"
-        title="Under Development"
+        title={t('casebase.title')}
         subTitle="Case list and search functionality coming soon"
         extra={
           <Button type="primary" href="/">
-            Go to Dashboard
+            {t('casebase.goToDashboard')}
           </Button>
         }
       />

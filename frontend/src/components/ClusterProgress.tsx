@@ -1,4 +1,5 @@
 import { Progress, Card, Typography } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 const { Text } = Typography;
 
@@ -8,15 +9,16 @@ interface ClusterProgressProps {
   currentStep: string;
 }
 
-const STATUS_STEPS: Record<string, { percent: number; label: string }> = {
-  scanning: { percent: 20, label: '扫描日志中...' },
-  aggregating: { percent: 50, label: '异常聚类中...' },
-  matching: { percent: 80, label: '历史案例匹配中...' },
-  done: { percent: 100, label: '分析完成' },
+const STATUS_STEPS: Record<string, { percent: number; labelKey: string }> = {
+  scanning: { percent: 20, labelKey: 'clusterProgress.scanning' },
+  aggregating: { percent: 50, labelKey: 'clusterProgress.aggregating' },
+  matching: { percent: 80, labelKey: 'clusterProgress.matching' },
+  done: { percent: 100, labelKey: 'clusterProgress.done' },
 };
 
 export default function ClusterProgress({ status, progress, currentStep }: ClusterProgressProps) {
-  const stepInfo = STATUS_STEPS[status] || { percent: progress, label: currentStep };
+  const { t } = useTranslation();
+  const stepInfo = STATUS_STEPS[status] || { percent: progress, labelKey: currentStep };
 
   return (
     <Card size="small" style={{ marginBottom: 16 }}>
@@ -28,7 +30,7 @@ export default function ClusterProgress({ status, progress, currentStep }: Clust
           status={status === 'done' ? 'success' : 'active'}
         />
         <div>
-          <Text strong>{stepInfo.label}</Text>
+          <Text strong>{t(stepInfo.labelKey)}</Text>
           <br />
           <Text type="secondary">{currentStep}</Text>
         </div>

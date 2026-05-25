@@ -19,6 +19,7 @@ import {
   CloseOutlined,
   RobotOutlined,
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import type { SelectionItem, UserContextModel } from '../types/api';
 import DiagnosisModeToggle from './DiagnosisModeToggle';
 
@@ -40,6 +41,7 @@ export default function EvidenceBasket({
   onDiagnose,
   loading,
 }: EvidenceBasketProps) {
+  const { t } = useTranslation();
   const [showPreview, setShowPreview] = useState(false);
   const [phenomenon, setPhenomenon] = useState('');
   const [stack, setStack] = useState('');
@@ -48,15 +50,15 @@ export default function EvidenceBasket({
 
   const getSelectionLabel = (sel: SelectionItem) => {
     if (sel.type === 'group' || sel.type === 'group_all') {
-      return sel.group_key || '未知分组';
+      return sel.group_key || t('diagnosis.evidence.unknownGroup');
     }
     if (sel.type === 'log') {
-      return `日志条目 (${sel.id?.slice(0, 8)}...)`;
+      return `${t('diagnosis.evidence.logEntry')} (${sel.id?.slice(0, 8)}...)`;
     }
     if (sel.type === 'cluster') {
-      return `聚类 #${sel.cluster_index}`;
+      return `${t('diagnosis.evidence.cluster')} #${sel.cluster_index}`;
     }
-    return '未知';
+    return t('diagnosis.evidence.unknown');
   };
 
   const getSelectionTypeTag = (sel: SelectionItem) => {
@@ -66,13 +68,13 @@ export default function EvidenceBasket({
       log: 'green',
       cluster: 'purple',
     };
-    const labelMap: Record<string, string> = {
-      group: '分组',
-      group_all: '全部分组',
-      log: '日志',
-      cluster: '聚类',
+    const labelKeyMap: Record<string, string> = {
+      group: 'diagnosis.evidence.group',
+      group_all: 'diagnosis.evidence.allGroups',
+      log: 'diagnosis.evidence.logEntry',
+      cluster: 'diagnosis.evidence.cluster',
     };
-    return <Tag color={colorMap[sel.type]}>{labelMap[sel.type]}</Tag>;
+    return <Tag color={colorMap[sel.type]}>{t(labelKeyMap[sel.type])}</Tag>;
   };
 
   const handleClear = () => {
@@ -88,7 +90,7 @@ export default function EvidenceBasket({
 
   const handleDiagnose = () => {
     if (!phenomenon.trim() && !stack.trim() && selections.length === 0) {
-      message.warning('请选择日志证据或填写问题信息');
+      message.warning(t('diagnosis.pleaseSelectEvidenceOrFillInfo'));
       return;
     }
     onDiagnose({ phenomenon, stack, params });
@@ -102,7 +104,7 @@ export default function EvidenceBasket({
     if (loading) {
       return (
         <div style={{ textAlign: 'center', padding: 24 }}>
-          <Spin tip="正在诊断..." />
+          <Spin tip={t('analysisTasks.generatingDiagnosis')} />
         </div>
       );
     }
@@ -111,11 +113,11 @@ export default function EvidenceBasket({
       <div style={{ width: 380 }}>
         {/* Evidence List Section */}
         <div style={{ marginBottom: 16 }}>
-          <Text strong style={{ fontSize: 13 }}>已选证据 ({selections.length})</Text>
+          <Text strong style={{ fontSize: 13 }}>{t('evidenceBasket.selectedEvidence')} ({selections.length})</Text>
           {selections.length === 0 ? (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="点击日志条目将其添加到证据"
+              description={t('evidenceBasket.noEvidence')}
               style={{ margin: '12px 0', fontSize: 12 }}
             />
           ) : (
@@ -135,7 +137,9 @@ export default function EvidenceBasket({
                       danger
                       icon={<CloseOutlined />}
                       onClick={() => handleRemove(sel)}
-                    />
+                    >
+                      {t('diagnosis.evidence.delete')}
+                    </Button>
                   ]}
                 >
                   <Space size={4}>
@@ -148,7 +152,7 @@ export default function EvidenceBasket({
           )}
           {selections.length > 5 && (
             <Text type="secondary" style={{ fontSize: 11 }}>
-              还有 {selections.length - 5} 条证据...
+              {t('diagnosis.evidence.moreEvidence', { count: selections.length - 5 })}
             </Text>
           )}
         </div>
@@ -157,13 +161,13 @@ export default function EvidenceBasket({
 
         {/* User Context Section */}
         <div style={{ marginBottom: 12 }}>
-          <Text strong style={{ fontSize: 13 }}>补充上下文</Text>
+          <Text strong style={{ fontSize: 13 }}>{t('evidenceBasket.additionalContext')}</Text>
           <div style={{ marginTop: 8 }}>
             <label style={{ fontSize: 11, color: 'rgba(0,0,0,0.45)', display: 'block', marginBottom: 4 }}>
-              问题现象 *
+              {t('evidenceBasket.problemPhenomenon')}
             </label>
             <TextArea
-              placeholder="描述观察到的问题现象"
+              placeholder={t('diagnosis.problemPhenomenonPlaceholder')}
               value={phenomenon}
               onChange={e => setPhenomenon(e.target.value)}
               rows={2}
@@ -173,10 +177,10 @@ export default function EvidenceBasket({
           </div>
           <div style={{ marginTop: 8 }}>
             <label style={{ fontSize: 11, color: 'rgba(0,0,0,0.45)', display: 'block', marginBottom: 4 }}>
-              堆栈信息
+              {t('evidenceBasket.stackInfo')}
             </label>
             <TextArea
-              placeholder="粘贴堆栈信息"
+              placeholder={t('diagnosis.stackInfoPlaceholder')}
               value={stack}
               onChange={e => setStack(e.target.value)}
               rows={2}
@@ -186,10 +190,10 @@ export default function EvidenceBasket({
           </div>
           <div style={{ marginTop: 8 }}>
             <label style={{ fontSize: 11, color: 'rgba(0,0,0,0.45)', display: 'block', marginBottom: 4 }}>
-              关键入参
+              {t('evidenceBasket.keyParams')}
             </label>
             <TextArea
-              placeholder="输入相关参数"
+              placeholder={t('diagnosis.keyParamsPlaceholder')}
               value={params}
               onChange={e => setParams(e.target.value)}
               rows={1}
@@ -214,7 +218,7 @@ export default function EvidenceBasket({
             onClick={handleClear}
             disabled={selections.length === 0 && !phenomenon && !stack && !params}
           >
-            清空
+            {t('evidenceBasket.clear')}
           </Button>
           <Button
             type="primary"
@@ -223,7 +227,7 @@ export default function EvidenceBasket({
             onClick={handleDiagnose}
             disabled={!phenomenon.trim() && !stack.trim() && selections.length === 0}
           >
-            开始诊断
+            {t('evidenceBasket.startDiagnosis')}
           </Button>
         </div>
       </div>
@@ -269,7 +273,7 @@ export default function EvidenceBasket({
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Space>
               <RobotOutlined style={{ color: '#667eea' }} />
-              <span style={{ fontWeight: 500 }}>AI 诊断助手</span>
+              <span style={{ fontWeight: 500 }}>{t('evidenceBasket.title')}</span>
             </Space>
             <Button
               type="text"

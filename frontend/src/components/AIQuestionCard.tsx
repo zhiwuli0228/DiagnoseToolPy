@@ -1,5 +1,6 @@
 import { Card, Button, Space, Typography } from 'antd';
 import { CommentOutlined, ForwardOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 const { Text } = Typography;
 
@@ -14,6 +15,7 @@ export default function AIQuestionCard({
   onSkip,
   showSkip = true,
 }: AIQuestionCardProps) {
+  const { t } = useTranslation();
   return (
     <Card
       size="small"
@@ -24,7 +26,7 @@ export default function AIQuestionCard({
       title={
         <Space>
           <CommentOutlined />
-          <span>AI 追问</span>
+          <span>{t('aiQuestion.title')}</span>
         </Space>
       }
       extra={
@@ -34,7 +36,7 @@ export default function AIQuestionCard({
             icon={<ForwardOutlined />}
             onClick={onSkip}
           >
-            跳过，直接诊断
+            {t('aiQuestion.skipAndDiagnose')}
           </Button>
         )
       }

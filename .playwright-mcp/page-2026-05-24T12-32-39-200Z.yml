@@ -1,0 +1,108 @@
+- generic [ref=e3]:
+  - complementary:
+    - generic:
+      - generic: DiagnoseToolPy
+      - menu:
+        - menuitem "dashboard 仪表盘":
+          - img "dashboard" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e12] [cursor=pointer]: 仪表盘
+        - menuitem "file-search 分析任务":
+          - img "file-search" [ref=e14] [cursor=pointer]:
+            - img [ref=e15]
+          - generic [ref=e17] [cursor=pointer]: 分析任务
+        - menuitem "folder 案例库":
+          - img "folder" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+          - generic [ref=e22] [cursor=pointer]: 案例库
+        - menuitem "setting 设置":
+          - img "setting" [ref=e24] [cursor=pointer]:
+            - img [ref=e25]
+          - generic [ref=e27] [cursor=pointer]: 设置
+    - img "bars" [ref=e29] [cursor=pointer]:
+      - img [ref=e30]
+  - generic [ref=e32]:
+    - banner [ref=e33]:
+      - button "global 中文" [ref=e34] [cursor=pointer]:
+        - img "global" [ref=e36]:
+          - img [ref=e37]
+        - generic [ref=e39]: 中文
+      - button "robot" [ref=e41] [cursor=pointer]:
+        - img "robot" [ref=e43]:
+          - img [ref=e44]
+    - main [ref=e46]:
+      - generic [ref=e48]:
+        - heading "设置" [level=1] [ref=e56]
+        - generic [ref=e57]:
+          - generic [ref=e60]: Application Configuration
+          - table [ref=e64]:
+            - rowgroup [ref=e65]:
+              - 'row "Application Name : DiagnoseToolPy" [ref=e66]':
+                - 'cell "Application Name : DiagnoseToolPy" [ref=e67]':
+                  - generic [ref=e68]:
+                    - generic [ref=e69]: "Application Name :"
+                    - generic [ref=e70]: DiagnoseToolPy
+              - 'row "Version : 0.1.0" [ref=e71]':
+                - 'cell "Version : 0.1.0" [ref=e72]':
+                  - generic [ref=e73]:
+                    - generic [ref=e74]: "Version :"
+                    - generic [ref=e75]: 0.1.0
+              - 'row "Data Directory : E:\\009workspace\\claudecode\\DiagnoseToolPy\\data" [ref=e76]':
+                - 'cell "Data Directory : E:\\009workspace\\claudecode\\DiagnoseToolPy\\data" [ref=e77]':
+                  - generic [ref=e78]:
+                    - generic [ref=e79]: "Data Directory :"
+                    - generic [ref=e80]: E:\009workspace\claudecode\DiagnoseToolPy\data
+        - generic [ref=e81]:
+          - generic [ref=e84]: LLM Configuration
+          - generic [ref=e85]:
+            - table [ref=e88]:
+              - rowgroup [ref=e89]:
+                - 'row "Enabled : true" [ref=e90]':
+                  - 'cell "Enabled : true" [ref=e91]':
+                    - generic [ref=e92]:
+                      - generic [ref=e93]: "Enabled :"
+                      - generic [ref=e95]: "true"
+                - 'row "Model : MiniMax-M2.7" [ref=e96]':
+                  - 'cell "Model : MiniMax-M2.7" [ref=e97]':
+                    - generic [ref=e98]:
+                      - generic [ref=e99]: "Model :"
+                      - generic [ref=e100]: MiniMax-M2.7
+                - 'row "Base URL : https://api.minimaxi.com/v1" [ref=e101]':
+                  - 'cell "Base URL : https://api.minimaxi.com/v1" [ref=e102]':
+                    - generic [ref=e103]:
+                      - generic [ref=e104]: "Base URL :"
+                      - generic [ref=e105]: https://api.minimaxi.com/v1
+                - 'row "Timeout : 60s" [ref=e106]':
+                  - 'cell "Timeout : 60s" [ref=e107]':
+                    - generic [ref=e108]:
+                      - generic [ref=e109]: "Timeout :"
+                      - generic [ref=e110]: 60s
+            - text: LLM settings can be configured in config/app.yaml or via environment variables.
+        - generic [ref=e111]:
+          - generic [ref=e113]:
+            - generic [ref=e114]: Allowed Input Roots
+            - generic [ref=e115]: Paths can also be configured directly in config/app.yaml
+          - generic [ref=e116]:
+            - list [ref=e120]:
+              - listitem [ref=e121]:
+                - text: E:\009workspace\claudecode\DiagnoseToolPy\data\input
+                - list [ref=e122]:
+                  - listitem [ref=e123]:
+                    - button "delete Remove" [ref=e124] [cursor=pointer]:
+                      - img "delete" [ref=e126]:
+                        - img [ref=e127]
+                      - generic [ref=e129]: Remove
+              - listitem [ref=e130]:
+                - text: E:\009workspace\claudecode\DiagnoseToolPy\data\input\uploads
+                - list [ref=e131]:
+                  - listitem [ref=e132]:
+                    - button "delete Remove" [ref=e133] [cursor=pointer]:
+                      - img "delete" [ref=e135]:
+                        - img [ref=e136]
+                      - generic [ref=e138]: Remove
+            - generic [ref=e139]:
+              - textbox "Enter directory path" [active] [ref=e140]
+              - button "plus Add" [ref=e141] [cursor=pointer]:
+                - img "plus" [ref=e143]:
+                  - img [ref=e144]
+                - generic [ref=e147]: Add

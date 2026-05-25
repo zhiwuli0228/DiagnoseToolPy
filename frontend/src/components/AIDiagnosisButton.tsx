@@ -16,6 +16,7 @@ import {
   ClearOutlined,
   RobotOutlined,
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import type { SelectionItem } from '../types/api';
 import { useDiagnosis } from '../context/DiagnosisContext';
 import DiagnosisModeToggle from './DiagnosisModeToggle';
@@ -38,20 +39,21 @@ export default function AIDiagnosisButton({
   onDiagnose,
   loading,
 }: AIDiagnosisButtonProps) {
+  const { t } = useTranslation();
   const { userContext, setUserContext, drawerOpen, setDrawerOpen } = useDiagnosis();
   const [mode, setMode] = useState<'user-priority' | 'log-priority'>('user-priority');
 
   const getSelectionLabel = (sel: SelectionItem) => {
     if (sel.type === 'group' || sel.type === 'group_all') {
-      return sel.group_key || '未知分组';
+      return sel.group_key || t('diagnosis.evidence.unknownGroup');
     }
     if (sel.type === 'log') {
-      return `日志条目 (${sel.id?.slice(0, 8)}...)`;
+      return `${t('diagnosis.evidence.logEntry')} (${sel.id?.slice(0, 8)}...)`;
     }
     if (sel.type === 'cluster') {
-      return `聚类 #${sel.cluster_index}`;
+      return `${t('diagnosis.evidence.cluster')} #${sel.cluster_index}`;
     }
-    return '未知';
+    return t('diagnosis.evidence.unknown');
   };
 
   const getSelectionTypeTag = (sel: SelectionItem) => {
@@ -61,13 +63,13 @@ export default function AIDiagnosisButton({
       log: 'green',
       cluster: 'purple',
     };
-    const labelMap: Record<string, string> = {
-      group: '分组',
-      group_all: '全部分组',
-      log: '日志',
-      cluster: '聚类',
+    const labelKeyMap: Record<string, string> = {
+      group: 'diagnosis.evidence.group',
+      group_all: 'diagnosis.evidence.allGroups',
+      log: 'diagnosis.evidence.logEntry',
+      cluster: 'diagnosis.evidence.cluster',
     };
-    return <Tag color={colorMap[sel.type]}>{labelMap[sel.type]}</Tag>;
+    return <Tag color={colorMap[sel.type]}>{t(labelKeyMap[sel.type])}</Tag>;
   };
 
   const handleClear = () => {
@@ -81,7 +83,7 @@ export default function AIDiagnosisButton({
 
   const handleDiagnose = () => {
     if (!userContext.phenomenon.trim() && !userContext.stack.trim() && selections.length === 0) {
-      message.warning('请选择日志证据或填写问题信息');
+      message.warning(t('diagnosis.pleaseSelectEvidenceOrFillInfo'));
       return;
     }
     setDrawerOpen(false);
@@ -109,7 +111,7 @@ export default function AIDiagnosisButton({
         title={
           <Space>
             <RobotOutlined style={{ color: '#667eea' }} />
-            <span style={{ fontWeight: 500 }}>AI 诊断助手</span>
+            <span style={{ fontWeight: 500 }}>{t('diagnosis.aiAssistant')}</span>
           </Space>
         }
         placement="right"
@@ -124,10 +126,10 @@ export default function AIDiagnosisButton({
         <div style={{ padding: '8px 0' }}>
           {/* Evidence List */}
           <div style={{ marginBottom: 16 }}>
-            <Text strong style={{ fontSize: 13 }}>已选证据 ({selections.length})</Text>
+            <Text strong style={{ fontSize: 13 }}>{t('diagnosis.selectedEvidence')} ({selections.length})</Text>
             {selections.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '12px 0', color: '#888' }}>
-                点击日志条目将其添加到证据
+                {t('diagnosis.evidence.clickToAddEvidence')}
               </div>
             ) : (
               <List
@@ -145,7 +147,7 @@ export default function AIDiagnosisButton({
                         danger
                         onClick={() => onRemove(sel)}
                       >
-                        删除
+                        {t('diagnosis.evidence.delete')}
                       </Button>
                     }
                   >
@@ -159,7 +161,7 @@ export default function AIDiagnosisButton({
             )}
             {selections.length > 5 && (
               <Text type="secondary" style={{ fontSize: 11 }}>
-                还有 {selections.length - 5} 条证据...
+                {t('diagnosis.evidence.moreEvidence', { count: selections.length - 5 })}
               </Text>
             )}
           </div>
@@ -168,13 +170,13 @@ export default function AIDiagnosisButton({
 
           {/* User Context */}
           <div style={{ marginBottom: 12 }}>
-            <Text strong style={{ fontSize: 13 }}>补充上下文</Text>
+            <Text strong style={{ fontSize: 13 }}>{t('diagnosis.additionalContext')}</Text>
             <div style={{ marginTop: 8 }}>
               <label style={{ fontSize: 11, color: 'rgba(0,0,0,0.45)', display: 'block', marginBottom: 4 }}>
-                问题现象 *
+                {t('diagnosis.problemPhenomenon')}
               </label>
               <TextArea
-                placeholder="描述观察到的问题现象"
+                placeholder={t('diagnosis.problemPhenomenonPlaceholder')}
                 value={userContext.phenomenon}
                 onChange={e => setUserContext({ ...userContext, phenomenon: e.target.value })}
                 rows={2}
@@ -183,10 +185,10 @@ export default function AIDiagnosisButton({
             </div>
             <div style={{ marginTop: 8 }}>
               <label style={{ fontSize: 11, color: 'rgba(0,0,0,0.45)', display: 'block', marginBottom: 4 }}>
-                堆栈信息
+                {t('diagnosis.stackInfo')}
               </label>
               <TextArea
-                placeholder="粘贴堆栈信息"
+                placeholder={t('diagnosis.stackInfoPlaceholder')}
                 value={userContext.stack}
                 onChange={e => setUserContext({ ...userContext, stack: e.target.value })}
                 rows={2}
@@ -196,10 +198,10 @@ export default function AIDiagnosisButton({
             </div>
             <div style={{ marginTop: 8 }}>
               <label style={{ fontSize: 11, color: 'rgba(0,0,0,0.45)', display: 'block', marginBottom: 4 }}>
-                关键入参
+                {t('diagnosis.keyParams')}
               </label>
               <TextArea
-                placeholder="输入相关参数"
+                placeholder={t('diagnosis.keyParamsPlaceholder')}
                 value={userContext.params}
                 onChange={e => setUserContext({ ...userContext, params: e.target.value })}
                 rows={1}
@@ -221,7 +223,7 @@ export default function AIDiagnosisButton({
               onClick={handleClear}
               disabled={selections.length === 0 && !userContext.phenomenon && !userContext.stack && !userContext.params}
             >
-              清空
+              {t('diagnosis.clear')}
             </Button>
             <Button
               type="primary"
@@ -231,7 +233,7 @@ export default function AIDiagnosisButton({
               loading={loading}
               disabled={!userContext.phenomenon.trim() && !userContext.stack.trim() && selections.length === 0}
             >
-              开始诊断
+              {t('diagnosis.startButton')}
             </Button>
           </div>
         </div>

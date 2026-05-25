@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Row, Col, Card, Typography, Button, message, Alert, List, Tag, Space, Modal, ModalProps } from 'antd';
 import { ThunderboltOutlined, DeleteOutlined, FolderOpenOutlined, CopyOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useSession } from '../hooks/useSession';
 import { useResultDetection } from '../hooks/useResultDetection';
 import {
@@ -24,6 +25,7 @@ import DiagnosisModeToggle from '../components/DiagnosisModeToggle';
 const { Title, Text } = Typography;
 
 function DiagnosisStudioPage() {
+  const { t } = useTranslation();
   const { sessionId, createSession } = useSession();
   const [searchParams, setSearchParams] = useSearchParams();
   const { selections, userContext, setUserContext, loading, setLoading, removeSelection, clearSelections } = useDiagnosis();
@@ -108,10 +110,10 @@ function DiagnosisStudioPage() {
 
     const showModal = () => {
       Modal.confirm({
-        title: '诊断结果已检测到',
-        content: '是否导入诊断结果？',
-        okText: '导入',
-        cancelText: '忽略',
+        title: t('useResultDetection.detectedDiagnosisResult'),
+        content: t('useResultDetection.detectedDiagnosisResult'),
+        okText: t('analysisTasks.import'),
+        cancelText: t('analysisTasks.ignore'),
         onOk: () => {
           handleImportResult(resultContent);
           resetResultDetection();
@@ -163,7 +165,7 @@ function DiagnosisStudioPage() {
 
   const handleStartDiagnosis = async () => {
     if (!userContext.phenomenon.trim() && !userContext.stack.trim() && selections.length === 0) {
-      message.warning('请选择日志证据或填写问题信息');
+      message.warning(t('diagnosis.pleaseSelectEvidenceOrFillInfo'));
       return;
     }
 
@@ -197,7 +199,7 @@ function DiagnosisStudioPage() {
       if (isDegradedResponse(err)) {
         handleDegradedResponse(err);
       } else {
-        message.error(err instanceof Error ? err.message : '诊断启动失败');
+        message.error(err instanceof Error ? err.message : t('analysisTasks.diagnosisStartFailed'));
       }
     } finally {
       setLoading(false);
@@ -211,7 +213,7 @@ function DiagnosisStudioPage() {
 
   const handlePreviewPrompt = async () => {
     if (!userContext.phenomenon.trim() && !userContext.stack.trim() && selections.length === 0) {
-      message.warning('请选择日志证据或填写问题信息');
+      message.warning(t('diagnosis.pleaseSelectEvidenceOrFillInfo'));
       return;
     }
 
@@ -227,7 +229,7 @@ function DiagnosisStudioPage() {
       setPreviewPromptContent(result.prompt);
       setPreviewPromptModalOpen(true);
     } catch (err: unknown) {
-      message.error(err instanceof Error ? err.message : '预览失败');
+      message.error(err instanceof Error ? err.message : t('analysisTasks.previewFailed'));
     } finally {
       setLoading(false);
     }
@@ -258,13 +260,13 @@ function DiagnosisStudioPage() {
 
       setWorkspaceDir(result.workspace_dir);
       setExportSuccess(true);
-      message.success('工作区已导出');
+      message.success(t('analysisTasks.exportSuccess'));
 
       // Start polling for result
       startPolling();
 
     } catch (err: unknown) {
-      message.error(err instanceof Error ? err.message : '导出失败');
+      message.error(err instanceof Error ? err.message : t('analysisTasks.exportFailed'));
     } finally {
       setLoading(false);
     }
@@ -280,7 +282,7 @@ function DiagnosisStudioPage() {
         // Fallback - just show success
       }
     }
-    message.info('请手动复制 prompt.md 文件内容');
+    message.info(t('analysisTasks.copyPromptManual'));
   };
 
   const handleCheckResult = async () => {
@@ -288,13 +290,13 @@ function DiagnosisStudioPage() {
     if (content) {
       handleImportResult(content);
     } else {
-      message.info('尚未检测到结果文件');
+      message.info(t('analysisTasks.resultNotDetected'));
     }
   };
 
   const handleImportResult = (content: string) => {
     // For now, just show the result - in full implementation would save to case
-    message.success('诊断结果已导入');
+    message.success(t('analysisTasks.importSuccess'));
     setExportSuccess(false);
   };
 
@@ -320,13 +322,13 @@ function DiagnosisStudioPage() {
 
       setWorkspaceDir(result.workspace_dir);
       setExportSuccess(true);
-      message.success('工作区已导出');
+      message.success(t('analysisTasks.exportSuccess'));
 
       // Start polling for result
       startPolling();
 
     } catch (err: unknown) {
-      message.error(err instanceof Error ? err.message : '导出失败');
+      message.error(err instanceof Error ? err.message : t('analysisTasks.exportFailed'));
     } finally {
       setLoading(false);
     }
@@ -359,7 +361,7 @@ function DiagnosisStudioPage() {
       if (isDegradedResponse(err)) {
         handleDegradedResponse(err);
       } else {
-        message.error(err instanceof Error ? err.message : '发送失败');
+        message.error(err instanceof Error ? err.message : t('analysisTasks.sendFailed'));
       }
     } finally {
       setLoading(false);
@@ -395,7 +397,7 @@ function DiagnosisStudioPage() {
       if (isDegradedResponse(err)) {
         handleDegradedResponse(err);
       } else {
-        message.error(err instanceof Error ? err.message : '跳过失败');
+        message.error(err instanceof Error ? err.message : t('analysisTasks.skipFailed'));
       }
     } finally {
       setLoading(false);
@@ -411,12 +413,12 @@ function DiagnosisStudioPage() {
       const result = await endConversation(currentSessionId);
       message.success(
         result.is_draft
-          ? `诊断结束，已存入草稿箱（质量评分: ${result.quality_score?.total}/10）`
-          : `诊断结束，已创建案例（质量评分: ${result.quality_score?.total}/10）`
+          ? t('diagnosis.endDiagnosisDraft', { score: result.quality_score?.total })
+          : t('diagnosis.endDiagnosisCase', { score: result.quality_score?.total })
       );
       handleReset();
     } catch (err: unknown) {
-      message.error(err instanceof Error ? err.message : '结束诊断失败');
+      message.error(err instanceof Error ? err.message : t('analysisTasks.endDiagnosisFailed'));
     } finally {
       setLoading(false);
     }
@@ -467,15 +469,15 @@ function DiagnosisStudioPage() {
 
   const getSelectionLabel = (sel: SelectionItem) => {
     if (sel.type === 'group' || sel.type === 'group_all') {
-      return sel.group_key || '未知分组';
+      return sel.group_key || t('diagnosis.evidence.unknownGroup');
     }
     if (sel.type === 'log') {
-      return `日志 (${sel.id?.slice(0, 12)}...)`;
+      return `${t('diagnosis.evidence.logEntryShort')} (${sel.id?.slice(0, 12)}...)`;
     }
     if (sel.type === 'cluster') {
-      return `聚类 #${sel.cluster_index}`;
+      return `${t('diagnosis.evidence.cluster')} #${sel.cluster_index}`;
     }
-    return '未知';
+    return t('diagnosis.evidence.unknown');
   };
 
   const getSelectionTypeTag = (sel: SelectionItem) => {
@@ -485,13 +487,13 @@ function DiagnosisStudioPage() {
       log: 'green',
       cluster: 'purple',
     };
-    const labelMap: Record<string, string> = {
-      group: '分组',
-      group_all: '全部分组',
-      log: '日志',
-      cluster: '聚类',
+    const labelKeyMap: Record<string, string> = {
+      group: 'diagnosis.evidence.group',
+      group_all: 'diagnosis.evidence.allGroups',
+      log: 'diagnosis.evidence.logEntry',
+      cluster: 'diagnosis.evidence.cluster',
     };
-    return <Tag color={colorMap[sel.type]}>{labelMap[sel.type]}</Tag>;
+    return <Tag color={colorMap[sel.type]}>{t(labelKeyMap[sel.type])}</Tag>;
   };
 
   return (
@@ -506,59 +508,59 @@ function DiagnosisStudioPage() {
       />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <Title level={2} style={{ margin: 0 }}>诊断工作室</Title>
+        <Title level={2} style={{ margin: 0 }}>{t('app.title')}</Title>
         {showConversation && (
-          <Button onClick={handleReset}>重新开始</Button>
+          <Button onClick={handleReset}>{t('analysisTasks.resetAndStart')}</Button>
         )}
       </div>
 
       {/* Degraded Response Modal */}
       <Modal
-        title="AI 诊断暂不可用"
+        title={t('analysisTasks.aiDiagnosisUnavailable')}
         open={degradedModalOpen}
         onCancel={() => setDegradedModalOpen(false)}
         footer={[
           <Button key="retry" type="primary" onClick={handleRetry}>
-            重试
+            {t('analysisTasks.retry')}
           </Button>,
           <Button key="export" icon={<FolderOpenOutlined />} onClick={handleExportFromDegraded}>
-            导出工作区
+            {t('analysisTasks.exportWorkspace')}
           </Button>,
         ]}
       >
         <Alert
-          message="LLM 服务暂不可用"
-          description={degradedInfo?.message || 'AI 诊断服务暂时无法使用。您可以导出工作区到本地目录，使用 OpenCode 手动完成诊断。'}
+          message={t('analysisTasks.llmServiceUnavailable')}
+          description={degradedInfo?.message || t('analysisTasks.llmServiceUnavailableDesc')}
           type="warning"
           showIcon
           style={{ marginBottom: 16 }}
         />
         <Text>
-          导出工作区后，您可以使用 OpenCode 打开目录，完成诊断后将结果保存为 result.md 文件，系统将自动检测并导入。
+          {t('analysisTasks.openInOpenCode')}
         </Text>
       </Modal>
 
       {/* Export Success Modal */}
       <Modal
-        title="工作区导出成功"
+        title={t('analysisTasks.workspaceExportSuccess')}
         open={exportSuccess}
         onCancel={() => setExportSuccess(false)}
         footer={[
           <Button key="check" icon={<CheckCircleOutlined />} onClick={handleCheckResult}>
-            检查结果
+            {t('analysisTasks.viewDiagnosisResult')}
           </Button>,
           <Button key="copy" icon={<CopyOutlined />} onClick={handleCopyPrompt}>
-            复制 Prompt
+            {t('analysisTasks.copyPrompt')}
           </Button>,
         ]}
       >
         <Alert
-          message="工作区已成功导出"
+          message={t('analysisTasks.exportSuccessDesc')}
           description={
             <div>
-              <p>工作区目录：{workspaceDir}</p>
-              <p>请在 OpenCode 中打开该目录，完成诊断后将结果保存为 result.md。</p>
-              {isPolling && <p style={{ color: '#888' }}>正在检测结果文件...</p>}
+              <p>{t('analysisTasks.workspaceDir')}: {workspaceDir}</p>
+              <p>{t('analysisTasks.openInOpenCode')}</p>
+              {isPolling && <p style={{ color: '#888' }}>{t('analysisTasks.detectingResult')}</p>}
             </div>
           }
           type="success"
@@ -568,16 +570,16 @@ function DiagnosisStudioPage() {
 
       {/* Preview Prompt Modal */}
       <Modal
-        title="诊断 Prompt 预览"
+        title={t('analysisTasks.diagnosisPromptPreview')}
         open={previewPromptModalOpen}
         onCancel={() => setPreviewPromptModalOpen(false)}
         width={800}
         footer={[
           <Button key="close" onClick={() => setPreviewPromptModalOpen(false)}>
-            关闭
+            {t('analysisTasks.close')}
           </Button>,
           <Button key="export" type="primary" icon={<FolderOpenOutlined />} onClick={handleExportFromPreview}>
-            导出工作区
+            {t('analysisTasks.exportFromPreview')}
           </Button>,
         ]}
       >
@@ -593,12 +595,12 @@ function DiagnosisStudioPage() {
         <Row gutter={24}>
           <Col span={16}>
             <Card
-              title="已选证据"
-              extra={<Text type="secondary">{selections.length} 条</Text>}
+              title={t('diagnosis.selectedEvidence')}
+              extra={<Text type="secondary">{selections.length} {t('diagnosis.evidence.selectedCount', { count: 0 })}</Text>}
             >
               {selections.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: 40, color: '#888' }}>
-                  从 Analysis Tasks 页面选择日志或聚类后，证据将显示在这里
+                  {t('analysisTasks.noEvidenceSelected')}
                 </div>
               ) : (
                 <List
@@ -627,22 +629,22 @@ function DiagnosisStudioPage() {
               )}
               {selections.length > 10 && (
                 <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>
-                  还有 {selections.length - 10} 条证据...
+                  {t('diagnosis.evidence.moreEvidence', { count: selections.length - 10 })}
                 </Text>
               )}
             </Card>
 
-            <Card title="诊断设置" style={{ marginTop: 16 }}>
+            <Card title={t('diagnosis.diagnosisSettings')} style={{ marginTop: 16 }}>
               <DiagnosisModeToggle value={mode} onChange={setMode} />
             </Card>
           </Col>
 
           <Col span={8}>
-            <Card title="问题描述">
+            <Card title={t('diagnosis.problemPhenomenon')}>
               <div style={{ marginBottom: 16 }}>
-                <Text strong style={{ fontSize: 13 }}>问题现象 *</Text>
+                <Text strong style={{ fontSize: 13 }}>{t('diagnosis.problemPhenomenon')}</Text>
                 <textarea
-                  placeholder="描述观察到的问题现象"
+                  placeholder={t('diagnosis.problemPhenomenonPlaceholder')}
                   value={userContext.phenomenon}
                   onChange={e => setUserContext({ ...userContext, phenomenon: e.target.value })}
                   style={{
@@ -657,9 +659,9 @@ function DiagnosisStudioPage() {
                 />
               </div>
               <div style={{ marginBottom: 16 }}>
-                <Text strong style={{ fontSize: 13 }}>堆栈信息</Text>
+                <Text strong style={{ fontSize: 13 }}>{t('diagnosis.stackInfo')}</Text>
                 <textarea
-                  placeholder="粘贴堆栈信息"
+                  placeholder={t('diagnosis.stackInfoPlaceholder')}
                   value={userContext.stack}
                   onChange={e => setUserContext({ ...userContext, stack: e.target.value })}
                   style={{
@@ -676,9 +678,9 @@ function DiagnosisStudioPage() {
                 />
               </div>
               <div>
-                <Text strong style={{ fontSize: 13 }}>关键入参</Text>
+                <Text strong style={{ fontSize: 13 }}>{t('diagnosis.keyParams')}</Text>
                 <textarea
-                  placeholder="输入相关参数"
+                  placeholder={t('diagnosis.keyParamsPlaceholder')}
                   value={userContext.params}
                   onChange={e => setUserContext({ ...userContext, params: e.target.value })}
                   style={{
@@ -704,7 +706,7 @@ function DiagnosisStudioPage() {
                 disabled={!userContext.phenomenon.trim() && !userContext.stack.trim() && selections.length === 0}
                 style={{ width: '100%', height: 48 }}
               >
-                开始诊断
+                {t('diagnosis.startDiagnosis')}
               </Button>
               <Button
                 size="large"
@@ -714,7 +716,7 @@ function DiagnosisStudioPage() {
                 disabled={!userContext.phenomenon.trim() && !userContext.stack.trim() && selections.length === 0}
                 style={{ width: '100%', height: 48 }}
               >
-                预览 Prompt
+                {t('diagnosis.previewPrompt')}
               </Button>
             </Space>
           </Col>
@@ -724,20 +726,20 @@ function DiagnosisStudioPage() {
         <>
           <Row gutter={24}>
             <Col span={8}>
-              <Card title="诊断摘要" size="small">
+              <Card title={t('diagnosis.summary')} size="small">
                 <div style={{ fontSize: 12 }}>
                   <div style={{ marginBottom: 8 }}>
-                    <strong>证据数量：</strong> {selections.length} 条
+                    <strong>{t('analysisTasks.evidenceLabel')}：</strong> {selections.length} {t('diagnosis.evidence.selectedCount', { count: 0 })}
                   </div>
                   {userContext.phenomenon && (
                     <div style={{ marginBottom: 8 }}>
-                      <strong>问题现象：</strong>
+                      <strong>{t('analysisTasks.phenomenonLabel')}：</strong>
                       <div style={{ color: '#666', marginTop: 4 }}>{userContext.phenomenon}</div>
                     </div>
                   )}
                   {userContext.stack && (
                     <div style={{ marginBottom: 8 }}>
-                      <strong>堆栈信息：</strong>
+                      <strong>{t('analysisTasks.stackLabel')}：</strong>
                       <pre style={{ fontSize: 10, color: '#666', marginTop: 4, maxHeight: 80, overflow: 'auto' }}>
                         {userContext.stack}
                       </pre>
@@ -745,7 +747,7 @@ function DiagnosisStudioPage() {
                   )}
                   {userContext.params && (
                     <div style={{ marginBottom: 8 }}>
-                      <strong>关键入参：</strong>
+                      <strong>{t('analysisTasks.paramsLabel')}：</strong>
                       <div style={{ color: '#666', marginTop: 4 }}>{userContext.params}</div>
                     </div>
                   )}
@@ -766,8 +768,8 @@ function DiagnosisStudioPage() {
 
           {diagnosisComplete && (
             <Alert
-              message="诊断结论仅供参考"
-              description="以上诊断结果由 AI 生成，可能存在偏差。请结合实际日志和经验进行验证。"
+              message={t('analysisTasks.diagnosisComplete')}
+              description={t('analysisTasks.diagnosisDisclaimer')}
               type="warning"
               showIcon
               style={{ marginTop: 16 }}

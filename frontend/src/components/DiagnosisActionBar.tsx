@@ -4,6 +4,7 @@ import {
   ForwardOutlined,
   StopOutlined,
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 interface DiagnosisActionBarProps {
   onContinue?: () => void;
@@ -26,6 +27,7 @@ export default function DiagnosisActionBar({
   loading = false,
   disabled = false,
 }: DiagnosisActionBarProps) {
+  const { t } = useTranslation();
   return (
     <Space style={{ marginTop: 16 }}>
       {showContinue && onContinue && (
@@ -36,7 +38,7 @@ export default function DiagnosisActionBar({
           loading={loading}
           disabled={disabled}
         >
-          发送回复
+          {t('conversation.sendReply')}
         </Button>
       )}
       {showSkip && onSkip && (
@@ -45,7 +47,7 @@ export default function DiagnosisActionBar({
           onClick={onSkip}
           disabled={disabled || loading}
         >
-          跳过追问
+          {t('conversation.skipQuestion')}
         </Button>
       )}
       {showEnd && onEnd && (
@@ -55,7 +57,7 @@ export default function DiagnosisActionBar({
           onClick={onEnd}
           disabled={loading}
         >
-          结束诊断
+          {t('conversation.endDiagnosis')}
         </Button>
       )}
     </Space>

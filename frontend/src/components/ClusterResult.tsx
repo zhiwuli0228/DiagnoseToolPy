@@ -1,5 +1,6 @@
 import { Card, Tag, Timeline, Typography, Empty, Button, Checkbox, Space, Spin, Table } from 'antd';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ClusterGroup, MatchedCase, SelectionItem, CachedLogEntry } from '../types/api';
 import { getClusterMatchedLines } from '../api/clusterApi';
 
@@ -47,6 +48,7 @@ interface ClusterResultProps {
 }
 
 export default function ClusterResult({ clusters, taskId, onSelect, selectedItems = [] }: ClusterResultProps) {
+  const { t } = useTranslation();
   const [expandedClusters, setExpandedClusters] = useState<Set<number>>(new Set());
   const [matchedLinesMap, setMatchedLinesMap] = useState<Record<number, CachedLogEntry[]>>({});
   const [loadingLines, setLoadingLines] = useState<Set<number>>(new Set());
@@ -148,13 +150,13 @@ export default function ClusterResult({ clusters, taskId, onSelect, selectedItem
   ];
 
   if (!clusters || clusters.length === 0) {
-    return <Empty description="未发现异常模式" />;
+    return <Empty description={t('clusterResult.noAnomalyFound')} />;
   }
 
   return (
     <div>
       <Text strong style={{ display: 'block', marginBottom: 16 }}>
-        发现 {clusters.length} 个异常模式
+        {t('clusterResult.foundAnomalyPatterns', { count: clusters.length })}
       </Text>
       <Timeline
         items={clusters.map((cluster, clusterIndex) => {
@@ -196,11 +198,11 @@ export default function ClusterResult({ clusters, taskId, onSelect, selectedItem
                           ? cluster.exception_class.slice(0, 40) + '...'
                           : cluster.exception_class}
                       </Tag>
-                      <Tag color="blue">{cluster.count} 次</Tag>
+                      <Tag color="blue">{cluster.count} {t('clusterResult.times')}</Tag>
                     </Space>
                   </div>
                   <Button size="small" type="link" onClick={() => toggleExpand(clusterIndex)}>
-                    {isExpanded ? '收起' : '展开'}
+                    {isExpanded ? t('clusterResult.collapse') : t('clusterResult.expand')}
                   </Button>
                 </div>
 
@@ -209,12 +211,12 @@ export default function ClusterResult({ clusters, taskId, onSelect, selectedItem
                     <div>
                       {cluster.time_distribution?.peak_hour !== 'N/A' && (
                         <Text type="secondary" style={{ fontSize: 11 }}>
-                          峰值: {cluster.time_distribution?.peak_hour}
+                          {t('clusterResult.peak')}: {cluster.time_distribution?.peak_hour}
                         </Text>
                       )}
                       {cluster.time_distribution?.range !== 'N/A' && (
                         <Text type="secondary" style={{ fontSize: 11, marginLeft: 8 }}>
-                          范围: {cluster.time_distribution?.range}
+                          {t('clusterResult.range')}: {cluster.time_distribution?.range}
                         </Text>
                       )}
                     </div>
@@ -223,7 +225,7 @@ export default function ClusterResult({ clusters, taskId, onSelect, selectedItem
 
                 {isExpanded && cluster.sample_messages && cluster.sample_messages.length > 0 && (
                   <div style={{ marginTop: 8 }}>
-                    <Text type="secondary" style={{ fontSize: 11 }}>典型样本:</Text>
+                    <Text type="secondary" style={{ fontSize: 11 }}>{t('clusterResult.typicalSamples')}</Text>
                     <div style={{ marginTop: 2 }}>
                       {cluster.sample_messages.slice(0, 3).map((msg, idx) => {
                         const isNormalized = msg.includes('<');
@@ -255,15 +257,15 @@ export default function ClusterResult({ clusters, taskId, onSelect, selectedItem
 
                 {isExpanded && isLoading && (
                   <div style={{ textAlign: 'center', padding: 16 }}>
-                    <Spin size="small" tip="加载日志条目..." />
+                    <Spin size="small" tip={t('clusterResult.loadingLogs')} />
                   </div>
                 )}
 
                 {isExpanded && !isLoading && matchedLines.length > 0 && (
                   <div style={{ marginTop: 8 }}>
                     <Text type="secondary" style={{ fontSize: 11 }}>
-                      日志条目 ({matchedLines.length} 条
-                      {cluster.count !== matchedLines.length && ` / 共 ${cluster.count} 次`}
+                      {t('clusterResult.logEntryCount', { count: matchedLines.length })}
+                      {cluster.count !== matchedLines.length && t('clusterResult.totalCount', { count: cluster.count })}
                       ):
                     </Text>
                     <Table
@@ -281,7 +283,7 @@ export default function ClusterResult({ clusters, taskId, onSelect, selectedItem
                   hasMatches ? (
                     <div style={{ marginTop: 8 }}>
                       <Text type="secondary" style={{ fontSize: 11 }}>
-                        匹配的历史案例:
+                        {t('clusterResult.matchedCases')}
                       </Text>
                       {cluster.matched_cases!.map((mc) => (
                         <MatchedCaseCard key={mc.case_id} matchedCase={mc} />
@@ -289,7 +291,7 @@ export default function ClusterResult({ clusters, taskId, onSelect, selectedItem
                     </div>
                   ) : (
                     <div style={{ marginTop: 8 }}>
-                      <Tag color="warning">无匹配案例，建议 AI 诊断</Tag>
+                      <Tag color="warning">{t('clusterResult.noMatchedCases')}</Tag>
                     </div>
                   )
                 )}

@@ -32,6 +32,8 @@
 {"case_id": "CASE-20260524144821_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}
 {"case_id": "CASE-20260524164811_redis-fault", "text_parts": ["Redis Fault", "", "redis", "connection", "ERROR: connection failed"]}
 {"case_id": "CASE-20260524164811_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}
-{"case_id": "CASE-001_orchestrated", "text_parts": ["Orchestrated Case", "", "# Case Draft\n"]}
 {"case_id": "CASE-20260524171346_redis-fault", "text_parts": ["Redis Fault", "", "redis", "connection", "ERROR: connection failed"]}
 {"case_id": "CASE-20260524171346_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}
+{"case_id": "CASE-001_orchestrated", "text_parts": ["Orchestrated Case", "", "# Case Draft\n"]}
+{"case_id": "CASE-20260524202711_redis-fault", "text_parts": ["Redis Fault", "", "redis", "connection", "ERROR: connection failed"]}
+{"case_id": "CASE-20260524202711_indexed-case", "text_parts": ["Indexed Case", "", "# Indexed Case\n\n"]}

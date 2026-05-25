@@ -5,10 +5,10 @@ import {
   FileSearchOutlined,
   FolderOutlined,
   SettingOutlined,
-  RobotOutlined,
-  ThunderboltOutlined,
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import AIDiagnosisButton from './components/AIDiagnosisButton';
+import LanguageSwitcher from './components/LanguageSwitcher';
 import { useDiagnosis } from './context/DiagnosisContext';
 import DashboardPage from './pages/DashboardPage';
 import AnalysisTasksPage from './pages/AnalysisTasksPage';
@@ -19,39 +19,6 @@ import SettingsPage from './pages/SettingsPage';
 
 const { Sider, Content, Header } = Layout;
 
-const menuItems = [
-  {
-    key: '/',
-    icon: <DashboardOutlined />,
-    label: 'Dashboard',
-  },
-  {
-    key: '/analysis',
-    icon: <FileSearchOutlined />,
-    label: 'Analysis Tasks',
-  },
-  {
-    key: '/cases',
-    icon: <FolderOutlined />,
-    label: 'Casebase',
-  },
-  {
-    key: '/diagnosis-studio',
-    icon: <ThunderboltOutlined />,
-    label: '诊断工作室',
-  },
-  {
-    key: '/diagnosis',
-    icon: <RobotOutlined />,
-    label: 'AI Diagnosis',
-  },
-  {
-    key: '/settings',
-    icon: <SettingOutlined />,
-    label: 'Settings',
-  },
-];
-
 // Pages that need state preserved
 const PRESERVE_STATE_PATHS = ['/analysis', '/diagnosis-studio', '/cases', '/diagnosis'];
 
@@ -61,7 +28,6 @@ function TabContent({ path, children }: { path: string; children: React.ReactNod
   const isActive = location.pathname === path || location.pathname.startsWith(path + '/');
 
   if (!isActive && PRESERVE_STATE_PATHS.includes(path)) {
-    // Keep mounted but hidden for state preservation
     return (
       <div style={{ display: 'none', height: '100%' }}>
         {children}
@@ -77,9 +43,33 @@ function TabContent({ path, children }: { path: string; children: React.ReactNod
 }
 
 function App() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { selections, removeSelection, clearSelections, loading } = useDiagnosis();
+
+  const menuItems = [
+    {
+      key: '/',
+      icon: <DashboardOutlined />,
+      label: t('nav.dashboard'),
+    },
+    {
+      key: '/analysis',
+      icon: <FileSearchOutlined />,
+      label: t('nav.analysisTasks'),
+    },
+    {
+      key: '/cases',
+      icon: <FolderOutlined />,
+      label: t('nav.casebase'),
+    },
+    {
+      key: '/settings',
+      icon: <SettingOutlined />,
+      label: t('nav.settings'),
+    },
+  ];
 
   const currentPath = location.pathname;
 
@@ -132,6 +122,7 @@ function App() {
             borderBottom: '1px solid #f0f0f0',
           }}
         >
+          <LanguageSwitcher />
           <AIDiagnosisButton
             selections={selections}
             onRemove={removeSelection}

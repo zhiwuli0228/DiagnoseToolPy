@@ -15,6 +15,7 @@ import {
 import { SearchOutlined, FolderOutlined } from '@ant-design/icons';
 import { searchLogContent } from '../api/sourceApi';
 import type { LogSearchResponse, LogSearchResult, SelectionItem } from '../types/api';
+import { useTranslation } from 'react-i18next';
 
 const { Text } = Typography;
 
@@ -35,6 +36,7 @@ export default function SearchPanel({
   initialResults,
   loading: externalLoading,
 }: SearchPanelProps) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<LogSearchResponse | null>(null);
@@ -77,7 +79,7 @@ export default function SearchPanel({
       });
       setResults(result);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : '搜索失败');
+      setError(err instanceof Error ? err.message : t('search.searchFailed'));
     } finally {
       setLoading(false);
     }
@@ -104,10 +106,10 @@ export default function SearchPanel({
   ];
 
   return (
-    <Card title="日志搜索" size="small">
+    <Card title={t('search.title')} size="small">
       <Space direction="vertical" style={{ width: '100%' }} size="small">
         <Input
-          placeholder="日志目录路径"
+          placeholder={t('search.pathPlaceholder')}
           value={path}
           onChange={e => onPathChange?.(e.target.value)}
           prefix={<FolderOutlined />}
@@ -134,13 +136,13 @@ export default function SearchPanel({
             size="small"
             onClick={() => addKeyword(keywordInput)}
           >
-            Add
+            {t('search.add')}
           </Button>
           <Checkbox
             checked={includeStack}
             onChange={e => setIncludeStack(e.target.checked)}
           >
-            堆栈
+            {t('search.stack')}
           </Checkbox>
           <Button
             type="primary"
@@ -149,7 +151,7 @@ export default function SearchPanel({
             loading={effectiveLoading}
             size="small"
           >
-            搜索
+            {t('search.search')}
           </Button>
         </div>
 
@@ -167,7 +169,7 @@ export default function SearchPanel({
 
         {effectiveLoading && (
           <div style={{ textAlign: 'center', padding: 24 }}>
-            <Spin tip="搜索中..." />
+            <Spin tip={t('search.searching')} />
           </div>
         )}
 
@@ -175,7 +177,7 @@ export default function SearchPanel({
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <Text type="secondary">
-                找到 {results.matched_count} 条匹配，扫描 {results.total_scanned_lines} 行
+                {t('search.foundMatches', { matched: results.matched_count, scanned: results.total_scanned_lines })}
               </Text>
               <Badge count={selections.length} style={{ marginLeft: 8 }} />
             </div>
@@ -208,11 +210,11 @@ export default function SearchPanel({
                           >
                             {group.key} ({group.count})
                             {groupSelectedCount > 0 && (
-                              <Tag color="blue" style={{ marginLeft: 8 }}>{groupSelectedCount} 已选</Tag>
+                              <Tag color="blue" style={{ marginLeft: 8 }}>{t('search.selectedCount', { count: groupSelectedCount })}</Tag>
                             )}
                           </Checkbox>
                           <Button size="small" type="link" onClick={handleSelectAllInGroup}>
-                            全选
+                            {t('diagnosis.evidence.selectAll')}
                           </Button>
                         </div>
                       }
@@ -244,7 +246,7 @@ export default function SearchPanel({
                           );
                         })}
                         {group.matched_lines.length > 5 && (
-                          <Text type="secondary">... 还有 {group.matched_lines.length - 5} 条</Text>
+                          <Text type="secondary">{t('search.moreLogs', { count: group.matched_lines.length - 5 })}</Text>
                         )}
                       </div>
                     </Card>
@@ -259,7 +261,7 @@ export default function SearchPanel({
                       onToggleSelection({ type: 'log', id: `t:${record.file_path}:${record.line_no}:${idx}` });
                     });
                   }}>
-                    全选当前页
+                    {t('search.selectAllCurrentPage')}
                   </Button>
                 </div>
                 <Table

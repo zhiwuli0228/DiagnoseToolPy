@@ -31,16 +31,9 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["diagnosis"])
 
 
-# Load LLM config once at module level (startup)
-_llm_config: AppLLMConfig | None = None
-
-
 def _get_llm_config() -> AppLLMConfig:
-    """Get cached LLM config, loading it once."""
-    global _llm_config
-    if _llm_config is None:
-        _llm_config = load_llm_config()
-    return _llm_config
+    """Load LLM config fresh on each call (no caching)."""
+    return load_llm_config()
 
 
 class DiagnosisRequest(BaseModel):

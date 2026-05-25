@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { message } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 const POLLING_INTERVAL = 5000; // 5 seconds
 const POLLING_TIMEOUT = 30 * 60 * 1000; // 30 minutes
@@ -24,6 +25,7 @@ export function useResultDetection({
   workspaceDir,
   enabled = true,
 }: UseResultDetectionOptions): UseResultDetectionReturn {
+  const { t } = useTranslation();
   const [isPolling, setIsPolling] = useState(false);
   const [lastCheck, setLastCheck] = useState<Date | null>(null);
   const [resultContent, setResultContent] = useState<string | null>(null);
@@ -88,7 +90,7 @@ export function useResultDetection({
 
   const checkNow = useCallback(async (): Promise<string | null> => {
     if (!workspaceDir) {
-      message.warning('请先导出工作区');
+      message.warning(t('useResultDetection.pleaseExportWorkspaceFirst'));
       return null;
     }
 
@@ -101,7 +103,7 @@ export function useResultDetection({
     }
 
     return null;
-  }, [workspaceDir, checkForResult]);
+  }, [workspaceDir, checkForResult, t]);
 
   const stopPolling = useCallback(() => {
     if (intervalRef.current) {
@@ -129,7 +131,7 @@ export function useResultDetection({
     // Set up timeout
     timeoutRef.current = setTimeout(() => {
       stopPolling();
-      message.warning('结果检测超时（30分钟）。您可以稍后手动导入。');
+      message.warning(t('useResultDetection.resultDetectionTimeout'));
     }, POLLING_TIMEOUT);
 
     // Set up interval
@@ -138,7 +140,7 @@ export function useResultDetection({
       if (content) {
         setResultContent(content);
         stopPolling();
-        message.success('检测到诊断结果！是否导入？');
+        message.success(t('useResultDetection.detectedDiagnosisResult'));
       }
     }, POLLING_INTERVAL);
 
@@ -147,10 +149,10 @@ export function useResultDetection({
       if (content) {
         setResultContent(content);
         stopPolling();
-        message.success('检测到诊断结果！是否导入？');
+        message.success(t('useResultDetection.detectedDiagnosisResult'));
       }
     });
-  }, [workspaceDir, enabled, stopPolling, savePollingState, checkForResult]);
+  }, [workspaceDir, enabled, stopPolling, savePollingState, checkForResult, t]);
 
   const reset = useCallback(() => {
     stopPolling();

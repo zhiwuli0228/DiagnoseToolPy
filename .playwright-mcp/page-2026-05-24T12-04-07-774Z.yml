@@ -1,0 +1,54 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: DiagnoseToolPy
+      - menu [ref=e7]:
+        - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]:
+            - img [ref=e10]
+          - generic [ref=e12]: 仪表盘
+        - menuitem "file-search 分析任务" [ref=e13] [cursor=pointer]:
+          - img "file-search" [ref=e14]:
+            - img [ref=e15]
+          - generic [ref=e17]: 分析任务
+        - menuitem "folder 案例库" [ref=e18] [cursor=pointer]:
+          - img "folder" [ref=e19]:
+            - img [ref=e20]
+          - generic [ref=e22]: 案例库
+        - menuitem "setting 设置" [ref=e23] [cursor=pointer]:
+          - img "setting" [ref=e24]:
+            - img [ref=e25]
+          - generic [ref=e27]: 设置
+    - img "bars" [ref=e29] [cursor=pointer]:
+      - img [ref=e30]
+  - generic [ref=e32]:
+    - banner [ref=e33]:
+      - button "global 中文" [ref=e34] [cursor=pointer]:
+        - img "global" [ref=e36]:
+          - img [ref=e37]
+        - generic [ref=e39]: 中文
+      - button "robot" [ref=e41] [cursor=pointer]:
+        - img "robot" [ref=e43]:
+          - img [ref=e44]
+    - main [ref=e46]:
+      - generic [ref=e48]:
+        - heading "仪表盘" [level=1] [ref=e49]
+        - generic [ref=e50]:
+          - generic [ref=e53] [cursor=pointer]:
+            - img "file-search" [ref=e55]:
+              - img [ref=e56]
+            - generic [ref=e59]:
+              - generic [ref=e60]: 分析任务
+              - generic [ref=e61]: 扫描服务器目录并分析日志文件
+          - generic [ref=e64] [cursor=pointer]:
+            - img "folder" [ref=e66]:
+              - img [ref=e67]
+            - generic [ref=e70]:
+              - generic [ref=e71]: 案例库
+              - generic [ref=e72]: 浏览和管理故障案例
+          - generic [ref=e75] [cursor=pointer]:
+            - img "setting" [ref=e77]:
+              - img [ref=e78]
+            - generic [ref=e81]:
+              - generic [ref=e82]: 设置
+              - generic [ref=e83]: 配置输入路径和应用程序设置
