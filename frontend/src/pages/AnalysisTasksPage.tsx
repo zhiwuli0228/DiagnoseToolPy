@@ -1,11 +1,10 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, Result, Spin, Alert, Card, Statistic, Row, Col, Collapse, Tag, Table, Tabs, Checkbox, message, Drawer, Space, Modal } from 'antd';
-import { FileSearchOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, UploadOutlined, ClusterOutlined, FullscreenOutlined, ThunderboltOutlined, FolderOpenOutlined, CopyOutlined, CheckCircleOutlined as CheckCircleFilled } from '@ant-design/icons';
+import { FileSearchOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, ClusterOutlined, FullscreenOutlined, ThunderboltOutlined, FolderOpenOutlined, CopyOutlined, DeleteOutlined, CheckCircleOutlined as CheckCircleFilled } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import JSZip from 'jszip';
 import type { ColumnsType } from 'antd/es/table';
-import { checkSourceDirectory, scanSourceDirectory, searchLogContent, uploadFiles } from '../api/sourceApi';
+import { checkSourceDirectory, scanSourceDirectory, searchLogContent, deleteTempDir } from '../api/sourceApi';
 import { createClusterTask, pollClusterTask } from '../api/clusterApi';
 import { diagnoseFromCluster, exportWorkspace, previewPrompt, isDegradedResponse, type DegradedResponse } from '../api/diagnosisApi';
 import type { SourceCheckResponse, ScanResult, LogSearchResponse, LogSearchResult, AggregatedGroup, ClusterStatusResponse, SelectionItem } from '../types/api';
@@ -22,9 +21,7 @@ function AnalysisTasksPage() {
   const [checkResult, setCheckResult] = useState<SourceCheckResponse | null>(null);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const zipInputRef = useRef<HTMLInputElement>(null);
-  const [extracting, setExtracting] = useState(false);
+  const [zipTaskId, setZipTaskId] = useState<string | null>(null);
 
   // Search state
   const [searchLoading, setSearchLoading] = useState(false);
@@ -122,6 +119,11 @@ function AnalysisTasksPage() {
     try {
       const result = await scanSourceDirectory(path);
       setScanResult(result);
+      // If ZIP was extracted, update path to the extracted directory for subsequent operations
+      if (result.extracted_path) {
+        setPath(result.extracted_path);
+        setZipTaskId(result.zip_task_id || null);
+      }
     } catch (err: unknown) {
       const axiosError = err as { response?: { data?: { detail?: string } } };
       setError(axiosError.response?.data?.detail || 'Failed to scan directory');
@@ -443,31 +445,17 @@ function AnalysisTasksPage() {
     setter(keywords.filter((k) => k !== kw));
   };
 
-  const handleZipExtract = async (zipFile: File) => {
-    setExtracting(true);
+  const handleCleanup = async () => {
+    if (!zipTaskId) {
+      message.warning('No temp files to clean');
+      return;
+    }
     try {
-      const zip = await JSZip.loadAsync(zipFile);
-      const files: File[] = [];
-      for (const [name, zipEntry] of Object.entries(zip.files)) {
-        if (!zipEntry.dir) {
-          const content = await zipEntry.async('blob');
-          // Use full path as filename to preserve directory structure in ZIP
-          const file = new File([content], name);
-          files.push(file);
-        }
-      }
-      if (files.length === 0) {
-        message.warning(t('analysisTasks.noZipFiles'));
-        return;
-      }
-      const result = await uploadFiles(files);
-      setPath(result.path);
-      message.success(t('analysisTasks.extractUploadSuccess', { count: result.file_count }));
+      await deleteTempDir(zipTaskId);
+      setZipTaskId(null);
+      message.success('Temp files cleaned');
     } catch {
-      message.error(t('analysisTasks.zipExtractFailed'));
-    } finally {
-      setExtracting(false);
-      if (zipInputRef.current) zipInputRef.current.value = '';
+      message.error('Failed to clean temp files');
     }
   };
 
@@ -524,67 +512,12 @@ function AnalysisTasksPage() {
         </Button>
       </div>
       <Card style={{ marginBottom: 24 }}>
-        <input
-          ref={fileInputRef}
-          type="file"
-          // @ts-ignore - webkitdirectory is non-standard but supported in Chromium-based browsers
-          webkitdirectory=""
-          // @ts-ignore
-          mozdirectory=""
-          style={{ display: 'none' }}
-          onChange={async (e) => {
-            const files = e.target.files;
-            if (files && files.length > 0) {
-              setLoading(true);
-              try {
-                const result = await uploadFiles(Array.from(files));
-                setPath(result.path);
-              } catch {
-                setError('Failed to upload files');
-              } finally {
-                setLoading(false);
-                if (fileInputRef.current) fileInputRef.current.value = '';
-              }
-            }
-          }}
-        />
         <Input
           size="large"
-          placeholder="Enter directory path (e.g., /data/diagnose/input)"
+          placeholder="Enter directory path (e.g., /data/logs or /data/logs/app.zip)"
           value={path}
           onChange={(e) => setPath(e.target.value)}
           style={{ marginBottom: 16 }}
-          addonAfter={
-            <>
-              <Button
-                size="small"
-                icon={<UploadOutlined />}
-                onClick={() => zipInputRef.current?.click()}
-                loading={extracting}
-                style={{ marginRight: 4 }}
-              >
-                ZIP
-              </Button>
-              <Button
-                size="small"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                Browse...
-              </Button>
-            </>
-          }
-        />
-        <input
-          ref={zipInputRef}
-          type="file"
-          accept=".zip"
-          style={{ display: 'none' }}
-          onChange={async (e) => {
-            const files = e.target.files;
-            if (files && files.length > 0) {
-              await handleZipExtract(files[0]);
-            }
-          }}
         />
         <div style={{ display: 'flex', gap: 8 }}>
           <Button
@@ -610,6 +543,13 @@ function AnalysisTasksPage() {
             disabled={!path.trim() || !!clusterTaskId}
           >
             {t('analysisTasks.anomalyClustering')}
+          </Button>
+          <Button
+            icon={<DeleteOutlined />}
+            onClick={handleCleanup}
+            disabled={!zipTaskId}
+          >
+            Clean Temp Files
           </Button>
         </div>
       </Card>

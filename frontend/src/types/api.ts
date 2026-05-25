@@ -6,6 +6,7 @@ export interface SourceCheckResponse {
   allowed: boolean;
   path: string;
   name: string;
+  is_zip?: boolean;
 }
 
 export interface ScanResult {
@@ -14,6 +15,8 @@ export interface ScanResult {
   file_types: Record<string, number>;
   error_count: number;
   warn_count: number;
+  extracted_path?: string;
+  zip_task_id?: string;
 }
 
 export interface HealthResponse {

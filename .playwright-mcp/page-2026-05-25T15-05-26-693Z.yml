@@ -1,0 +1,68 @@
+- generic [ref=e3]:
+  - complementary:
+    - generic:
+      - generic: DiagnoseToolPy
+      - menu:
+        - menuitem "dashboard Dashboard":
+          - img "dashboard" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e12] [cursor=pointer]: Dashboard
+        - menuitem "file-search Analysis Tasks":
+          - img "file-search" [ref=e14] [cursor=pointer]:
+            - img [ref=e15]
+          - generic [ref=e17] [cursor=pointer]: Analysis Tasks
+        - menuitem "folder Casebase":
+          - img "folder" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+          - generic [ref=e22] [cursor=pointer]: Casebase
+        - menuitem "setting Settings":
+          - img "setting" [ref=e24] [cursor=pointer]:
+            - img [ref=e25]
+          - generic [ref=e27] [cursor=pointer]: Settings
+    - img "bars" [ref=e29] [cursor=pointer]:
+      - img [ref=e30]
+  - generic [ref=e32]:
+    - banner [ref=e33]:
+      - button "global EN" [ref=e34] [cursor=pointer]:
+        - img "global" [ref=e36]:
+          - img [ref=e37]
+        - generic [ref=e39]: EN
+      - button "robot" [ref=e41] [cursor=pointer]:
+        - img "robot" [ref=e43]:
+          - img [ref=e44]
+    - main [ref=e46]:
+      - generic [ref=e85]:
+        - heading "Analysis Tasks" [level=1] [ref=e86]
+        - button "thunderbolt Start Diagnosis" [ref=e88] [cursor=pointer]:
+          - img "thunderbolt" [ref=e90]:
+            - img [ref=e91]
+          - generic [ref=e93]: Start Diagnosis
+        - generic [ref=e95]:
+          - textbox "Enter directory path (e.g., /data/logs or /data/logs/app.zip)" [ref=e96]: /data/logs
+          - generic [ref=e97]:
+            - button "check-circle Check Directory" [active] [ref=e98] [cursor=pointer]:
+              - img "check-circle" [ref=e119]:
+                - img [ref=e120]
+              - generic [ref=e104]: Check Directory
+            - button "file-search Scan Directory" [ref=e105] [cursor=pointer]:
+              - img "file-search" [ref=e124]:
+                - img [ref=e125]
+              - generic [ref=e112]: Scan Directory
+            - button "cluster Anomaly Clustering" [ref=e106] [cursor=pointer]:
+              - img "cluster" [ref=e114]:
+                - img [ref=e115]
+              - generic [ref=e117]: Anomaly Clustering
+            - button "delete Clean Temp Files" [disabled] [ref=e107]:
+              - generic:
+                - img "delete":
+                  - img
+              - generic: Clean Temp Files
+        - alert [ref=e127]:
+          - img "close-circle" [ref=e128]:
+            - img [ref=e129]
+          - generic [ref=e131]:
+            - generic [ref=e132]: Error
+            - generic [ref=e133]: Requested path does not exist
+          - button "close" [ref=e134] [cursor=pointer]:
+            - img "close" [ref=e135]:
+              - img [ref=e136]

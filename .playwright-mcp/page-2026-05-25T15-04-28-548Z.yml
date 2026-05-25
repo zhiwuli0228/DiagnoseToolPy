@@ -1,0 +1,33 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: DiagnoseToolPy
+      - menu [ref=e7]:
+        - menuitem "dashboard Dashboard" [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]:
+            - img [ref=e10]
+          - generic [ref=e12]: Dashboard
+        - menuitem "file-search Analysis Tasks" [ref=e13] [cursor=pointer]:
+          - img "file-search" [ref=e14]:
+            - img [ref=e15]
+          - generic [ref=e17]: Analysis Tasks
+        - menuitem "folder Casebase" [ref=e18] [cursor=pointer]:
+          - img "folder" [ref=e19]:
+            - img [ref=e20]
+          - generic [ref=e22]: Casebase
+        - menuitem "setting Settings" [ref=e23] [cursor=pointer]:
+          - img "setting" [ref=e24]:
+            - img [ref=e25]
+          - generic [ref=e27]: Settings
+    - img "bars" [ref=e29] [cursor=pointer]:
+      - img [ref=e30]
+  - generic [ref=e32]:
+    - banner [ref=e33]:
+      - button "global EN" [ref=e34] [cursor=pointer]:
+        - img "global" [ref=e36]:
+          - img [ref=e37]
+        - generic [ref=e39]: EN
+      - button "robot" [ref=e41] [cursor=pointer]:
+        - img "robot" [ref=e43]:
+          - img [ref=e44]
+    - main [ref=e46]

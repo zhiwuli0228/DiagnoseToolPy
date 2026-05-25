@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import shutil
+import uuid
+import zipfile
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
@@ -12,7 +15,10 @@ from pydantic import BaseModel, Field
 from diagnose_tool.analyzer.log_search import search_log_content
 from diagnose_tool.analyzer.scanner import scan_directory
 from diagnose_tool.core.config import load_config
-from diagnose_tool.core.security import PathValidationError, validate_server_directory
+
+
+# Track extracted ZIP directories: task_id -> extracted_path
+_extracted_dirs: dict[str, Path] = {}
 
 
 router = APIRouter(prefix="/api/source", tags=["source"])
@@ -39,14 +45,36 @@ class LogSearchRequest(BaseModel):
 
 @router.post("/check")
 def check_source_directory(request: SourcePathRequest) -> dict[str, object]:
-    path = _validate_source_path(request.path)
-    return {"allowed": True, "path": str(path), "name": path.name}
+    is_zip = request.path.lower().endswith(".zip")
+    if is_zip:
+        # For ZIP files, validate the file exists and is within allowed roots
+        path = _validate_source_file(request.path)
+        if not zipfile.is_zipfile(path):
+            raise HTTPException(status_code=400, detail="Not a valid ZIP file")
+    else:
+        path = _validate_source_path(request.path)
+    return {"allowed": True, "path": str(path), "name": path.name, "is_zip": is_zip}
 
 
 @router.post("/scan")
 def scan_source_directory(request: SourcePathRequest) -> dict[str, object]:
+    is_zip = request.path.lower().endswith(".zip")
+
+    if is_zip:
+        # For ZIP files, validate file exists and is valid
+        path = _validate_source_file(request.path)
+        if not zipfile.is_zipfile(path):
+            raise HTTPException(status_code=400, detail="Not a valid ZIP file")
+        extracted_path, task_id = _extract_zip_to_temp(path)
+        result = scan_directory(extracted_path).to_dict()
+        result["extracted_path"] = str(extracted_path)
+        result["zip_task_id"] = task_id
+        return result
+
+    # Regular directory scan
     path = _validate_source_path(request.path)
-    return scan_directory(path).to_dict()
+    result = scan_directory(path).to_dict()
+    return result
 
 
 @router.post("/search")
@@ -146,8 +174,70 @@ async def upload_files(files: list[UploadFile] = File(...)) -> dict:
 
 
 def _validate_source_path(path: str):
+    """Validate a source directory path for local use.
+
+    Checks:
+    1. Path exists
+    2. Is a directory (not file)
+    """
+    requested = Path(path).resolve()
+
+    if not requested.exists():
+        raise HTTPException(status_code=400, detail="Requested path does not exist")
+
+    if not requested.is_dir():
+        raise HTTPException(status_code=400, detail="Requested path is not a directory")
+
+    return requested
+
+
+def _validate_source_file(path: str):
+    """Validate a source file path for local use.
+
+    Checks:
+    1. Path exists
+    2. Is a file (not directory)
+    """
+    requested = Path(path).resolve()
+
+    if not requested.exists():
+        raise HTTPException(status_code=400, detail="Requested path does not exist")
+
+    if not requested.is_file():
+        raise HTTPException(status_code=400, detail="Requested path is not a file")
+
+    return requested
+
+
+def _extract_zip_to_temp(zip_path: Path) -> tuple[Path, str]:
+    """Extract a ZIP file to a temporary directory.
+
+    Args:
+        zip_path: Path to the ZIP file.
+
+    Returns:
+        Tuple of (extracted_path, task_id).
+    """
     config = load_config()
-    try:
-        return validate_server_directory(path, config.allowed_input_roots)
-    except PathValidationError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    task_id = uuid.uuid4().hex[:8]
+    temp_base = config.data_dir / "temp"
+    temp_base.mkdir(parents=True, exist_ok=True)
+    extracted_path = temp_base / f"zip-{task_id}"
+    extracted_path.mkdir(parents=True, exist_ok=True)
+
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        zf.extractall(extracted_path)
+
+    _extracted_dirs[task_id] = extracted_path
+    return extracted_path, task_id
+
+
+@router.delete("/temp/{task_id}")
+def cleanup_temp_dir(task_id: str) -> dict[str, str]:
+    """Delete a previously extracted temporary directory."""
+    if task_id not in _extracted_dirs:
+        raise HTTPException(status_code=404, detail="Temp directory not found")
+    extracted_path = _extracted_dirs.pop(task_id)
+    if extracted_path.exists():
+        shutil.rmtree(extracted_path)
+    return {"status": "cleaned", "task_id": task_id}

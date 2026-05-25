@@ -27,15 +27,7 @@ export async function searchLogContent(
   return response.data;
 }
 
-export async function uploadFiles(
-  files: File[]
-): Promise<{ path: string; file_count: number; relative_path: string }> {
-  const formData = new FormData();
-  for (const file of files) {
-    formData.append('files', file);
-  }
-  const response = await apiClient.post('/source/upload', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  return response.data as { path: string; file_count: number; relative_path: string };
+export async function deleteTempDir(taskId: string): Promise<{ status: string; task_id: string }> {
+  const response = await apiClient.delete(`/source/temp/${taskId}`);
+  return response.data as { status: string; task_id: string };
 }
