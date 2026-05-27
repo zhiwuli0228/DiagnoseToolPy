@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
 from diagnose_tool.api.routes_case import router as case_router
@@ -19,6 +20,15 @@ def create_app() -> FastAPI:
 
     config = load_config()
     app = FastAPI(title=config.name, version=config.version)
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
     app.include_router(source_router)
     app.include_router(case_router)
     app.include_router(config_router)
