@@ -40,4 +40,3 @@ data/indexes/bm25/corpus.jsonl
 .claude/settings.local.json
 
 # Rectification docs
-docs/rectification/

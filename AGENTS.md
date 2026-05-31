@@ -1,3 +1,8 @@
+# Authority Notice
+
+This file is the canonical project-level instruction entry for AI development agents.
+Tool-specific instructions may exist in `CLAUDE.md`, `.claude/`, or `.opencode/`, but they must not override the non-negotiable project constraints and change-governance rules defined here.
+
 # AGENT.md
 
 This file defines the project-level rules for AI agents working on **DiagnoseToolPy**.
