@@ -13,6 +13,7 @@ from collections import defaultdict
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
+from typing import Iterator
 
 from diagnose_tool.analyzer.evidence_cache import (
     EvidenceCacheManager,
@@ -219,19 +220,25 @@ class ClusterAnalyzer:
         """
         task_output = self._data_dir / "output" / task_id
 
-        # Phase 1: Scan and extract ERROR/WARN lines
+        # Phase 1: Scan and extract ERROR/WARN lines with streaming aggregation
         self._update_progress(task_output, PHASE_SCAN, 20)
-        error_lines = self._scan_and_extract_errors(source_path)
+        files, zip_source_path = self._prepare_file_list(source_path)
+        total_files = len(files)
+        aggregated_groups = self._scan_and_aggregate_streaming(
+            task_output, files, total_files, zip_source_path=zip_source_path
+        )
 
-        # Phase 2: Aggregate clusters
-        self._update_progress(task_output, PHASE_AGGREGATE, 50)
-        aggregated_groups = self._aggregate_clusters(error_lines)
+        if not aggregated_groups:
+            result = ClusterResult(task_id=task_id, clusters=[], total_errors=0)
+            self._write_result(task_output, result)
+            self._update_progress(task_output, PHASE_DONE, 100)
+            return result
 
-        # Phase 3: Match historical cases
+        # Phase 2: Match historical cases
         self._update_progress(task_output, PHASE_MATCH, 80)
         clusters = self._match_historical_cases(aggregated_groups)
 
-        # Phase 4: Write result
+        # Phase 3: Write result
         self._update_progress(task_output, PHASE_DONE, 100)
         result = ClusterResult(
             task_id=task_id,
@@ -240,7 +247,9 @@ class ClusterAnalyzer:
         )
         self._write_result(task_output, result)
 
-        # Phase 5: Write matched-lines.jsonl for diagnosis cache
+        # Phase 4: Write matched-lines.jsonl for diagnosis cache
+        # Use streaming when zip_source_path is available (no extractall)
+        error_lines = self._scan_and_extract_errors_from_files(files, zip_source_path)
         self._write_matched_lines_cache(task_output, aggregated_groups, error_lines)
 
         return result
@@ -256,6 +265,81 @@ class ClusterAnalyzer:
         }
         progress_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
 
+    def _prepare_file_list(self, source_path: str) -> tuple[list, Path | None]:
+        """Prepare the list of files to scan.
+
+        Args:
+            source_path: Path to log directory, file, or ZIP archive.
+
+        Returns:
+            Tuple of (list of ScannedFile objects, zip_source_path or None).
+            The second element is the ZIP file path itself when source is a ZIP
+            (for streaming reads), or None for regular directories/files.
+        """
+        from diagnose_tool.analyzer.scanner import scan_directory
+
+        source = Path(source_path)
+        zip_source_path: Path | None = None
+
+        # Handle ZIP archives - return ZIP path for streaming (no extractall)
+        if source.is_file() and source.suffix.lower() == ".zip":
+            zip_source_path = source
+            from diagnose_tool.analyzer.scanner import ScannedFile
+            files = [
+                ScannedFile(
+                    path=str(source.resolve()),
+                    name=source.name,
+                    size=source.stat().st_size,
+                    type="zip",
+                )
+            ]
+            return files, zip_source_path
+
+        # Collect all files to scan
+        if source.is_dir():
+            scan_result = scan_directory(source)
+            return list(scan_result.files), zip_source_path
+        else:
+            from diagnose_tool.analyzer.scanner import ScannedFile
+            return [
+                ScannedFile(
+                    path=str(source.resolve()),
+                    name=source.name,
+                    size=source.stat().st_size,
+                    type=source.suffix.removeprefix("."),
+                )
+            ], zip_source_path
+
+    def _scan_and_extract_errors_gen(
+        self, source_path: str
+    ) -> Iterator[dict]:
+        """Scan log source and yield ERROR/WARN lines as a generator.
+
+        Memory-efficient: yields error lines one at a time instead of
+        collecting all into a list.
+
+        Args:
+            source_path: Path to log directory, file, or ZIP archive.
+
+        Yields:
+            Log line dicts with timestamp, level, message, thread, raw.
+        """
+        files, _extracted_dir = self._prepare_file_list(source_path)
+        error_level_pattern = re.compile(r"\b(ERROR|WARN|WARNING|SEVERE|FATAL)\b", re.IGNORECASE)
+        timestamp_pattern = re.compile(
+            r"(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?)"
+        )
+
+        for file_info in files:
+            file_path = Path(file_info.path)
+            try:
+                for log_line in self._read_log_lines(file_path):
+                    if error_level_pattern.search(log_line.raw):
+                        parsed = self._parse_log_line(log_line, timestamp_pattern)
+                        yield parsed
+            except Exception as e:
+                logger.warning("Failed to read %s: %s", file_path, e)
+
     def _scan_and_extract_errors(
         self, source_path: str
     ) -> list[dict]:
@@ -267,45 +351,169 @@ class ClusterAnalyzer:
         Returns:
             List of log line dicts with timestamp, level, message, thread, raw.
         """
-        from diagnose_tool.analyzer.scanner import scan_directory
+        return list(self._scan_and_extract_errors_gen(source_path))
 
-        source = Path(source_path)
-        error_lines: list[dict] = []
+    def _scan_and_extract_errors_from_files(
+        self, files: list, zip_source_path: Path | None = None
+    ) -> list[dict]:
+        """Extract ERROR/WARN lines from an already-prepared file list.
+
+        When zip_source_path is provided, uses streaming to avoid disk I/O.
+
+        Args:
+            files: List of ScannedFile objects from _prepare_file_list.
+            zip_source_path: ZIP file path for streaming read, or None for file-based.
+
+        Returns:
+            List of log line dicts with timestamp, level, message, thread, raw.
+        """
         error_level_pattern = re.compile(r"\b(ERROR|WARN|WARNING|SEVERE|FATAL)\b", re.IGNORECASE)
         timestamp_pattern = re.compile(
             r"(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?)"
         )
+        results = []
 
-        # Handle ZIP archives - extract and scan contents
-        if source.is_file() and source.suffix.lower() == ".zip":
-            source = self._extract_zip_archive(source)
+        if zip_source_path is not None:
+            # Streaming path: read directly from ZIP without extractall
+            from diagnose_tool.analyzer.reader import read_log_lines_from_zip_streaming
+            for log_line in read_log_lines_from_zip_streaming(zip_source_path):
+                if error_level_pattern.search(log_line.raw):
+                    parsed = self._parse_log_line(log_line, timestamp_pattern)
+                    results.append(parsed)
+            return results
 
-        # Collect all files to scan
-        if source.is_dir():
-            scan_result = scan_directory(source)
-            files = scan_result.files
-        else:
-            from diagnose_tool.analyzer.scanner import ScannedFile
-            files = [
-                ScannedFile(
-                    path=str(source.resolve()),
-                    name=source.name,
-                    size=source.stat().st_size,
-                    type=source.suffix.removeprefix("."),
-                )
-            ]
-
+        # File-based path: iterate over extracted files
         for file_info in files:
             file_path = Path(file_info.path)
             try:
                 for log_line in self._read_log_lines(file_path):
                     if error_level_pattern.search(log_line.raw):
                         parsed = self._parse_log_line(log_line, timestamp_pattern)
-                        error_lines.append(parsed)
+                        results.append(parsed)
             except Exception as e:
                 logger.warning("Failed to read %s: %s", file_path, e)
 
-        return error_lines
+    def _scan_and_aggregate_streaming(
+        self,
+        task_output: Path,
+        files: list,
+        total_files: int,
+        zip_source_path: Path | None = None,
+    ) -> list:
+        """Scan files and aggregate clusters in a streaming fashion.
+
+        Memory-efficient: accumulates groups incrementally without storing
+        all error lines in memory.
+
+        Args:
+            task_output: Task output directory for progress updates.
+            files: List of files to scan.
+            total_files: Total number of files for progress calculation.
+
+        Returns:
+            List of AggregatedGroup sorted by count descending.
+        """
+        from diagnose_tool.analyzer.log_aggregator import aggregate_log_lines_streaming, AggregationOptions
+
+        error_level_pattern = re.compile(r"\b(ERROR|WARN|WARNING|SEVERE|FATAL)\b", re.IGNORECASE)
+        timestamp_pattern = re.compile(
+            r"(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?)"
+        )
+
+        opts = AggregationOptions(
+            group_by_exception=True,
+            include_thread=False,
+            include_time=True,
+            message_only=False,
+        )
+
+        # Accumulators: key -> group data (memory-efficient)
+        group_counts: dict[str, int] = defaultdict(int)
+        group_first_line: dict[str, dict] = {}
+        group_samples: dict[str, list[dict]] = defaultdict(list)
+
+        processed_files = 0
+        # 如果传入了 zip_source_path，直接流式读取 ZIP，跳过 files 列表
+        if zip_source_path is not None:
+            from diagnose_tool.analyzer.reader import read_log_lines_from_zip_streaming
+            for log_line in read_log_lines_from_zip_streaming(zip_source_path):
+                if error_level_pattern.search(log_line.raw):
+                    parsed = self._parse_log_line(log_line, timestamp_pattern)
+                    key = self._build_group_key(parsed, opts)
+                    group_counts[key] += 1
+                    if key not in group_first_line:
+                        group_first_line[key] = parsed
+                    if len(group_samples[key]) < MAX_SAMPLE_MESSAGES:
+                        group_samples[key].append(parsed)
+            processed_files = total_files
+        else:
+            # 现有的 for file_info in files: 循环
+            for file_info in files:
+                file_path = Path(file_info.path)
+                try:
+                    for log_line in self._read_log_lines(file_path):
+                        if error_level_pattern.search(log_line.raw):
+                            parsed = self._parse_log_line(log_line, timestamp_pattern)
+                            key = self._build_group_key(parsed, opts)
+
+                            group_counts[key] += 1
+                            if key not in group_first_line:
+                                group_first_line[key] = parsed
+                            if len(group_samples[key]) < MAX_SAMPLE_MESSAGES:
+                                group_samples[key].append(parsed)
+                except Exception as e:
+                    logger.warning("Failed to read %s: %s", file_path, e)
+
+                processed_files += 1
+                # Update progress every 10 files or at the end
+                if processed_files % 10 == 0 or processed_files == total_files:
+                    progress = 20 + int(30 * processed_files / total_files)
+                    self._update_progress(task_output, PHASE_SCAN, progress)
+
+        # Build AggregatedGroup list from accumulators
+        results: list = []
+        for key in group_counts:
+            first = group_first_line[key]
+            results.append(AggregatedGroup(
+                key=key,
+                count=group_counts[key],
+                sample_message=self._build_sample_message(first, opts),
+                sample_timestamp=first.get("timestamp") or "",
+                sample_thread=first.get("thread") or "",
+                sample_level=first.get("level") or "",
+                file_path=first.get("file_path") or "",
+                matched_lines=group_samples[key],
+            ))
+
+        results.sort(key=lambda g: g.count, reverse=True)
+        return results
+
+    def _build_group_key(self, line: dict, options: AggregationOptions) -> str:
+        """Build a group key from a log line dict (duplicates log_aggregator logic)."""
+        raw = line.get("raw", "") or ""
+        exc = self._extract_exception_class(raw)
+        if exc and options.group_by_exception:
+            key = exc
+        else:
+            key = _normalize_message(line.get("message") or "")
+        if options.include_time and line.get("timestamp"):
+            ts = line["timestamp"]
+            if "T" in ts:
+                key = f"{key} [{ts[11:16]}]"
+            elif " " in ts:
+                key = f"{key} [{ts[11:16]}]"
+        return key
+
+    def _build_sample_message(self, line: dict, options: AggregationOptions) -> str:
+        """Build a human-readable sample message line."""
+        parts = []
+        if options.include_time and line.get("timestamp"):
+            parts.append(line["timestamp"][11:16])
+        if not options.message_only and line.get("level"):
+            parts.append(line["level"])
+        msg = line.get("message") or line.get("raw") or ""
+        parts.append(msg)
+        return " ".join(parts)
 
     def _read_log_lines(self, path: Path):
         """Read log lines from a single file or .gz archive."""

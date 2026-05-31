@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
+from typing import Iterator
 
 
 # Patterns used for message normalization
@@ -14,6 +15,7 @@ _STRING_RE = re.compile(r'"[^"]*"')
 _HEX_RE = re.compile(r'0x[0-9a-fA-F]+')
 _EXCEPTION_CLASS_RE = re.compile(r'\b([A-Z]\w*(?:Exception|Error|RuntimeException))\b')
 _CAUSED_BY_RE = re.compile(r'Caused by:\s*([\w.]+\.(?:Exception|Error|RuntimeException))', re.IGNORECASE)
+_UNDERSCORE_NUM_RE = re.compile(r'_\d+(?=_|$)')
 
 
 @dataclass
@@ -75,6 +77,58 @@ def aggregate_log_lines(
     return results
 
 
+def aggregate_log_lines_streaming(
+    lines_iter: Iterator[dict],
+    options: AggregationOptions,
+    max_sample_lines: int = 10,
+) -> list[AggregatedGroup]:
+    """Aggregate log lines by exception class using streaming (memory-efficient).
+
+    Accumulates groups incrementally without storing all lines in memory.
+
+    Args:
+        lines_iter: Iterable of log line dicts (e.g., from a generator).
+        options: Aggregation options.
+        max_sample_lines: Max sample lines to store per group.
+
+    Returns:
+        List of AggregatedGroup sorted by count descending.
+    """
+    # Accumulators: key -> group data (no need to store all lines)
+    group_counts: dict[str, int] = defaultdict(int)
+    group_first_line: dict[str, dict] = {}
+    group_samples: dict[str, list[dict]] = defaultdict(list)
+
+    for line in lines_iter:
+        key = _build_group_key(line, options)
+        group_counts[key] += 1
+
+        # Keep first line as sample (for message/timestamp/thread/level)
+        if key not in group_first_line:
+            group_first_line[key] = line
+
+        # Keep samples up to max_sample_lines
+        if len(group_samples[key]) < max_sample_lines:
+            group_samples[key].append(line)
+
+    results: list[AggregatedGroup] = []
+    for key in group_counts:
+        first = group_first_line[key]
+        results.append(AggregatedGroup(
+            key=key,
+            count=group_counts[key],
+            sample_message=_build_sample_message(first, options),
+            sample_timestamp=first.get("timestamp") or "",
+            sample_thread=first.get("thread") or "",
+            sample_level=first.get("level") or "",
+            file_path=first.get("file_path") or "",
+            matched_lines=group_samples[key],
+        ))
+
+    results.sort(key=lambda g: g.count, reverse=True)
+    return results
+
+
 def _build_group_key(line: dict, options: AggregationOptions) -> str:
     """Build a group key from a log line dict."""
     # Try exception class first
@@ -91,11 +145,11 @@ def _build_group_key(line: dict, options: AggregationOptions) -> str:
         key = f"{key} @ {line['thread']}"
     if options.include_time and line.get("timestamp"):
         ts = line["timestamp"]
-        # Keep only hour:minute
+        # Keep only hour (HH) to avoid per-minute fragmentation
         if "T" in ts:
-            key = f"{key} [{ts[11:16]}]"
+            key = f"{key} [{ts[11:13]}]"
         elif " " in ts:
-            key = f"{key} [{ts[11:16]}]"
+            key = f"{key} [{ts[11:13]}]"
 
     return key
 
@@ -104,7 +158,7 @@ def _build_sample_message(line: dict, options: AggregationOptions) -> str:
     """Build a human-readable sample message line."""
     parts = []
     if options.include_time and line.get("timestamp"):
-        parts.append(line["timestamp"][11:16])  # HH:MM
+        parts.append(line["timestamp"][11:13])  # HH
     if not options.message_only and line.get("level"):
         parts.append(line["level"])
     if not options.message_only and options.include_thread and line.get("thread"):
@@ -137,6 +191,7 @@ def _normalize_message(message: str, strip_context: bool = False) -> str:
     text = _TIMESTAMP_RE.sub('<TS>', text)
     text = _STRING_RE.sub('<S>', text)
     text = _HEX_RE.sub('<HEX>', text)
+    text = _UNDERSCORE_NUM_RE.sub('<N>', text)
     text = _NUMERIC_RE.sub('<N>', text)
     # Collapse whitespace
     text = re.sub(r'\s+', ' ', text)

@@ -156,3 +156,93 @@ def _iter_lines(path: Path, file: TextIO) -> Iterator[LogLine]:
     resolved = str(path.resolve())
     for line_no, line in enumerate(file, start=1):
         yield LogLine(file_path=resolved, line_no=line_no, raw=line.rstrip("\n"))
+
+
+def read_log_lines_from_zip_streaming(zip_path: Path) -> Iterator[LogLine]:
+    """Stream log lines directly from a ZIP archive without extractall.
+
+    Uses zf.open() for DEFLATE streaming — no disk writes, no full entry loading.
+    Supports nested ZIPs (ZIP containing other ZIPs) by loading inner ZIPs into memory.
+    Supports .gz members via BytesIO+gzip.GzipFile buffer.
+    Supports .log/.txt/.out/.err members via zf.open()+TextIOWrapper.
+
+    Args:
+        zip_path: Path to the ZIP file.
+
+    Yields:
+        LogLine objects with file_path, line_no, raw.
+    """
+    import io
+
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        for info in zf.infolist():
+            name_lower = info.filename.lower()
+
+            # Skip directories
+            if name_lower.endswith("/"):
+                continue
+
+            if name_lower.endswith(".zip"):
+                # Nested ZIP: load into memory and recurse
+                # (acceptable since nested ZIPs in log bundles are typically small-ish)
+                try:
+                    nested_bytes = zf.read(info.filename)
+                    nested_path = Path(info.filename)
+                    yield from _read_nested_zip_streaming(nested_bytes, nested_path)
+                except Exception:
+                    # Skip invalid nested ZIPs
+                    continue
+
+            elif name_lower.endswith(".gz"):
+                # Gzip inside ZIP: buffer approach
+                buf = io.BytesIO(zf.read(info.filename))
+                with gzip.GzipFile(fileobj=buf, mode="rb") as gz:
+                    yield from _iter_lines_gzip_streaming(Path(info.filename), gz)
+
+            elif any(name_lower.endswith(ext) for ext in (".log", ".txt", ".out", ".err")):
+                # Plain log in ZIP: use zf.open() + TextIOWrapper for line-by-line streaming
+                with zf.open(info) as raw_member:
+                    text_wrapper = io.TextIOWrapper(raw_member, encoding="utf-8", errors="replace")
+                    yield from _iter_lines_streaming(Path(info.filename), text_wrapper)
+
+
+def _read_nested_zip_streaming(nested_bytes: bytes, nested_path: Path) -> Iterator[LogLine]:
+    """Process a nested ZIP loaded from bytes, yielding log lines recursively."""
+    import io
+
+    try:
+        with zipfile.ZipFile(io.BytesIO(nested_bytes), "r") as nested_zf:
+            for info in nested_zf.infolist():
+                name_lower = info.filename.lower()
+                if name_lower.endswith("/"):
+                    continue
+                if name_lower.endswith(".gz"):
+                    buf = io.BytesIO(nested_zf.read(info.filename))
+                    with gzip.GzipFile(fileobj=buf, mode="rb") as gz:
+                        yield from _iter_lines_gzip_streaming(nested_path / info.filename, gz)
+                elif name_lower.endswith(".zip"):
+                    try:
+                        inner_bytes = nested_zf.read(info.filename)
+                        yield from _read_nested_zip_streaming(inner_bytes, nested_path / info.filename)
+                    except Exception:
+                        continue
+                elif any(name_lower.endswith(ext) for ext in (".log", ".txt", ".out", ".err")):
+                    with nested_zf.open(info) as raw_member:
+                        text_wrapper = io.TextIOWrapper(raw_member, encoding="utf-8", errors="replace")
+                        yield from _iter_lines_streaming(nested_path / info.filename, text_wrapper)
+    except Exception:
+        pass
+
+
+def _iter_lines_gzip_streaming(path: Path, gzip_file) -> Iterator[LogLine]:
+    """Yield LogLine from a gzip file object."""
+    resolved = str(path.resolve())
+    for line_no, line in enumerate(gzip_file, start=1):
+        yield LogLine(file_path=resolved, line_no=line_no, raw=line.rstrip("\n"))
+
+
+def _iter_lines_streaming(path: Path, file: TextIO) -> Iterator[LogLine]:
+    """Yield LogLine from a text file object."""
+    resolved = str(path.resolve())
+    for line_no, line in enumerate(file, start=1):
+        yield LogLine(file_path=resolved, line_no=line_no, raw=line.rstrip("\n"))
