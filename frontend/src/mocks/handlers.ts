@@ -28,6 +28,18 @@ export const handlers = [
       diagnosis: 'Database connection pool exhausted.',
     });
   }),
+  http.post('/api/diagnosis/export-bugfix-prompt', async ({ request }) => {
+    const body = await request.json() as { task_id: string };
+    if (!body.task_id) {
+      return HttpResponse.json({ detail: 'task_id required' }, { status: 400 });
+    }
+    return HttpResponse.json({
+      success: true,
+      task_id: body.task_id,
+      output_path: `data/output/${body.task_id}/bugfix-prompt.md`,
+      prompt: `# Bugfix Prompt for ${body.task_id}\n\n## Problem Summary\n- Example bugfix prompt generated for ${body.task_id}`,
+    });
+  }),
 
   // source APIs
   http.post('/api/source/check', async ({ request }) => {

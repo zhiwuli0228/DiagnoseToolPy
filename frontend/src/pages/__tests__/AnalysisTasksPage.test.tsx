@@ -24,11 +24,17 @@ describe('AnalysisTasksPage', () => {
     expect(screen.getByPlaceholderText(/enter directory path/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /check directory/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /scan directory/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /analysisTasks\.generateBugfixPrompt/i })).toBeInTheDocument();
   });
 
   it('scan button is disabled when input is empty', () => {
     renderWithRouter(<AnalysisTasksPage />);
     expect(screen.getByRole('button', { name: /scan directory/i })).toBeDisabled();
+  });
+
+  it('bugfix prompt button is disabled until a cluster task exists', () => {
+    renderWithRouter(<AnalysisTasksPage />);
+    expect(screen.getByRole('button', { name: /analysisTasks\.generateBugfixPrompt/i })).toBeDisabled();
   });
 
   it('shows success result when directory is allowed', async () => {
@@ -86,8 +92,6 @@ describe('AnalysisTasksPage', () => {
 
   describe('Degraded Dialog', () => {
     it('shows degraded modal when cluster diagnosis returns degraded response', async () => {
-      const user = userEvent.setup();
-
       // Override the cluster diagnosis endpoint to return degraded response
       server.use(
         http.post('/api/diagnosis/cluster', () =>
@@ -113,12 +117,8 @@ describe('AnalysisTasksPage', () => {
 
   describe('Export Workspace', () => {
     it('export-workspace API is called with correct parameters', async () => {
-      const user = userEvent.setup();
-
-      let exportRequestBody: unknown = null;
       server.use(
-        http.post('/api/diagnosis/export-workspace', async ({ request }) => {
-          exportRequestBody = await request.json();
+        http.post('/api/diagnosis/export-workspace', async () => {
           return HttpResponse.json({
             success: true,
             workspace_dir: '/test/workspace',

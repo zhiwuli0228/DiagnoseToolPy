@@ -27,6 +27,17 @@ export interface PreviewPromptResponse {
   prompt: string;
 }
 
+export interface BugfixPromptExportRequest {
+  task_id: string;
+}
+
+export interface BugfixPromptExportResponse {
+  success: boolean;
+  task_id: string;
+  output_path: string;
+  prompt: string;
+}
+
 export interface ExportWorkspaceResponse {
   success: boolean;
   workspace_dir: string;
@@ -116,6 +127,21 @@ export async function exportWorkspace(request: ExportWorkspaceRequest): Promise<
 
 export async function previewPrompt(request: PreviewPromptRequest): Promise<PreviewPromptResponse> {
   const response = await fetch('/api/diagnosis/preview-prompt', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ detail: 'Unknown error' }));
+    throw new Error(err.detail || `HTTP ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function exportBugfixPrompt(
+  request: BugfixPromptExportRequest,
+): Promise<BugfixPromptExportResponse> {
+  const response = await fetch('/api/diagnosis/export-bugfix-prompt', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request),

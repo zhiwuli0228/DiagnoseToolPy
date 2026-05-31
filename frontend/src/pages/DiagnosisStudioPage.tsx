@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Row, Col, Card, Typography, Button, message, Alert, List, Tag, Space, Modal, ModalProps } from 'antd';
+import { Row, Col, Card, Typography, Button, message, Alert, List, Tag, Space, Modal } from 'antd';
 import { ThunderboltOutlined, DeleteOutlined, FolderOpenOutlined, CopyOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useSession } from '../hooks/useSession';
@@ -12,7 +12,7 @@ import {
   endConversation,
   getConversation,
 } from '../api/conversationApi';
-import { exportWorkspace, previewPrompt, isDegradedResponse, type DegradedResponse } from '../api/diagnosisApi';
+import { exportWorkspace, previewPrompt, exportBugfixPrompt, isDegradedResponse, type DegradedResponse } from '../api/diagnosisApi';
 import type {
   ConversationTurn,
   ConversationStartResponse,
@@ -42,13 +42,18 @@ function DiagnosisStudioPage() {
   // Workspace export state
   const [workspaceDir, setWorkspaceDir] = useState<string | null>(null);
   const [exportSuccess, setExportSuccess] = useState(false);
-  const [exportedPrompt, setExportedPrompt] = useState<string | null>(null);
   const [degradedModalOpen, setDegradedModalOpen] = useState(false);
   const [degradedInfo, setDegradedInfo] = useState<DegradedResponse | null>(null);
 
   // Preview prompt state
   const [previewPromptModalOpen, setPreviewPromptModalOpen] = useState(false);
   const [previewPromptContent, setPreviewPromptContent] = useState<string | null>(null);
+
+  // Bugfix prompt state
+  const [bugfixPromptModalOpen, setBugfixPromptModalOpen] = useState(false);
+  const [bugfixPromptContent, setBugfixPromptContent] = useState<string | null>(null);
+  const [bugfixPromptPath, setBugfixPromptPath] = useState<string | null>(null);
+  const [bugfixPromptTaskId, setBugfixPromptTaskId] = useState<string | null>(null);
 
   // Directory picker ref and state
   const directoryInputRef = useRef<HTMLInputElement>(null);
@@ -115,7 +120,7 @@ function DiagnosisStudioPage() {
         okText: t('analysisTasks.import'),
         cancelText: t('analysisTasks.ignore'),
         onOk: () => {
-          handleImportResult(resultContent);
+          handleImportResult();
           resetResultDetection();
         },
         onCancel: () => {
@@ -208,6 +213,8 @@ function DiagnosisStudioPage() {
 
   const handleDegradedResponse = (degraded: DegradedResponse) => {
     setDegradedInfo(degraded);
+    const taskId = degraded.workspace_export_options?.task_id;
+    setBugfixPromptTaskId(typeof taskId === 'string' ? taskId : null);
     setDegradedModalOpen(true);
   };
 
@@ -244,13 +251,6 @@ function DiagnosisStudioPage() {
     setLoading(true);
 
     try {
-      const evidenceRefs = selections.map(sel => {
-        if (sel.type === 'log' && sel.id) return sel.id;
-        if (sel.type === 'group' && sel.group_key) return sel.group_key;
-        if (sel.type === 'cluster' && sel.cluster_index !== undefined) return `cluster:${sel.cluster_index}`;
-        return '';
-      }).filter(Boolean);
-
       const result = await exportWorkspace({
         session_id: currentSessionId || undefined,
         workspace_dir: dir,
@@ -272,29 +272,71 @@ function DiagnosisStudioPage() {
     }
   };
 
-  const handleCopyPrompt = async () => {
-    if (!exportedPrompt) {
-      // Try to fetch the prompt.md content
-      try {
-        const response = await fetch(`/api/diagnosis/export-workspace?workspace_dir=${encodeURIComponent(workspaceDir || '')}`);
-        // This won't work as-is, need a separate endpoint
-      } catch {
-        // Fallback - just show success
-      }
+  const handleGenerateBugfixPrompt = async () => {
+    if (!bugfixPromptTaskId) {
+      message.warning(t('analysisTasks.noBugfixPromptTask'));
+      return;
     }
-    message.info(t('analysisTasks.copyPromptManual'));
+
+    setLoading(true);
+
+    try {
+      const result = await exportBugfixPrompt({ task_id: bugfixPromptTaskId });
+      setBugfixPromptContent(result.prompt);
+      setBugfixPromptPath(result.output_path);
+      setBugfixPromptModalOpen(true);
+      message.success(t('analysisTasks.bugfixPromptGenerated'));
+    } catch (err: unknown) {
+      message.error(err instanceof Error ? err.message : t('analysisTasks.bugfixPromptExportFailed'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCopyBugfixPrompt = async () => {
+    if (!bugfixPromptContent) {
+      return;
+    }
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(bugfixPromptContent);
+        message.success(t('analysisTasks.copyBugfixPromptSuccess'));
+      } else {
+        message.info(t('analysisTasks.copyBugfixPromptManual'));
+      }
+    } catch {
+      message.info(t('analysisTasks.copyBugfixPromptManual'));
+    }
+  };
+
+  const handleCopyPrompt = async () => {
+    if (!previewPromptContent) {
+      message.info(t('analysisTasks.copyPromptManual'));
+      return;
+    }
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(previewPromptContent);
+        message.success(t('analysisTasks.copyPromptSuccess'));
+      } else {
+        message.info(t('analysisTasks.copyPromptManual'));
+      }
+    } catch {
+      message.info(t('analysisTasks.copyPromptManual'));
+    }
   };
 
   const handleCheckResult = async () => {
     const content = await checkNow();
     if (content) {
-      handleImportResult(content);
+      handleImportResult();
     } else {
       message.info(t('analysisTasks.resultNotDetected'));
     }
   };
 
-  const handleImportResult = (content: string) => {
+  const handleImportResult = () => {
     // For now, just show the result - in full implementation would save to case
     message.success(t('analysisTasks.importSuccess'));
     setExportSuccess(false);
@@ -310,7 +352,11 @@ function DiagnosisStudioPage() {
     setDegradedModalOpen(false);
 
     try {
-      const options = degradedInfo.workspace_export_options;
+      const options = degradedInfo?.workspace_export_options;
+      if (!options) {
+        message.error(t('analysisTasks.exportFailed'));
+        return;
+      }
       const result = await exportWorkspace({
         session_id: options.session_id as string | undefined,
         task_id: options.task_id as string | undefined,
@@ -462,6 +508,10 @@ function DiagnosisStudioPage() {
     setCurrentSessionId(null);
     setExportSuccess(false);
     setWorkspaceDir(null);
+    setBugfixPromptModalOpen(false);
+    setBugfixPromptContent(null);
+    setBugfixPromptPath(null);
+    setBugfixPromptTaskId(null);
     clearSelections();
     setShowConversation(false);
     createSession();
@@ -502,6 +552,7 @@ function DiagnosisStudioPage() {
       <input
         ref={directoryInputRef}
         type="file"
+        // @ts-expect-error webkitdirectory is a supported non-standard attribute
         webkitdirectory="webkitdirectory"
         style={{ display: 'none' }}
         onChange={handleDirectorySelect}
@@ -525,6 +576,14 @@ function DiagnosisStudioPage() {
           </Button>,
           <Button key="export" icon={<FolderOpenOutlined />} onClick={handleExportFromDegraded}>
             {t('analysisTasks.exportWorkspace')}
+          </Button>,
+          <Button
+            key="bugfix"
+            icon={<FolderOpenOutlined />}
+            onClick={handleGenerateBugfixPrompt}
+            disabled={!bugfixPromptTaskId}
+          >
+            {t('analysisTasks.generateBugfixPrompt')}
           </Button>,
         ]}
       >
@@ -552,6 +611,14 @@ function DiagnosisStudioPage() {
           <Button key="copy" icon={<CopyOutlined />} onClick={handleCopyPrompt}>
             {t('analysisTasks.copyPrompt')}
           </Button>,
+          <Button
+            key="bugfix"
+            icon={<FolderOpenOutlined />}
+            onClick={handleGenerateBugfixPrompt}
+            disabled={!bugfixPromptTaskId}
+          >
+            {t('analysisTasks.generateBugfixPrompt')}
+          </Button>,
         ]}
       >
         <Alert
@@ -566,6 +633,40 @@ function DiagnosisStudioPage() {
           type="success"
           showIcon
         />
+      </Modal>
+
+      {/* Bugfix Prompt Modal */}
+      <Modal
+        title={t('analysisTasks.bugfixPromptPreview')}
+        open={bugfixPromptModalOpen}
+        onCancel={() => setBugfixPromptModalOpen(false)}
+        width={900}
+        footer={[
+          <Button key="close" onClick={() => setBugfixPromptModalOpen(false)}>
+            {t('analysisTasks.close')}
+          </Button>,
+          <Button key="copy" type="primary" icon={<CopyOutlined />} onClick={handleCopyBugfixPrompt}>
+            {t('analysisTasks.copyBugfixPrompt')}
+          </Button>,
+        ]}
+      >
+        <Alert
+          message={t('analysisTasks.bugfixPromptGenerated')}
+          description={
+            <div>
+              <p>{t('analysisTasks.bugfixPromptTaskId')}: {bugfixPromptTaskId}</p>
+              <p>{t('analysisTasks.bugfixPromptPath')}: {bugfixPromptPath}</p>
+            </div>
+          }
+          type="success"
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
+        <div style={{ maxHeight: '60vh', overflow: 'auto' }}>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12 }}>
+            {bugfixPromptContent}
+          </pre>
+        </div>
       </Modal>
 
       {/* Preview Prompt Modal */}
@@ -717,6 +818,16 @@ function DiagnosisStudioPage() {
                 style={{ width: '100%', height: 48 }}
               >
                 {t('diagnosis.previewPrompt')}
+              </Button>
+              <Button
+                size="large"
+                icon={<FolderOpenOutlined />}
+                onClick={handleGenerateBugfixPrompt}
+                loading={loading}
+                disabled={!bugfixPromptTaskId}
+                style={{ width: '100%', height: 48 }}
+              >
+                {t('analysisTasks.generateBugfixPrompt')}
               </Button>
             </Space>
           </Col>
