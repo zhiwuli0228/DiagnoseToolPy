@@ -8,6 +8,17 @@ schema: superspec
 #     Tech stack: TypeScript, React, Node.js
 #     We use conventional commits
 #     Domain: e-commerce platform
+context: |
+  DiagnoseToolPy is a lightweight web-based diagnostic assistant for system stability work.
+  Stack: Python 3.11+, uv, FastAPI backend, and a React/TypeScript frontend.
+  AGENTS.md is the canonical project-level agent entry; docs/README.md routes task-specific reading.
+  File system is the source of truth; durable artifacts use Markdown, YAML, JSON, JSONL, HTML, or plain text.
+  Local indexes are rebuildable caches, not durable truth; mandatory external databases are prohibited.
+  Primary workflow is server-side directory scanning and streaming log analysis; browser upload is optional for small files.
+  Large logs must be streamed line by line; never load entire files into memory.
+  Retrieval must work without embeddings; default matching uses keywords, rules, and BM25 when available.
+  AI diagnosis is assistive; preserve human-confirmed root cause, review, lessons learned, and follow-up fields.
+  OpenSpec artifacts should stay aligned with the authoritative governance docs; avoid scope creep into unrelated assets.
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
@@ -18,3 +29,42 @@ schema: superspec
 #       - Always include a "Non-goals" section
 #     tasks:
 #       - Break tasks into chunks of max 2 hours
+rules:
+  brainstorm:
+    - Read the authoritative governance docs first and isolate the exact capability under change.
+    - Separate durable behavior changes from implementation-only work; state non-goals and out-of-scope items.
+    - Do not expand into unrelated refactors or infrastructure adoption.
+  proposal:
+    - Include problem, goal, scope, out of scope, affected modules, storage impact, risks, and verification.
+    - List only capabilities actually changed and keep the proposal concise and testable.
+    - If storage contracts change, name the affected files and describe rebuild behavior.
+  design:
+    - Preserve file-system source of truth, no mandatory database, and streaming-first log handling.
+    - Keep module boundaries explicit and avoid undocumented dependencies between analyzer, casebase, retrieval, and API layers.
+    - Cover failure handling, memory behavior, and any security-relevant path or directory constraints.
+  specs:
+    - Use MUST and MUST NOT language with at least one scenario per requirement, including failure scenarios when relevant.
+    - Describe observable behavior only; do not encode implementation internals.
+    - If files are written, specify names, paths, overwrite behavior, and rebuild behavior.
+  tasks:
+    - Keep tasks small, dependency-ordered, and individually verifiable.
+    - Each task should identify files, behavior, tests, and validation steps.
+    - Update durable docs, including current-state, only when an approved change alters long-term capabilities, architecture boundaries, operations contracts, or recorded limitations.
+  plan:
+    - Break work into micro-steps with exact paths and validation checkpoints.
+    - Prefer test-first execution where feasible and stop if new out-of-scope work appears.
+    - Keep the plan focused on the active change only.
+  apply:
+    - Implement only approved paths and record any deviation before proceeding.
+    - Keep work constrained to the active change and avoid unrelated refactors or scope expansion.
+    - Preserve evidence of tests and task completion in the apply receipt.
+    - "Do not execute real business implementation through SuperSpec apply until Phase 3 approves the implementation tool, Superpowers availability, worktree behavior, review discipline, and Git-safety prerequisites for this repository."
+  verify:
+    - Run structural validation and confirm task completion, scope compliance, and spec coherence.
+    - Fail on unauthorized file changes or missing durable-asset updates.
+    - Do not recommend finalize while a blocking issue remains.
+  finalize:
+    - Close out only after verify passes and repository-specific Git safety prerequisites are approved.
+    - Do not broaden merge, push, cleanup, or PR actions beyond the active change and approved workflow.
+    - Record the final outcome and evidence for archive and human review.
+    - "Do not execute Git/PR closeout through SuperSpec finalize until Phase 3 approves repository-specific merge, push, worktree cleanup, and pull-request safety prerequisites."
