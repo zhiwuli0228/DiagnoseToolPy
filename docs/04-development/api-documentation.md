@@ -446,6 +446,39 @@ Export complete diagnostic workspace to a user-specified directory for manual di
 
 ---
 
+### POST /api/diagnosis/export-bugfix-prompt
+
+Generate a structured bugfix prompt markdown artifact from an existing analysis task output.
+
+**Request:**
+```json
+{
+  "task_id": "string"
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "task_id": "string",
+  "output_path": "data/output/{task_id}/bugfix-prompt.md",
+  "prompt": "string (markdown)"
+}
+```
+
+**Behavior:**
+- Reads existing task output artifacts such as `task.yaml`, `evidence-pack.md`, `case-draft.md`, and `retrieval-query.json`.
+- Writes `data/output/{task_id}/bugfix-prompt.md` atomically.
+- Overwrites the existing bugfix prompt deterministically on regeneration.
+- Does not load raw log files into memory.
+
+**Errors:**
+- `404`: Task output directory or required artifact not found
+- `400`: Invalid task output or write failure
+
+---
+
 ### GET /api/diagnosis/check-result
 
 Check if `result.md` exists in workspace directory and validate content.

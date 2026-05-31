@@ -19,6 +19,17 @@ Use workspace export when:
 4. Enter the workspace directory path when prompted
 5. The system exports the workspace and shows success dialog
 
+### Bugfix Prompt Export
+
+When you have an existing analysis task output and want to hand a structured implementation brief to Claude Code or OpenCode:
+
+1. Open the Analysis Tasks page and finish clustering or another task that produces `data/output/{task_id}`.
+2. Click **Generate Bugfix Prompt**.
+3. Review the generated `data/output/{task_id}/bugfix-prompt.md` content.
+4. Copy the prompt into the implementation agent, or inspect the file directly in the data directory.
+
+The bugfix prompt is generated from task artifacts such as `task.yaml`, `evidence-pack.md`, `case-draft.md`, and `retrieval-query.json`. It is deterministic and can be regenerated safely.
+
 ### From Degraded Dialog
 
 When AI diagnosis returns a degraded response:
@@ -94,3 +105,12 @@ Click "Check Result" button in the export success dialog to immediately check fo
 4. Complete your diagnosis in `result.md`
 5. Save the file
 6. Return to DiagnoseToolPy and import the result
+
+## Using Bugfix Prompt Export
+
+If you already have a completed analysis task and want a fix-oriented brief:
+
+1. Use the Analysis Tasks page to generate the bugfix prompt.
+2. Open `data/output/{task_id}/bugfix-prompt.md`.
+3. Pass the prompt to Claude Code or OpenCode for implementation.
+4. Keep the prompt and the analysis artifacts together so future reviews can trace the rationale.

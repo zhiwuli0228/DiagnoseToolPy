@@ -4,7 +4,7 @@ This file is the **project continuity snapshot**. Update it after every complete
 
 ## Current Phase
 
-V0.3 AI Diagnosis Integration implemented. Remaining: full UI business features.
+V0.4 Bugfix Prompt Export pilot implemented. Remaining: test suggestion export and monitoring suggestion export.
 
 ## Implemented
 
@@ -48,6 +48,7 @@ V0.3 AI Diagnosis Integration implemented. Remaining: full UI business features.
 - [x] Evidence cache with context (matched-lines.jsonl)
 - [x] Smart evidence compression module
 - [x] Cluster matched lines retrieval API
+- [x] Bugfix prompt generation export
 
 ## Current Constraints
 
@@ -73,7 +74,6 @@ DiagnoseToolPy/
 
 ## Known Gaps
 
-- Bugfix prompt generation not implemented.
 - Test suggestion generation not implemented.
 - Monitoring suggestion generation not implemented.
 - Vector retrieval not implemented.
@@ -84,6 +84,6 @@ DiagnoseToolPy/
 
 1. Implement complete log analysis UI.
 2. Implement complete case management UI.
-3. Implement bugfix prompt generation (V0.3 extended).
-4. Implement test suggestion generation (V0.3 extended).
-5. Implement monitoring suggestion generation (V0.3 extended).
+3. Implement test suggestion generation (V0.4 extended).
+4. Implement monitoring suggestion generation (V0.4 extended).
+5. Extend the bugfix prompt export pattern to additional assistant-ready artifacts if needed.
