@@ -22,3 +22,22 @@ build/
 .opencode/
 .vscode/
 .ruff_cache/
+
+# Playwright MCP logs
+.playwright-mcp/
+
+# Analysis output (task results, temp data)
+data/output/
+data/temp/
+data/indexes/bm25/corpus.jsonl
+
+# Screenshots and page logs from testing
+*.png
+*.yml
+
+# Local claude settings
+.claude/settings.json
+.claude/settings.local.json
+
+# Rectification docs
+docs/rectification/
