@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Provide local retrieval over existing fault cases without embeddings, using keywords, rules, and optional BM25 while keeping historical cases reference-only.
+
+## Requirements
 
 ### Requirement: Retrieval Query Builder
 The retrieval module SHALL provide a query builder that creates a retrieval query from analyzer output or retrieval-query.json.
