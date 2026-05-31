@@ -30,9 +30,6 @@
 - `frontend/src/pages/__tests__/DiagnosisStudioPage.test.tsx`
 - `tests/test_bugfix_prompt_exporter.py`
 - `tests/test_diagnosis_api.py`
-- `docs/00-project/current-state.md`
-- `docs/04-development/api-documentation.md`
-- `docs/05-domain/workspace-export-guide.md`
 - `openspec/changes/2026-05-31-bugfix-prompt-export/tasks.md`
 
 ## Implementation Notes
@@ -41,4 +38,3 @@
 - The API returns a safe prompt preview plus the output path.
 - The UI exposes generation/preview actions without requiring raw log reads in memory.
 - The prompt content preserves AI diagnosis as preliminary and highlights human confirmation requirements.
-
