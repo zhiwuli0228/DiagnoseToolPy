@@ -1,0 +1,8 @@
+[     125ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/chunk-FD5SMSK5.js?v=663fd24c:21608
+[     205ms] [ERROR] Warning: [antd: Input] `addonAfter` is deprecated. Please use `Space.Compact` instead. @ http://localhost:5173/node_modules/.vite/deps/chunk-L6C7PLMZ.js?v=663fd24c:1247
+[     260ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=663fd24c:4435
+[     260ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=663fd24c:4435
+[     312ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5173/api/diagnosis/conversation/c1dedc17-4fae-4f33-8a02-3b6cf352ece7:0
+[     330ms] [WARNING] Failed to load conversation: Error: Session not found
+    at getConversation (http://localhost:5173/src/api/conversationApi.ts?t=1779618084690:66:11)
+    at async loadConversation (http://localhost:5173/src/pages/DiagnosisStudioPage.tsx?t=1779623260968:123:23) @ http://localhost:5173/src/pages/DiagnosisStudioPage.tsx?t=1779623260968:136

@@ -1,0 +1,54 @@
+- generic [ref=e3]:
+  - complementary:
+    - generic:
+      - generic: DiagnoseToolPy
+      - menu:
+        - menuitem "dashboard Dashboard":
+          - img "dashboard" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e12] [cursor=pointer]: Dashboard
+        - menuitem "file-search Analysis Tasks":
+          - img "file-search" [ref=e14] [cursor=pointer]:
+            - img [ref=e15]
+          - generic [ref=e17] [cursor=pointer]: Analysis Tasks
+        - menuitem "folder Casebase":
+          - img "folder" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+          - generic [ref=e22] [cursor=pointer]: Casebase
+        - menuitem "setting Settings":
+          - img "setting" [ref=e24] [cursor=pointer]:
+            - img [ref=e25]
+          - generic [ref=e27] [cursor=pointer]: Settings
+    - img "bars" [ref=e29] [cursor=pointer]:
+      - img [ref=e30]
+  - generic [ref=e32]:
+    - banner [ref=e33]:
+      - button "global EN" [ref=e90] [cursor=pointer]:
+        - img "global" [ref=e36]:
+          - img [ref=e37]
+        - generic [ref=e39]: EN
+      - button "robot" [ref=e41] [cursor=pointer]:
+        - img "robot" [ref=e43]:
+          - img [ref=e44]
+    - main [ref=e46]:
+      - generic [ref=e48]:
+        - heading "Dashboard" [level=1] [ref=e49]
+        - generic [ref=e50]:
+          - generic [ref=e53] [cursor=pointer]:
+            - img "file-search" [ref=e55]:
+              - img [ref=e56]
+            - generic [ref=e59]:
+              - generic [ref=e60]: Analysis Tasks
+              - generic [ref=e61]: Scan server directories and analyze log files
+          - generic [ref=e64] [cursor=pointer]:
+            - img "folder" [ref=e66]:
+              - img [ref=e67]
+            - generic [ref=e70]:
+              - generic [ref=e71]: Casebase
+              - generic [ref=e72]: Browse and manage fault cases
+          - generic [ref=e75] [cursor=pointer]:
+            - img "setting" [ref=e77]:
+              - img [ref=e78]
+            - generic [ref=e81]:
+              - generic [ref=e82]: Settings
+              - generic [ref=e83]: Configure input roots and application settings

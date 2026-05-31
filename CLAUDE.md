@@ -14,6 +14,46 @@ DiagnoseToolPy is a lightweight Web-based diagnostic assistant for system stabil
 - **Testing**: pytest + pytest-cov (backend), Vitest (frontend)
 - **Linting**: ruff (backend)
 
+# Frontend E2E Verification Rule
+
+## Goal
+
+When fixing frontend bugs, Claude Code must not rely only on static code analysis. It must verify the issue in a real browser whenever the frontend can be started locally.
+
+## Required workflow
+
+For every frontend UI bug fix:
+
+1. Understand the reported user path.
+2. Start the frontend dev server if it is not running.
+3. Use Playwright MCP to open the target page.
+4. Reproduce the issue through real browser interaction.
+5. Inspect:
+   - visible UI state
+   - DOM / accessibility snapshot
+   - browser console errors
+   - network failures if relevant
+6. Apply the minimal code fix.
+7. Re-run the same browser path.
+8. Capture evidence:
+   - final page state
+   - screenshot when useful
+   - console status
+   - test result
+9. If the bug is reproducible, add or update a Playwright E2E test.
+10. Do not mark the task complete until browser verification passes or the reason verification is impossible is explicitly stated.
+
+## Verification output format
+
+At the end of the task, report:
+
+- Reproduction path
+- Root cause
+- Code changes
+- Browser verification result
+- Screenshot / trace / test evidence if available
+- Remaining risk
+
 ## Common Commands
 
 ### Backend (from project root)
@@ -62,14 +102,14 @@ Web UI (React) → FastAPI API → Service Modules → File-based Storage
 
 ### Backend Modules (`diagnose_tool/`)
 
-| Module | Purpose | Notes |
-|--------|---------|-------|
-| `api/` | FastAPI route handlers | Thin layer - validation, formatting, calling services |
-| `core/` | Config loading, path security, shared models | No business logic |
-| `analyzer/` | Log analysis: scanning, parsing, classification, sampling | **Must be independent from FastAPI** |
-| `casebase/` | Case lifecycle: write `case.md`/`metadata.yaml`, maintain index | File-based |
-| `retrieval/` | Similar case search via keywords, rules, BM25 | Works without embeddings by default |
-| `exporter/` | Export formats: Markdown, JSONL, ZIP, bugfix prompts | |
+| Module       | Purpose                                                         | Notes                                                 |
+| ------------ | --------------------------------------------------------------- | ----------------------------------------------------- |
+| `api/`       | FastAPI route handlers                                          | Thin layer - validation, formatting, calling services |
+| `core/`      | Config loading, path security, shared models                    | No business logic                                     |
+| `analyzer/`  | Log analysis: scanning, parsing, classification, sampling       | **Must be independent from FastAPI**                  |
+| `casebase/`  | Case lifecycle: write `case.md`/`metadata.yaml`, maintain index | File-based                                            |
+| `retrieval/` | Similar case search via keywords, rules, BM25                   | Works without embeddings by default                   |
+| `exporter/`  | Export formats: Markdown, JSONL, ZIP, bugfix prompts            |                                                       |
 
 ### Frontend Structure (`frontend/src/`)
 
@@ -124,5 +164,72 @@ Complex log headers must be parsed with regex + balanced bracket scanner:
 ## Frontend-Backend Communication
 
 - Vite dev server proxies `/api` → `http://localhost:18080` (avoids CORS)
-- Frontend calls `/api/source/check`, `/api/source/scan`, `/api/diagnosis/*`, `/api/cases/*`
+- Frontend calls `/api/source/check`, `/api/source/scan`, `/api/diagnosis/*`, `/api/cases/*`, `/api/cluster`
 - API routes in `diagnose_tool/api/routes_*.py`
+
+### Cluster Analysis API
+
+| Endpoint                 | Method | Purpose                                               |
+| ------------------------ | ------ | ----------------------------------------------------- |
+| `/api/cluster`           | POST   | Create async clustering task, returns `task_id`       |
+| `/api/cluster/{task_id}` | GET    | Poll task progress/status, returns clusters when done |
+
+### Conversational Diagnosis API
+
+| Endpoint                                            | Method | Purpose                                   |
+| --------------------------------------------------- | ------ | ----------------------------------------- |
+| `/api/diagnosis/conversation`                       | POST   | Create/continue diagnosis conversation    |
+| `/api/diagnosis/conversation/{session_id}`          | GET    | Get conversation state and history        |
+| `/api/diagnosis/conversation/{session_id}/continue` | POST   | Continue with user's reply                |
+| `/api/diagnosis/conversation/{session_id}/skip`     | POST   | Skip follow-up, force diagnosis           |
+| `/api/diagnosis/conversation/{session_id}/end`      | POST   | End conversation, trigger quality scoring |
+
+**Request/Response Models:**
+- `UserContextModel`: `phenomenon`, `stack`, `params` (user-provided context)
+- `ConversationStartRequest`: `session_id`, `user_context`, `evidence_refs`, `mode`, `max_follow_up_rounds`
+- `ConversationStartResponse`: `session_id`, `is_new_session`, `turn_id`, `state`, `ai_question`, `ai_diagnosis`
+- `EndConversationResponse`: `session_id`, `quality_score`, `case_id`, `is_draft`, `diagnosis`
+
+**Session Storage**: Sessions stored in `data/sessions/{session_id}/` with `metadata.yaml` and `conversation/turn-*.json` files.
+
+### Workspace Export API
+
+| Endpoint                          | Method | Purpose                                                 |
+| --------------------------------- | ------ | ------------------------------------------------------- |
+| `/api/diagnosis/export-workspace` | POST   | Export workspace to user directory for manual diagnosis |
+| `/api/diagnosis/check-result`     | GET    | Poll for result.md in exported workspace                |
+
+**Workspace Export Flow:**
+1. User clicks "Preview Prompt" button in DiagnosisStudio, Search, or Cluster views
+2. System prompts for workspace directory path
+3. `POST /api/diagnosis/export-workspace` creates directory structure with:
+   - `README.md` - Instructions for manual diagnosis
+   - `prompt.md` - Pre-filled diagnosis prompt with evidence
+   - `context/phenomenon.md`, `stack.md`, `params.md` - User context
+   - `logs/evidence-pack.md` - Compressed log evidence
+   - `cases/` - Up to 3 similar historical cases
+4. User opens workspace in OpenCode, completes diagnosis, saves as `result.md`
+5. System polls `GET /api/diagnosis/check-result` for result
+6. Valid result is imported as diagnosis
+
+**ExportWorkspaceRequest:**
+```json
+{
+  "task_id": "optional - export from analysis task",
+  "session_id": "optional - export from conversation session",
+  "cache_key": "optional - export from search/cluster cache",
+  "workspace_dir": "required - user-selected directory",
+  "user_context": {"phenomenon": "", "stack": "", "params": ""},
+  "selections": [{"type": "log|group|cluster", "id": "", "group_key": "", "cluster_index": 0}]
+}
+```
+
+**Degraded Response (503):** When LLM is unavailable, API returns degraded response with `workspace_export_url` and `workspace_export_options` to guide user to workspace export flow.
+
+### Result Detection
+
+The `useResultDetection` hook handles polling for `result.md` in exported workspace:
+- 5-second polling interval
+- 30-minute timeout
+- localStorage persistence for page reload recovery
+- Validates result.md content (not empty, >100 chars, not prompt template)

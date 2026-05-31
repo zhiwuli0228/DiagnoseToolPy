@@ -1,0 +1,108 @@
+2026-05-05 10:20:00.451 [common-worker-1] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00000, cost=63ms, traceId=TRACE-MYSERVICE2-COMMON-0000
+2026-05-05 10:20:02.380 [common-worker-2] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00001, cost=75ms, traceId=TRACE-MYSERVICE2-COMMON-0001
+2026-05-05 10:20:04.717 [common-worker-3] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00002, cost=17ms, traceId=TRACE-MYSERVICE2-COMMON-0002
+2026-05-05 10:20:06.047 [common-worker-4] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00003, cost=26ms, traceId=TRACE-MYSERVICE2-COMMON-0003
+2026-05-05 10:20:08.759 [common-worker-1] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00004, cost=41ms, traceId=TRACE-MYSERVICE2-COMMON-0004
+2026-05-05 10:20:10.652 [common-worker-2] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00005, cost=79ms, traceId=TRACE-MYSERVICE2-COMMON-0005
+2026-05-05 10:20:12.790 [common-worker-3] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00006, cost=62ms, traceId=TRACE-MYSERVICE2-COMMON-0006
+2026-05-05 10:20:14.563 [common-worker-4] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00007, cost=72ms, traceId=TRACE-MYSERVICE2-COMMON-0007
+2026-05-05 10:20:16.178 [common-worker-1] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00008, cost=39ms, traceId=TRACE-MYSERVICE2-COMMON-0008
+2026-05-05 10:20:18.727 [common-worker-2] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00009, cost=93ms, traceId=TRACE-MYSERVICE2-COMMON-0009
+2026-05-05 10:20:20.192 [common-worker-3] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00010, cost=35ms, traceId=TRACE-MYSERVICE2-COMMON-0010
+2026-05-05 10:20:22.284 [common-worker-4] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00011, cost=81ms, traceId=TRACE-MYSERVICE2-COMMON-0011
+2026-05-05 10:20:24.084 [common-worker-1] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00012, cost=31ms, traceId=TRACE-MYSERVICE2-COMMON-0012
+2026-05-05 10:20:26.482 [common-worker-2] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00013, cost=111ms, traceId=TRACE-MYSERVICE2-COMMON-0013
+2026-05-05 10:20:28.611 [common-worker-3] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00014, cost=84ms, traceId=TRACE-MYSERVICE2-COMMON-0014
+2026-05-05 10:20:30.302 [common-worker-4] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00015, cost=49ms, traceId=TRACE-MYSERVICE2-COMMON-0015
+2026-05-05 10:20:32.664 [common-worker-1] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00016, cost=35ms, traceId=TRACE-MYSERVICE2-COMMON-0016
+2026-05-05 10:20:34.181 [common-worker-2] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00017, cost=81ms, traceId=TRACE-MYSERVICE2-COMMON-0017
+2026-05-05 10:20:36.876 [common-worker-3] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00018, cost=92ms, traceId=TRACE-MYSERVICE2-COMMON-0018
+2026-05-05 10:20:38.604 [common-worker-4] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00019, cost=86ms, traceId=TRACE-MYSERVICE2-COMMON-0019
+2026-05-05 10:20:40.307 [common-worker-1] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00020, cost=38ms, traceId=TRACE-MYSERVICE2-COMMON-0020
+2026-05-05 10:20:42.818 [common-worker-2] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00021, cost=83ms, traceId=TRACE-MYSERVICE2-COMMON-0021
+2026-05-05 10:20:44.049 [common-worker-3] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00022, cost=72ms, traceId=TRACE-MYSERVICE2-COMMON-0022
+2026-05-05 10:20:46.800 [common-worker-4] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00023, cost=96ms, traceId=TRACE-MYSERVICE2-COMMON-0023
+2026-05-05 10:20:48.387 [common-worker-1] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00024, cost=45ms, traceId=TRACE-MYSERVICE2-COMMON-0024
+2026-05-05 10:20:50.077 [common-worker-2] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00025, cost=79ms, traceId=TRACE-MYSERVICE2-COMMON-0025
+2026-05-05 10:20:52.374 [common-worker-3] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00026, cost=60ms, traceId=TRACE-MYSERVICE2-COMMON-0026
+2026-05-05 10:20:54.341 [common-worker-4] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00027, cost=52ms, traceId=TRACE-MYSERVICE2-COMMON-0027
+2026-05-05 10:20:56.877 [common-worker-1] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00028, cost=70ms, traceId=TRACE-MYSERVICE2-COMMON-0028
+2026-05-05 10:20:58.163 [common-worker-2] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00029, cost=55ms, traceId=TRACE-MYSERVICE2-COMMON-0029
+2026-05-05 10:21:00.765 [common-worker-3] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00030, cost=59ms, traceId=TRACE-MYSERVICE2-COMMON-0030
+2026-05-05 10:21:02.735 [common-worker-4] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00031, cost=68ms, traceId=TRACE-MYSERVICE2-COMMON-0031
+2026-05-05 10:21:04.486 [common-worker-1] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00032, cost=67ms, traceId=TRACE-MYSERVICE2-COMMON-0032
+2026-05-05 10:21:06.427 [common-worker-2] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00033, cost=31ms, traceId=TRACE-MYSERVICE2-COMMON-0033
+2026-05-05 10:21:08.832 [common-worker-3] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00034, cost=22ms, traceId=TRACE-MYSERVICE2-COMMON-0034
+2026-05-05 10:21:10.312 [common-worker-4] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00035, cost=109ms, traceId=TRACE-MYSERVICE2-COMMON-0035
+2026-05-05 10:21:12.583 [common-worker-1] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00036, cost=74ms, traceId=TRACE-MYSERVICE2-COMMON-0036
+2026-05-05 10:21:14.381 [common-worker-2] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00037, cost=98ms, traceId=TRACE-MYSERVICE2-COMMON-0037
+2026-05-05 10:21:16.752 [common-worker-3] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00038, cost=95ms, traceId=TRACE-MYSERVICE2-COMMON-0038
+2026-05-05 10:21:18.892 [common-worker-4] INFO  com.example.common.CommonService - common batch processed successfully, batchId=BATCH-00039, cost=69ms, traceId=TRACE-MYSERVICE2-COMMON-0039
+2026-05-05 10:25:40.000 [task-dispatcher-1] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=900, remainingCapacity=100, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:41.001 [task-dispatcher-2] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=905, remainingCapacity=99, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:42.002 [task-dispatcher-1] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=910, remainingCapacity=98, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:43.003 [task-dispatcher-2] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=915, remainingCapacity=97, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:44.004 [task-dispatcher-1] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=920, remainingCapacity=96, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:45.005 [task-dispatcher-2] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=925, remainingCapacity=95, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:46.006 [task-dispatcher-1] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=930, remainingCapacity=94, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:47.007 [task-dispatcher-2] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=935, remainingCapacity=93, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:48.008 [task-dispatcher-1] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=940, remainingCapacity=92, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:49.009 [task-dispatcher-2] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=945, remainingCapacity=91, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:50.010 [task-dispatcher-1] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=950, remainingCapacity=90, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:51.011 [task-dispatcher-2] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=955, remainingCapacity=89, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:52.012 [task-dispatcher-1] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=960, remainingCapacity=88, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:53.013 [task-dispatcher-2] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=965, remainingCapacity=87, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:54.014 [task-dispatcher-1] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=970, remainingCapacity=86, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:55.015 [task-dispatcher-2] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=975, remainingCapacity=85, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:56.016 [task-dispatcher-1] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=980, remainingCapacity=84, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:57.017 [task-dispatcher-2] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=985, remainingCapacity=83, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:58.018 [task-dispatcher-1] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=990, remainingCapacity=82, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:25:59.019 [task-dispatcher-2] WARN  com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=64, queueSize=995, remainingCapacity=81, traceId=TD-THREADPOOL-20260505-0004
+2026-05-05 10:26:05.077 [task-dispatcher-1] ERROR com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=1024, active=64, traceId=TD-THREADPOOL-20260505-0004
+java.util.concurrent.RejectedExecutionException: Task rejected from java.util.concurrent.ThreadPoolExecutor[Running, pool size = 64, active threads = 64, queued tasks = 1024, completed tasks = 203311]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2081)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:841)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1376)
+	at com.example.scheduler.TaskSubmitter.submit(TaskSubmitter.java:61)
+2026-05-05 10:26:06.077 [task-dispatcher-1] ERROR com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=1024, active=64, traceId=TD-THREADPOOL-20260505-0004
+java.util.concurrent.RejectedExecutionException: Task rejected from java.util.concurrent.ThreadPoolExecutor[Running, pool size = 64, active threads = 64, queued tasks = 1024, completed tasks = 203311]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2081)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:841)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1376)
+	at com.example.scheduler.TaskSubmitter.submit(TaskSubmitter.java:61)
+2026-05-05 10:26:07.077 [task-dispatcher-1] ERROR com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=1024, active=64, traceId=TD-THREADPOOL-20260505-0004
+java.util.concurrent.RejectedExecutionException: Task rejected from java.util.concurrent.ThreadPoolExecutor[Running, pool size = 64, active threads = 64, queued tasks = 1024, completed tasks = 203311]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2081)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:841)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1376)
+	at com.example.scheduler.TaskSubmitter.submit(TaskSubmitter.java:61)
+2026-05-05 10:26:08.077 [task-dispatcher-1] ERROR com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=1024, active=64, traceId=TD-THREADPOOL-20260505-0004
+java.util.concurrent.RejectedExecutionException: Task rejected from java.util.concurrent.ThreadPoolExecutor[Running, pool size = 64, active threads = 64, queued tasks = 1024, completed tasks = 203311]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2081)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:841)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1376)
+	at com.example.scheduler.TaskSubmitter.submit(TaskSubmitter.java:61)
+2026-05-05 10:26:09.077 [task-dispatcher-1] ERROR com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=1024, active=64, traceId=TD-THREADPOOL-20260505-0004
+java.util.concurrent.RejectedExecutionException: Task rejected from java.util.concurrent.ThreadPoolExecutor[Running, pool size = 64, active threads = 64, queued tasks = 1024, completed tasks = 203311]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2081)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:841)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1376)
+	at com.example.scheduler.TaskSubmitter.submit(TaskSubmitter.java:61)
+2026-05-05 10:26:10.077 [task-dispatcher-1] ERROR com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=1024, active=64, traceId=TD-THREADPOOL-20260505-0004
+java.util.concurrent.RejectedExecutionException: Task rejected from java.util.concurrent.ThreadPoolExecutor[Running, pool size = 64, active threads = 64, queued tasks = 1024, completed tasks = 203311]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2081)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:841)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1376)
+	at com.example.scheduler.TaskSubmitter.submit(TaskSubmitter.java:61)
+2026-05-05 10:26:11.077 [task-dispatcher-1] ERROR com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=1024, active=64, traceId=TD-THREADPOOL-20260505-0004
+java.util.concurrent.RejectedExecutionException: Task rejected from java.util.concurrent.ThreadPoolExecutor[Running, pool size = 64, active threads = 64, queued tasks = 1024, completed tasks = 203311]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2081)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:841)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1376)
+	at com.example.scheduler.TaskSubmitter.submit(TaskSubmitter.java:61)
+2026-05-05 10:26:12.077 [task-dispatcher-1] ERROR com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=1024, active=64, traceId=TD-THREADPOOL-20260505-0004
+java.util.concurrent.RejectedExecutionException: Task rejected from java.util.concurrent.ThreadPoolExecutor[Running, pool size = 64, active threads = 64, queued tasks = 1024, completed tasks = 203311]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2081)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:841)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1376)
+	at com.example.scheduler.TaskSubmitter.submit(TaskSubmitter.java:61)

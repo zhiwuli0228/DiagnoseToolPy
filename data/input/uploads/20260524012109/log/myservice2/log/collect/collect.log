@@ -1,0 +1,84 @@
+2026-05-05 10:20:00.727 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00000, cost=42ms, traceId=TRACE-MYSERVICE2-COLLECT-0000
+2026-05-05 10:20:02.270 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00001, cost=99ms, traceId=TRACE-MYSERVICE2-COLLECT-0001
+2026-05-05 10:20:04.008 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00002, cost=69ms, traceId=TRACE-MYSERVICE2-COLLECT-0002
+2026-05-05 10:20:06.071 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00003, cost=102ms, traceId=TRACE-MYSERVICE2-COLLECT-0003
+2026-05-05 10:20:08.311 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00004, cost=67ms, traceId=TRACE-MYSERVICE2-COLLECT-0004
+2026-05-05 10:20:10.243 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00005, cost=29ms, traceId=TRACE-MYSERVICE2-COLLECT-0005
+2026-05-05 10:20:12.244 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00006, cost=12ms, traceId=TRACE-MYSERVICE2-COLLECT-0006
+2026-05-05 10:20:14.695 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00007, cost=99ms, traceId=TRACE-MYSERVICE2-COLLECT-0007
+2026-05-05 10:20:16.133 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00008, cost=51ms, traceId=TRACE-MYSERVICE2-COLLECT-0008
+2026-05-05 10:20:18.831 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00009, cost=50ms, traceId=TRACE-MYSERVICE2-COLLECT-0009
+2026-05-05 10:20:20.661 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00010, cost=113ms, traceId=TRACE-MYSERVICE2-COLLECT-0010
+2026-05-05 10:20:22.441 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00011, cost=70ms, traceId=TRACE-MYSERVICE2-COLLECT-0011
+2026-05-05 10:20:24.373 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00012, cost=86ms, traceId=TRACE-MYSERVICE2-COLLECT-0012
+2026-05-05 10:20:26.662 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00013, cost=18ms, traceId=TRACE-MYSERVICE2-COLLECT-0013
+2026-05-05 10:20:28.194 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00014, cost=92ms, traceId=TRACE-MYSERVICE2-COLLECT-0014
+2026-05-05 10:20:30.742 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00015, cost=56ms, traceId=TRACE-MYSERVICE2-COLLECT-0015
+2026-05-05 10:20:32.480 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00016, cost=28ms, traceId=TRACE-MYSERVICE2-COLLECT-0016
+2026-05-05 10:20:34.525 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00017, cost=19ms, traceId=TRACE-MYSERVICE2-COLLECT-0017
+2026-05-05 10:20:36.189 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00018, cost=79ms, traceId=TRACE-MYSERVICE2-COLLECT-0018
+2026-05-05 10:20:38.610 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00019, cost=51ms, traceId=TRACE-MYSERVICE2-COLLECT-0019
+2026-05-05 10:20:40.071 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00020, cost=85ms, traceId=TRACE-MYSERVICE2-COLLECT-0020
+2026-05-05 10:20:42.169 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00021, cost=101ms, traceId=TRACE-MYSERVICE2-COLLECT-0021
+2026-05-05 10:20:44.079 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00022, cost=118ms, traceId=TRACE-MYSERVICE2-COLLECT-0022
+2026-05-05 10:20:46.381 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00023, cost=73ms, traceId=TRACE-MYSERVICE2-COLLECT-0023
+2026-05-05 10:20:48.405 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00024, cost=72ms, traceId=TRACE-MYSERVICE2-COLLECT-0024
+2026-05-05 10:20:50.106 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00025, cost=34ms, traceId=TRACE-MYSERVICE2-COLLECT-0025
+2026-05-05 10:20:52.899 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00026, cost=112ms, traceId=TRACE-MYSERVICE2-COLLECT-0026
+2026-05-05 10:20:54.764 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00027, cost=48ms, traceId=TRACE-MYSERVICE2-COLLECT-0027
+2026-05-05 10:20:56.115 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00028, cost=102ms, traceId=TRACE-MYSERVICE2-COLLECT-0028
+2026-05-05 10:20:58.221 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00029, cost=77ms, traceId=TRACE-MYSERVICE2-COLLECT-0029
+2026-05-05 10:21:00.884 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00030, cost=117ms, traceId=TRACE-MYSERVICE2-COLLECT-0030
+2026-05-05 10:21:02.827 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00031, cost=49ms, traceId=TRACE-MYSERVICE2-COLLECT-0031
+2026-05-05 10:21:04.827 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00032, cost=42ms, traceId=TRACE-MYSERVICE2-COLLECT-0032
+2026-05-05 10:21:06.568 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00033, cost=22ms, traceId=TRACE-MYSERVICE2-COLLECT-0033
+2026-05-05 10:21:08.722 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00034, cost=47ms, traceId=TRACE-MYSERVICE2-COLLECT-0034
+2026-05-05 10:21:10.694 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00035, cost=82ms, traceId=TRACE-MYSERVICE2-COLLECT-0035
+2026-05-05 10:21:12.643 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00036, cost=104ms, traceId=TRACE-MYSERVICE2-COLLECT-0036
+2026-05-05 10:21:14.208 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00037, cost=99ms, traceId=TRACE-MYSERVICE2-COLLECT-0037
+2026-05-05 10:21:16.349 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00038, cost=26ms, traceId=TRACE-MYSERVICE2-COLLECT-0038
+2026-05-05 10:21:18.027 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00039, cost=70ms, traceId=TRACE-MYSERVICE2-COLLECT-0039
+2026-05-05 10:21:20.763 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00040, cost=27ms, traceId=TRACE-MYSERVICE2-COLLECT-0040
+2026-05-05 10:21:22.064 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00041, cost=116ms, traceId=TRACE-MYSERVICE2-COLLECT-0041
+2026-05-05 10:21:24.723 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00042, cost=69ms, traceId=TRACE-MYSERVICE2-COLLECT-0042
+2026-05-05 10:21:26.574 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00043, cost=37ms, traceId=TRACE-MYSERVICE2-COLLECT-0043
+2026-05-05 10:21:28.858 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00044, cost=29ms, traceId=TRACE-MYSERVICE2-COLLECT-0044
+2026-05-05 10:21:30.864 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00045, cost=30ms, traceId=TRACE-MYSERVICE2-COLLECT-0045
+2026-05-05 10:21:32.893 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00046, cost=12ms, traceId=TRACE-MYSERVICE2-COLLECT-0046
+2026-05-05 10:21:34.271 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00047, cost=26ms, traceId=TRACE-MYSERVICE2-COLLECT-0047
+2026-05-05 10:21:36.630 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00048, cost=60ms, traceId=TRACE-MYSERVICE2-COLLECT-0048
+2026-05-05 10:21:38.747 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00049, cost=85ms, traceId=TRACE-MYSERVICE2-COLLECT-0049
+2026-05-05 10:20:00.539 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00000, cost=76ms, traceId=TRACE-MYSERVICE2-COLLECT-0000
+2026-05-05 10:20:02.695 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00001, cost=81ms, traceId=TRACE-MYSERVICE2-COLLECT-0001
+2026-05-05 10:20:04.836 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00002, cost=113ms, traceId=TRACE-MYSERVICE2-COLLECT-0002
+2026-05-05 10:20:06.473 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00003, cost=114ms, traceId=TRACE-MYSERVICE2-COLLECT-0003
+2026-05-05 10:20:08.702 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00004, cost=24ms, traceId=TRACE-MYSERVICE2-COLLECT-0004
+2026-05-05 10:20:10.775 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00005, cost=88ms, traceId=TRACE-MYSERVICE2-COLLECT-0005
+2026-05-05 10:20:12.319 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00006, cost=86ms, traceId=TRACE-MYSERVICE2-COLLECT-0006
+2026-05-05 10:20:14.350 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00007, cost=75ms, traceId=TRACE-MYSERVICE2-COLLECT-0007
+2026-05-05 10:20:16.554 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00008, cost=75ms, traceId=TRACE-MYSERVICE2-COLLECT-0008
+2026-05-05 10:20:18.158 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00009, cost=84ms, traceId=TRACE-MYSERVICE2-COLLECT-0009
+2026-05-05 10:20:20.178 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00010, cost=100ms, traceId=TRACE-MYSERVICE2-COLLECT-0010
+2026-05-05 10:20:22.738 [collect-worker-4] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00011, cost=104ms, traceId=TRACE-MYSERVICE2-COLLECT-0011
+2026-05-05 10:20:24.341 [collect-worker-1] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00012, cost=33ms, traceId=TRACE-MYSERVICE2-COLLECT-0012
+2026-05-05 10:20:26.566 [collect-worker-2] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00013, cost=23ms, traceId=TRACE-MYSERVICE2-COLLECT-0013
+2026-05-05 10:20:28.745 [collect-worker-3] INFO  com.example.collect.CollectService - collect batch processed successfully, batchId=BATCH-00014, cost=64ms, traceId=TRACE-MYSERVICE2-COLLECT-0014
+2026-05-05 10:24:20.008 [kafka-consumer-cache-sync-1] WARN  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=cache-sync-1, groupId=cache-sync-group] Rebalance in progress, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:25.066 [kafka-consumer-cache-sync-1] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=0, lag=10000, consumeRate=20, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:27.066 [kafka-consumer-cache-sync-2] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=1, lag=12400, consumeRate=19, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:29.066 [kafka-consumer-cache-sync-3] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=2, lag=14800, consumeRate=18, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:31.066 [kafka-consumer-cache-sync-1] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=3, lag=17200, consumeRate=17, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:33.066 [kafka-consumer-cache-sync-2] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=0, lag=19600, consumeRate=16, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:35.066 [kafka-consumer-cache-sync-3] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=1, lag=22000, consumeRate=20, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:37.066 [kafka-consumer-cache-sync-1] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=2, lag=24400, consumeRate=19, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:39.066 [kafka-consumer-cache-sync-2] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=3, lag=26800, consumeRate=18, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:41.066 [kafka-consumer-cache-sync-3] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=0, lag=29200, consumeRate=17, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:43.066 [kafka-consumer-cache-sync-1] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=1, lag=31600, consumeRate=16, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:45.066 [kafka-consumer-cache-sync-2] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=2, lag=34000, consumeRate=20, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:47.066 [kafka-consumer-cache-sync-3] WARN  com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=3, lag=36400, consumeRate=19, traceId=TD-KAFKA-20260505-0003
+2026-05-05 10:24:51.991 [kafka-consumer-cache-sync-2] ERROR com.example.kafka.CacheSyncConsumer - Failed to process cache event, topic=cache-sync-topic, partition=2, offset=882311, cacheKey=DEVICE_STATUS_10086, traceId=TD-KAFKA-20260505-0003
+org.apache.kafka.common.errors.TimeoutException: Expiring 1 record(s) for cache-sync-topic-2:120000 ms has passed since batch creation
+	at org.apache.kafka.clients.producer.internals.RecordAccumulator.abortExpiredBatches(RecordAccumulator.java:466)
+	at org.apache.kafka.clients.producer.internals.Sender.runOnce(Sender.java:337)
+	at com.example.kafka.CacheSyncProducer.publish(CacheSyncProducer.java:89)
+	at com.example.kafka.CacheSyncConsumer.handleEvent(CacheSyncConsumer.java:137)

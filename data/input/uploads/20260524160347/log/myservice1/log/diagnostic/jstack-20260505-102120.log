@@ -1,0 +1,26 @@
+2026-05-05 10:21:20.001 [diagnostic] INFO  com.example.diagnostic.JstackDumper - Full thread dump captured, traceId=TD-REDIS-20260505-0001
+Full thread dump Java HotSpot(TM) 64-Bit Server VM (21.0.2+13 mixed mode):
+
+"cache-refresh-worker-1" #87 prio=5 os_prio=0 cpu=152.88ms elapsed=65.12s tid=0x00007f91c8123000 nid=0x51a3 runnable  [0x00007f91a93f8000]
+   java.lang.Thread.State: RUNNABLE
+        at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:278)
+        at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1099)
+        at redis.clients.jedis.util.RedisInputStream.ensureFill(RedisInputStream.java:199)
+        at redis.clients.jedis.Protocol.process(Protocol.java:165)
+        at redis.clients.jedis.Jedis.get(Jedis.java:4979)
+        at com.example.cache.RedisCacheClient.get(RedisCacheClient.java:72)
+        at com.example.cache.CacheRefreshService.loadRemoteCache(CacheRefreshService.java:142)
+        at com.example.cache.CacheRefreshService.refreshWithWriteLock(CacheRefreshService.java:98)
+        - locked <0x000000071a8c4b10> (a java.util.concurrent.locks.ReentrantReadWriteLock$NonfairSync)
+        at com.example.cache.CacheRefreshTask.run(CacheRefreshTask.java:57)
+
+"http-nio-8080-exec-41" #121 prio=5 os_prio=0 cpu=42.18ms elapsed=49.78s tid=0x00007f91d0241000 nid=0x5201 waiting on condition  [0x00007f9198ff4000]
+   java.lang.Thread.State: WAITING (parking)
+        at java.base/jdk.internal.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x000000071a8c4b10> (a java.util.concurrent.locks.ReentrantReadWriteLock$NonfairSync)
+        at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
+        at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireShared(AbstractQueuedSynchronizer.java:1099)
+        at java.base/java.util.concurrent.locks.ReentrantReadWriteLock$ReadLock.lock(ReentrantReadWriteLock.java:783)
+        at com.example.cache.LocalCacheFacade.getWithReadLock(LocalCacheFacade.java:64)
+        at com.example.device.DeviceQueryService.queryDevice(DeviceQueryService.java:83)
+        at com.example.web.DeviceController.query(DeviceController.java:41)

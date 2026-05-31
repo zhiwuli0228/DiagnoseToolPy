@@ -1,0 +1,520 @@
+{
+  "task_id": "cluster-20260524-160317-32dbcb",
+  "total_errors": 248,
+  "clusters": [
+    {
+      "exception_class": "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 20,
+      "sample_messages": [
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30002ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 20,
+      "sample_messages": [
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30012ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 20,
+      "sample_messages": [
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30022ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N> [10:25]",
+      "count": 20,
+      "sample_messages": [
+        "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.DispatchMonitor - Worker pool pressure high, active=<N>, queueSize=<N>, remainingCapacity=<N>, traceId=TD-THREADPOOL-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:25 - 10:25"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N> [10:24]",
+      "count": 12,
+      "sample_messages": [
+        "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N>",
+        "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N>",
+        "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N>",
+        "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N>",
+        "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N>",
+        "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N>",
+        "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N>",
+        "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N>",
+        "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N>",
+        "com.example.kafka.CacheSyncConsumer - Kafka consumer lag increased, topic=cache-sync-topic, partition=<N>, lag=<N>, consumeRate=<N>, traceId=TD-KAFKA-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:24 - 10:24"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command slow, command=GET, key=DEVICE_TOPOLOGY_REGION_001, cost=5021ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30032ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30042ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30052ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_001, cost=30062ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_002, cost=30072ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.CacheRefreshService - Refresh cache failed, cacheKey=DEVICE_TOPOLOGY_REGION_003, cost=30082ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.cache.RedisCacheClient - Redis command timeout, command=GET, key=DEVICE_STATUS_10086, cost=30000ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60000ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60311ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60622ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=60933ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N> [10:21]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N>",
+        "com.example.web.GlobalExceptionHandler - Request timeout, uri=/api/v1/device/query, cost=61244ms, traceId=TD-REDIS-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:21 - 10:21"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N> [10:23]",
+      "count": 10,
+      "sample_messages": [
+        "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N>",
+        "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N>",
+        "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N>",
+        "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N>",
+        "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N>",
+        "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N>",
+        "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N>",
+        "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N>",
+        "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N>",
+        "com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=<N>, cost=30000ms, traceId=TD-DB-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:23 - 10:23"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=<N>, active=<N>, traceId=TD-THREADPOOL-<N>-<N> [10:26]",
+      "count": 8,
+      "sample_messages": [
+        "com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=<N>, active=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=<N>, active=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=<N>, active=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=<N>, active=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=<N>, active=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=<N>, active=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=<N>, active=<N>, traceId=TD-THREADPOOL-<N>-<N>",
+        "com.example.scheduler.TaskSubmitter - Task rejected, taskType=minute-aggregation, queueSize=<N>, active=<N>, traceId=TD-THREADPOOL-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:26 - 10:26"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.zaxxer.hikari.pool.HikariPool - HikariPool-<N> - Thread starvation or clock leap detected (housekeeper delta=48s), traceId=TD-DB-<N>-<N> [10:23]",
+      "count": 1,
+      "sample_messages": [
+        "com.zaxxer.hikari.pool.HikariPool - HikariPool-<N> - Thread starvation or clock leap detected (housekeeper delta=48s), traceId=TD-DB-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:23 - 10:23"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.ingestion.IngestionMonitor - Ingestion backlog increased, period=30s, pendingRows=<N>, deadlineMiss=true, traceId=TD-DB-<N>-<N> [10:23]",
+      "count": 1,
+      "sample_messages": [
+        "com.example.ingestion.IngestionMonitor - Ingestion backlog increased, period=30s, pendingRows=<N>, deadlineMiss=true, traceId=TD-DB-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:23 - 10:23"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.ingestion.repository.DynamicDataRepository - Slow SQL detected, sql=INSERT INTO T_SECOND_LEVEL_DATA(...), cost=12842ms, traceId=TD-DB-<N>-<N> [10:23]",
+      "count": 1,
+      "sample_messages": [
+        "com.example.ingestion.repository.DynamicDataRepository - Slow SQL detected, sql=INSERT INTO T_SECOND_LEVEL_DATA(...), cost=12842ms, traceId=TD-DB-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:23 - 10:23"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=cache-sync-<N>, groupId=cache-sync-group] Rebalance in progress, traceId=TD-KAFKA-<N>-<N> [10:24]",
+      "count": 1,
+      "sample_messages": [
+        "org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=cache-sync-<N>, groupId=cache-sync-group] Rebalance in progress, traceId=TD-KAFKA-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:24 - 10:24"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.kafka.CacheSyncConsumer - Failed to process cache event, topic=cache-sync-topic, partition=<N>, offset=<N>, cacheKey=DEVICE_STATUS_10086, traceId=TD-KAFKA-<N>-<N> [10:24]",
+      "count": 1,
+      "sample_messages": [
+        "com.example.kafka.CacheSyncConsumer - Failed to process cache event, topic=cache-sync-topic, partition=<N>, offset=<N>, cacheKey=DEVICE_STATUS_10086, traceId=TD-KAFKA-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:24 - 10:24"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.monitor.JvmMonitor - OldGen usage high, oldUsed=7450MB, oldMax=8192MB, fullGcCount=<N>, traceId=TD-JVM-<N>-<N> [10:27]",
+      "count": 1,
+      "sample_messages": [
+        "com.example.monitor.JvmMonitor - OldGen usage high, oldUsed=7450MB, oldMax=8192MB, fullGcCount=<N>, traceId=TD-JVM-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:27 - 10:27"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.monitor.GcLogBridge - Full GC pause detected, cause=Allocation Failure, pause=4821ms, before=7901MB, after=7712MB, traceId=TD-JVM-<N>-<N> [10:27]",
+      "count": 1,
+      "sample_messages": [
+        "com.example.monitor.GcLogBridge - Full GC pause detected, cause=Allocation Failure, pause=4821ms, before=7901MB, after=7712MB, traceId=TD-JVM-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:27 - 10:27"
+      },
+      "matched_cases": []
+    },
+    {
+      "exception_class": "com.example.web.GlobalExceptionHandler - Request failed due to memory pressure, uri=/api/v1/report/export, traceId=TD-JVM-<N>-<N> [10:27]",
+      "count": 1,
+      "sample_messages": [
+        "com.example.web.GlobalExceptionHandler - Request failed due to memory pressure, uri=/api/v1/report/export, traceId=TD-JVM-<N>-<N>"
+      ],
+      "time_distribution": {
+        "peak_hour": "10:00-10:59",
+        "range": "10:27 - 10:27"
+      },
+      "matched_cases": []
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "turn_id": "001",
+  "user_context": {
+    "phenomenon": "test error",
+    "stack": "Error at line 1",
+    "params": ""
+  },
+  "evidence_refs": [],
+  "ai_question": "<think>用户只提供了\"test error\"和\"Error at line 1\"，这个信息非常有限。我需要生成针对性的追问问题来帮助诊断。\n\n关键缺失信息：\n1. 这个error是在什么场景下出现的？运行测试？编译？执行？\n2. 用的是什么技术栈/语言/框架？\n3. 完整的错误信息是什么？\n4. 相关的代码片段是什么？\n\n我应该问最关键的问题来快速定位问题。\n</think>\n\n## 针对性追问\n\n**1. 这是什么类型的错误？**\n> 例如：运行测试失败、编译报错、程序执行时崩溃等\n\n**2. 能否提供更多上下文？**\n> - 使用的编程语言和框架？\n> - 完整的错误信息？\n> - 相关代码片段或能复现问题的步骤？",
+  "ai_diagnosis": null,
+  "mode": "user-priority",
+  "timestamp": "2026-05-24T10:18:26.544852+00:00"
+}

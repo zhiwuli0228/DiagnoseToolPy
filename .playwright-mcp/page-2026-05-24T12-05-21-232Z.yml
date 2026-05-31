@@ -1,0 +1,59 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: DiagnoseToolPy
+      - menu [ref=e7]:
+        - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]:
+            - img [ref=e10]
+          - generic [ref=e12]: 仪表盘
+        - menuitem "file-search 分析任务" [ref=e13] [cursor=pointer]:
+          - img "file-search" [ref=e14]:
+            - img [ref=e15]
+          - generic [ref=e17]: 分析任务
+        - menuitem "folder 案例库" [ref=e18] [cursor=pointer]:
+          - img "folder" [ref=e19]:
+            - img [ref=e20]
+          - generic [ref=e22]: 案例库
+        - menuitem "setting 设置" [ref=e23] [cursor=pointer]:
+          - img "setting" [ref=e24]:
+            - img [ref=e25]
+          - generic [ref=e27]: 设置
+    - img "bars" [ref=e29] [cursor=pointer]:
+      - img [ref=e30]
+  - generic [ref=e32]:
+    - banner [ref=e33]:
+      - button "global 中文" [ref=e34] [cursor=pointer]:
+        - img "global" [ref=e36]:
+          - img [ref=e37]
+        - generic [ref=e39]: 中文
+      - button "robot" [ref=e41] [cursor=pointer]:
+        - img "robot" [ref=e43]:
+          - img [ref=e44]
+    - main [ref=e46]:
+      - generic [ref=e48]:
+        - heading "设置" [level=1] [ref=e49]
+        - generic [ref=e50]:
+          - generic [ref=e53]: Application Configuration
+          - table [ref=e57]:
+            - rowgroup [ref=e58]:
+              - 'row "Application Name : DiagnoseToolPy" [ref=e59]':
+                - 'cell "Application Name : DiagnoseToolPy" [ref=e60]':
+                  - generic [ref=e61]:
+                    - generic [ref=e62]: "Application Name :"
+                    - generic [ref=e63]: DiagnoseToolPy
+              - 'row "Version : 0.1.0" [ref=e64]':
+                - 'cell "Version : 0.1.0" [ref=e65]':
+                  - generic [ref=e66]:
+                    - generic [ref=e67]: "Version :"
+                    - generic [ref=e68]: 0.1.0
+        - generic [ref=e69]:
+          - generic [ref=e72]: 输入根目录
+          - generic [ref=e74]:
+            - img "No data" [ref=e76]
+            - generic [ref=e88]: No input roots configured. Update config/app.yaml to configure allowed input directories.
+        - generic [ref=e89]:
+          - generic [ref=e92]: Placeholder
+          - generic [ref=e94]:
+            - img "No data" [ref=e96]
+            - generic [ref=e108]: Additional settings will be available in future updates.

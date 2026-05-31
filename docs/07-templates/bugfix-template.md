@@ -1,4 +1,4 @@
-# Bugfix: {bug_name}
+ # Bugfix: {bug_name}
 
 ## 1. Symptom
 

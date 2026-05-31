@@ -1,0 +1,26 @@
+created_at: '2026-05-24T08:38:56.288696+00:00'
+draft_id: deedbc12
+quality_score:
+  ai_confidence: 5.0
+  breakdown:
+    ai_confidence:
+      raw: 0.5
+      score: 5.0
+    completeness:
+      has_params: false
+      has_phenomenon: true
+      has_stack: false
+      score: 3.0
+    conversation_rounds:
+      raw: 1
+      score: 2.0
+    user_questions:
+      raw: 1
+      score: 2.0
+  completeness: 3.0
+  conversation_rounds: 2.0
+  recommendation: draft
+  total: 2.9
+  user_questions: 2.0
+session_id: 6bc48409-8ed9-4326-8bb6-884dacff2068
+status: pending_review

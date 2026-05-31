@@ -6,11 +6,12 @@ server:
   port: 18080
 paths:
   allowed_input_roots:
-    - data/input
+  - data/input/uploads
+  - E:/009workspace/claudecode/DiagnoseToolPy/data/input
   data_dir: data
 llm:
-  enabled: false
-  model: "gpt-4o-mini"
-  base_url: "https://api.openai.com/v1"
-  api_key: ""
+  enabled: true
+  model: MiniMax-M2.7
+  base_url: https://api.minimaxi.com/v1
+  api_key: ''
   timeout: 60

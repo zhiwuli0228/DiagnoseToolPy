@@ -4,7 +4,7 @@
 
 File-based fault case storage with case creation from analysis artifacts, metadata management, and rebuildable index. Fault cases are stored as `case.md` + `metadata.yaml` documents under `data/cases/{case_id}_{slug}/`.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Case Models
 The casebase module SHALL provide Pydantic/dataclass models for case metadata and case structures.

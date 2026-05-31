@@ -1,0 +1,6 @@
+Total messages: 9 (Errors: 3, Warnings: 3)
+Returning 3 messages for level "error"
+
+[ERROR] Warning: [antd: Input] `addonAfter` is deprecated. Please use `Space.Compact` instead. @ http://localhost:5179/node_modules/.vite/deps/chunk-L6C7PLMZ.js?v=663fd24c:1247
+[ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5179/api/diagnosis/conversation/235f30a3-80c2-4b41-a4d3-b10485b58356:0
+[ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5179/favicon.ico:0

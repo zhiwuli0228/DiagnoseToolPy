@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Provide a containerized deployment path for DiagnoseToolPy with documented volume mounts and environment configuration, without changing the application behavior.
+
+## Requirements
 
 ### Requirement: Docker Image Build
 The system SHALL provide a Dockerfile that builds a working Python application image.

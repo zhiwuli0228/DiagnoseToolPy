@@ -6,41 +6,52 @@ import {
   FolderOutlined,
   SettingOutlined,
   RobotOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
+import AIDiagnosisButton from '../AIDiagnosisButton';
+import { useDiagnosis } from '../../context/DiagnosisContext';
 
-const { Sider, Content } = Layout;
-
-const menuItems = [
-  {
-    key: '/',
-    icon: <DashboardOutlined />,
-    label: 'Dashboard',
-  },
-  {
-    key: '/analysis',
-    icon: <FileSearchOutlined />,
-    label: 'Analysis Tasks',
-  },
-  {
-    key: '/cases',
-    icon: <FolderOutlined />,
-    label: 'Casebase',
-  },
-  {
-    key: '/diagnosis',
-    icon: <RobotOutlined />,
-    label: 'AI Diagnosis',
-  },
-  {
-    key: '/settings',
-    icon: <SettingOutlined />,
-    label: 'Settings',
-  },
-];
+const { Sider, Content, Header } = Layout;
 
 function AppLayout() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const { selections, removeSelection, clearSelections, loading } = useDiagnosis();
+
+  const menuItems = [
+    {
+      key: '/',
+      icon: <DashboardOutlined />,
+      label: 'nav.dashboard',
+    },
+    {
+      key: '/analysis',
+      icon: <FileSearchOutlined />,
+      label: 'nav.analysisTasks',
+    },
+    {
+      key: '/cases',
+      icon: <FolderOutlined />,
+      label: 'nav.casebase',
+    },
+    {
+      key: '/diagnosis-studio',
+      icon: <ThunderboltOutlined />,
+      label: 'nav.diagnosisStudio',
+    },
+    {
+      key: '/diagnosis',
+      icon: <RobotOutlined />,
+      label: 'nav.aiDiagnosis',
+    },
+    {
+      key: '/settings',
+      icon: <SettingOutlined />,
+      label: 'nav.settings',
+    },
+  ].map(item => ({ ...item, label: t(item.label) }));
 
   const selectedKey = menuItems.find(
     (item) => location.pathname.startsWith(item.key) && item.key !== '/'
@@ -49,6 +60,10 @@ function AppLayout() {
     : location.pathname === '/'
     ? '/'
     : '/';
+
+  const handleDiagnose = () => {
+    navigate('/diagnosis-studio?start=1');
+  };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -75,6 +90,24 @@ function AppLayout() {
         />
       </Sider>
       <Layout>
+        <Header
+          style={{
+            background: '#fff',
+            padding: '0 24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            borderBottom: '1px solid #f0f0f0',
+          }}
+        >
+          <AIDiagnosisButton
+            selections={selections}
+            onRemove={removeSelection}
+            onClear={clearSelections}
+            onDiagnose={handleDiagnose}
+            loading={loading}
+          />
+        </Header>
         <Content style={{ margin: 24 }}>
           <Outlet />
         </Content>

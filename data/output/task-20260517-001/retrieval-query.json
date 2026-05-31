@@ -12,7 +12,9 @@
   "keywords": [
     "NullPointer"
   ],
-  "stack_symbols": [],
+  "stack_symbols": [
+    "com.demo.Service.method"
+  ],
   "log_templates": [
     "NullPointer"
   ]

@@ -1,0 +1,143 @@
+2026-05-05 10:20:00.784 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00000, cost=97ms, traceId=TRACE-MYSERVICE1-INGESTION-0000
+2026-05-05 10:20:02.639 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00001, cost=81ms, traceId=TRACE-MYSERVICE1-INGESTION-0001
+2026-05-05 10:20:04.890 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00002, cost=118ms, traceId=TRACE-MYSERVICE1-INGESTION-0002
+2026-05-05 10:20:06.038 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00003, cost=74ms, traceId=TRACE-MYSERVICE1-INGESTION-0003
+2026-05-05 10:20:08.659 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00004, cost=67ms, traceId=TRACE-MYSERVICE1-INGESTION-0004
+2026-05-05 10:20:10.618 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00005, cost=88ms, traceId=TRACE-MYSERVICE1-INGESTION-0005
+2026-05-05 10:20:12.136 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00006, cost=104ms, traceId=TRACE-MYSERVICE1-INGESTION-0006
+2026-05-05 10:20:14.290 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00007, cost=116ms, traceId=TRACE-MYSERVICE1-INGESTION-0007
+2026-05-05 10:20:16.755 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00008, cost=116ms, traceId=TRACE-MYSERVICE1-INGESTION-0008
+2026-05-05 10:20:18.183 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00009, cost=44ms, traceId=TRACE-MYSERVICE1-INGESTION-0009
+2026-05-05 10:20:20.335 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00010, cost=108ms, traceId=TRACE-MYSERVICE1-INGESTION-0010
+2026-05-05 10:20:22.548 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00011, cost=90ms, traceId=TRACE-MYSERVICE1-INGESTION-0011
+2026-05-05 10:20:24.819 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00012, cost=79ms, traceId=TRACE-MYSERVICE1-INGESTION-0012
+2026-05-05 10:20:26.369 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00013, cost=56ms, traceId=TRACE-MYSERVICE1-INGESTION-0013
+2026-05-05 10:20:28.299 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00014, cost=22ms, traceId=TRACE-MYSERVICE1-INGESTION-0014
+2026-05-05 10:20:30.687 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00015, cost=120ms, traceId=TRACE-MYSERVICE1-INGESTION-0015
+2026-05-05 10:20:32.008 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00016, cost=95ms, traceId=TRACE-MYSERVICE1-INGESTION-0016
+2026-05-05 10:20:34.888 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00017, cost=19ms, traceId=TRACE-MYSERVICE1-INGESTION-0017
+2026-05-05 10:20:36.656 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00018, cost=94ms, traceId=TRACE-MYSERVICE1-INGESTION-0018
+2026-05-05 10:20:38.361 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00019, cost=91ms, traceId=TRACE-MYSERVICE1-INGESTION-0019
+2026-05-05 10:20:40.158 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00020, cost=75ms, traceId=TRACE-MYSERVICE1-INGESTION-0020
+2026-05-05 10:20:42.481 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00021, cost=95ms, traceId=TRACE-MYSERVICE1-INGESTION-0021
+2026-05-05 10:20:44.560 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00022, cost=31ms, traceId=TRACE-MYSERVICE1-INGESTION-0022
+2026-05-05 10:20:46.733 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00023, cost=82ms, traceId=TRACE-MYSERVICE1-INGESTION-0023
+2026-05-05 10:20:48.406 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00024, cost=87ms, traceId=TRACE-MYSERVICE1-INGESTION-0024
+2026-05-05 10:20:50.105 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00025, cost=37ms, traceId=TRACE-MYSERVICE1-INGESTION-0025
+2026-05-05 10:20:52.486 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00026, cost=63ms, traceId=TRACE-MYSERVICE1-INGESTION-0026
+2026-05-05 10:20:54.438 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00027, cost=16ms, traceId=TRACE-MYSERVICE1-INGESTION-0027
+2026-05-05 10:20:56.393 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00028, cost=70ms, traceId=TRACE-MYSERVICE1-INGESTION-0028
+2026-05-05 10:20:58.745 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00029, cost=107ms, traceId=TRACE-MYSERVICE1-INGESTION-0029
+2026-05-05 10:21:00.362 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00030, cost=42ms, traceId=TRACE-MYSERVICE1-INGESTION-0030
+2026-05-05 10:21:02.474 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00031, cost=119ms, traceId=TRACE-MYSERVICE1-INGESTION-0031
+2026-05-05 10:21:04.816 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00032, cost=54ms, traceId=TRACE-MYSERVICE1-INGESTION-0032
+2026-05-05 10:21:06.431 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00033, cost=44ms, traceId=TRACE-MYSERVICE1-INGESTION-0033
+2026-05-05 10:21:08.876 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00034, cost=25ms, traceId=TRACE-MYSERVICE1-INGESTION-0034
+2026-05-05 10:21:10.518 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00035, cost=60ms, traceId=TRACE-MYSERVICE1-INGESTION-0035
+2026-05-05 10:21:12.463 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00036, cost=80ms, traceId=TRACE-MYSERVICE1-INGESTION-0036
+2026-05-05 10:21:14.530 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00037, cost=21ms, traceId=TRACE-MYSERVICE1-INGESTION-0037
+2026-05-05 10:21:16.240 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00038, cost=86ms, traceId=TRACE-MYSERVICE1-INGESTION-0038
+2026-05-05 10:21:18.447 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00039, cost=86ms, traceId=TRACE-MYSERVICE1-INGESTION-0039
+2026-05-05 10:21:20.874 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00040, cost=74ms, traceId=TRACE-MYSERVICE1-INGESTION-0040
+2026-05-05 10:21:22.407 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00041, cost=56ms, traceId=TRACE-MYSERVICE1-INGESTION-0041
+2026-05-05 10:21:24.220 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00042, cost=30ms, traceId=TRACE-MYSERVICE1-INGESTION-0042
+2026-05-05 10:21:26.319 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00043, cost=52ms, traceId=TRACE-MYSERVICE1-INGESTION-0043
+2026-05-05 10:21:28.088 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00044, cost=63ms, traceId=TRACE-MYSERVICE1-INGESTION-0044
+2026-05-05 10:21:30.604 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00045, cost=58ms, traceId=TRACE-MYSERVICE1-INGESTION-0045
+2026-05-05 10:21:32.632 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00046, cost=49ms, traceId=TRACE-MYSERVICE1-INGESTION-0046
+2026-05-05 10:21:34.728 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00047, cost=17ms, traceId=TRACE-MYSERVICE1-INGESTION-0047
+2026-05-05 10:21:36.070 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00048, cost=69ms, traceId=TRACE-MYSERVICE1-INGESTION-0048
+2026-05-05 10:21:38.229 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00049, cost=56ms, traceId=TRACE-MYSERVICE1-INGESTION-0049
+2026-05-05 10:20:00.086 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00000, cost=66ms, traceId=TRACE-MYSERVICE1-INGESTION-0000
+2026-05-05 10:20:02.339 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00001, cost=61ms, traceId=TRACE-MYSERVICE1-INGESTION-0001
+2026-05-05 10:20:04.324 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00002, cost=90ms, traceId=TRACE-MYSERVICE1-INGESTION-0002
+2026-05-05 10:20:06.013 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00003, cost=96ms, traceId=TRACE-MYSERVICE1-INGESTION-0003
+2026-05-05 10:20:08.284 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00004, cost=76ms, traceId=TRACE-MYSERVICE1-INGESTION-0004
+2026-05-05 10:20:10.359 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00005, cost=71ms, traceId=TRACE-MYSERVICE1-INGESTION-0005
+2026-05-05 10:20:12.887 [ingestion-worker-3] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00006, cost=69ms, traceId=TRACE-MYSERVICE1-INGESTION-0006
+2026-05-05 10:20:14.566 [ingestion-worker-4] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00007, cost=31ms, traceId=TRACE-MYSERVICE1-INGESTION-0007
+2026-05-05 10:20:16.010 [ingestion-worker-1] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00008, cost=67ms, traceId=TRACE-MYSERVICE1-INGESTION-0008
+2026-05-05 10:20:18.519 [ingestion-worker-2] INFO  com.example.ingestion.IngestionService - ingestion batch processed successfully, batchId=BATCH-00009, cost=66ms, traceId=TRACE-MYSERVICE1-INGESTION-0009
+2026-05-05 10:23:00.013 [ingestion-db-writer-7] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=48s), traceId=TD-DB-20260505-0002
+2026-05-05 10:23:05.120 [ingestion-db-writer-1] ERROR com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=5000, cost=30000ms, traceId=TD-DB-20260505-0002
+java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:181)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at com.example.ingestion.repository.DynamicDataRepository.batchInsert(DynamicDataRepository.java:211)
+	at com.example.ingestion.BatchInsertService.flushBatch(BatchInsertService.java:156)
+	at com.example.ingestion.BatchInsertWorker.run(BatchInsertWorker.java:74)
+2026-05-05 10:23:06.120 [ingestion-db-writer-2] ERROR com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=5000, cost=30000ms, traceId=TD-DB-20260505-0002
+java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:181)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at com.example.ingestion.repository.DynamicDataRepository.batchInsert(DynamicDataRepository.java:211)
+	at com.example.ingestion.BatchInsertService.flushBatch(BatchInsertService.java:156)
+	at com.example.ingestion.BatchInsertWorker.run(BatchInsertWorker.java:74)
+2026-05-05 10:23:07.120 [ingestion-db-writer-3] ERROR com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=5000, cost=30000ms, traceId=TD-DB-20260505-0002
+java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:181)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at com.example.ingestion.repository.DynamicDataRepository.batchInsert(DynamicDataRepository.java:211)
+	at com.example.ingestion.BatchInsertService.flushBatch(BatchInsertService.java:156)
+	at com.example.ingestion.BatchInsertWorker.run(BatchInsertWorker.java:74)
+2026-05-05 10:23:08.120 [ingestion-db-writer-4] ERROR com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=5000, cost=30000ms, traceId=TD-DB-20260505-0002
+java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:181)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at com.example.ingestion.repository.DynamicDataRepository.batchInsert(DynamicDataRepository.java:211)
+	at com.example.ingestion.BatchInsertService.flushBatch(BatchInsertService.java:156)
+	at com.example.ingestion.BatchInsertWorker.run(BatchInsertWorker.java:74)
+2026-05-05 10:23:09.120 [ingestion-db-writer-5] ERROR com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=5000, cost=30000ms, traceId=TD-DB-20260505-0002
+java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:181)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at com.example.ingestion.repository.DynamicDataRepository.batchInsert(DynamicDataRepository.java:211)
+	at com.example.ingestion.BatchInsertService.flushBatch(BatchInsertService.java:156)
+	at com.example.ingestion.BatchInsertWorker.run(BatchInsertWorker.java:74)
+2026-05-05 10:23:10.120 [ingestion-db-writer-6] ERROR com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=5000, cost=30000ms, traceId=TD-DB-20260505-0002
+java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:181)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at com.example.ingestion.repository.DynamicDataRepository.batchInsert(DynamicDataRepository.java:211)
+	at com.example.ingestion.BatchInsertService.flushBatch(BatchInsertService.java:156)
+	at com.example.ingestion.BatchInsertWorker.run(BatchInsertWorker.java:74)
+2026-05-05 10:23:11.120 [ingestion-db-writer-7] ERROR com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=5000, cost=30000ms, traceId=TD-DB-20260505-0002
+java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:181)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at com.example.ingestion.repository.DynamicDataRepository.batchInsert(DynamicDataRepository.java:211)
+	at com.example.ingestion.BatchInsertService.flushBatch(BatchInsertService.java:156)
+	at com.example.ingestion.BatchInsertWorker.run(BatchInsertWorker.java:74)
+2026-05-05 10:23:12.120 [ingestion-db-writer-8] ERROR com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=5000, cost=30000ms, traceId=TD-DB-20260505-0002
+java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:181)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at com.example.ingestion.repository.DynamicDataRepository.batchInsert(DynamicDataRepository.java:211)
+	at com.example.ingestion.BatchInsertService.flushBatch(BatchInsertService.java:156)
+	at com.example.ingestion.BatchInsertWorker.run(BatchInsertWorker.java:74)
+2026-05-05 10:23:13.120 [ingestion-db-writer-1] ERROR com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=5000, cost=30000ms, traceId=TD-DB-20260505-0002
+java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:181)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at com.example.ingestion.repository.DynamicDataRepository.batchInsert(DynamicDataRepository.java:211)
+	at com.example.ingestion.BatchInsertService.flushBatch(BatchInsertService.java:156)
+	at com.example.ingestion.BatchInsertWorker.run(BatchInsertWorker.java:74)
+2026-05-05 10:23:14.120 [ingestion-db-writer-2] ERROR com.example.ingestion.BatchInsertService - Batch insert failed, table=T_SECOND_LEVEL_DATA, batchSize=5000, cost=30000ms, traceId=TD-DB-20260505-0002
+java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms.
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:181)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at com.example.ingestion.repository.DynamicDataRepository.batchInsert(DynamicDataRepository.java:211)
+	at com.example.ingestion.BatchInsertService.flushBatch(BatchInsertService.java:156)
+	at com.example.ingestion.BatchInsertWorker.run(BatchInsertWorker.java:74)
+2026-05-05 10:23:22.333 [ingestion-scheduler-1] WARN  com.example.ingestion.IngestionMonitor - Ingestion backlog increased, period=30s, pendingRows=184000, deadlineMiss=true, traceId=TD-DB-20260505-0002
+2026-05-05 10:23:24.812 [ingestion-db-writer-3] WARN  com.example.ingestion.repository.DynamicDataRepository - Slow SQL detected, sql=INSERT INTO T_SECOND_LEVEL_DATA(...), cost=12842ms, traceId=TD-DB-20260505-0002

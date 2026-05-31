@@ -4,7 +4,7 @@
 
 Generate structured output files from in-memory analysis results for evidence preservation, reporting, case drafting, and retrieval querying. This capability produces HTML reports, evidence packages, case drafts, and retrieval context without AI involvement or full-file loading.
 
-##ADDED Requirements
+## Requirements
 
 ### Requirement: Evidence Pack Generator
 The system SHALL generate `evidence-pack.md` containing classification statistics, exception timeline, key log features, and bounded top exception samples from in-memory parsed log records and classification results.

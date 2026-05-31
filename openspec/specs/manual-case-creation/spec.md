@@ -4,7 +4,7 @@
 
 API endpoint and service for creating fault cases manually without requiring log analysis. Supports cold-start environments, legacy system migration, and known fault pattern initialization. All data stored as files with no database required.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Manual Case Creation Service
 The casebase module SHALL provide a service function for creating fault cases manually without analysis task artifacts.

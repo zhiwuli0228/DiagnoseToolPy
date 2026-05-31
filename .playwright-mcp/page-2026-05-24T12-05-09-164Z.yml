@@ -1,0 +1,43 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: DiagnoseToolPy
+      - menu [ref=e7]:
+        - menuitem "dashboard 仪表盘" [ref=e8] [cursor=pointer]:
+          - img "dashboard" [ref=e9]:
+            - img [ref=e10]
+          - generic [ref=e12]: 仪表盘
+        - menuitem "file-search 分析任务" [ref=e13] [cursor=pointer]:
+          - img "file-search" [ref=e14]:
+            - img [ref=e15]
+          - generic [ref=e17]: 分析任务
+        - menuitem "folder 案例库" [ref=e18] [cursor=pointer]:
+          - img "folder" [ref=e19]:
+            - img [ref=e20]
+          - generic [ref=e22]: 案例库
+        - menuitem "setting 设置" [ref=e23] [cursor=pointer]:
+          - img "setting" [ref=e24]:
+            - img [ref=e25]
+          - generic [ref=e27]: 设置
+    - img "bars" [ref=e29] [cursor=pointer]:
+      - img [ref=e30]
+  - generic [ref=e32]:
+    - banner [ref=e33]:
+      - button "global 中文" [ref=e34] [cursor=pointer]:
+        - img "global" [ref=e36]:
+          - img [ref=e37]
+        - generic [ref=e39]: 中文
+      - button "robot" [ref=e41] [cursor=pointer]:
+        - img "robot" [ref=e43]:
+          - img [ref=e44]
+    - main [ref=e46]:
+      - generic [ref=e48]:
+        - heading "案例库" [level=1] [ref=e49]
+        - generic [ref=e50]:
+          - img "exclamation-circle" [ref=e52]:
+            - img [ref=e53]
+          - generic [ref=e55]: 案例库
+          - generic [ref=e56]: Case list and search functionality coming soon
+          - link "返回仪表盘" [ref=e58] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e59]: 返回仪表盘

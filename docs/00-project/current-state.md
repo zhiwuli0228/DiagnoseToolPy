@@ -42,6 +42,12 @@ V0.3 AI Diagnosis Integration implemented. Remaining: full UI business features.
 - [x] AI diagnosis orchestrator (analyzer/diagnosis.py)
 - [x] POST /api/diagnosis endpoint
 - [x] Frontend AI diagnosis page (AIDiagnosisPage.tsx)
+- [x] Evidence basket for selected log diagnosis
+- [x] POST /api/diagnosis/search endpoint
+- [x] POST /api/diagnosis/cluster endpoint
+- [x] Evidence cache with context (matched-lines.jsonl)
+- [x] Smart evidence compression module
+- [x] Cluster matched lines retrieval API
 
 ## Current Constraints
 

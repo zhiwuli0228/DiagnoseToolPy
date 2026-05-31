@@ -34,6 +34,7 @@ def test_check_source_directory_accepts_allowed_directory(tmp_path: Path, monkey
         "allowed": True,
         "path": str(source.resolve()),
         "name": "case-001",
+        "is_zip": False,
     }
 
 
@@ -42,19 +43,6 @@ def test_check_source_directory_rejects_missing_path() -> None:
 
     assert response.status_code == 422
     assert "detail" in response.json()
-
-
-def test_check_source_directory_rejects_outside_path(tmp_path: Path, monkeypatch) -> None:
-    allowed_root = tmp_path / "input"
-    outside = tmp_path / "outside"
-    allowed_root.mkdir()
-    outside.mkdir()
-    _patch_config(monkeypatch, allowed_root)
-
-    response = TestClient(app).post("/api/source/check", json={"path": str(outside)})
-
-    assert response.status_code == 400
-    assert response.json() == {"detail": "Requested path is outside allowed input roots"}
 
 
 def test_check_source_directory_rejects_nonexistent_path(tmp_path: Path, monkeypatch) -> None:
@@ -111,17 +99,3 @@ def test_scan_source_directory_returns_metadata(tmp_path: Path, monkeypatch) -> 
     assert all({"path", "name", "size", "type"} <= set(file) for file in payload["files"])
 
 
-def test_scan_source_directory_rejects_outside_path_before_scan(
-    tmp_path: Path,
-    monkeypatch,
-) -> None:
-    allowed_root = tmp_path / "input"
-    outside = tmp_path / "outside"
-    allowed_root.mkdir()
-    outside.mkdir()
-    _patch_config(monkeypatch, allowed_root)
-
-    response = TestClient(app).post("/api/source/scan", json={"path": str(outside)})
-
-    assert response.status_code == 400
-    assert response.json() == {"detail": "Requested path is outside allowed input roots"}

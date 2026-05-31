@@ -28,14 +28,44 @@ export const handlers = [
       diagnosis: 'Database connection pool exhausted.',
     });
   }),
+  http.post('/api/diagnosis/export-bugfix-prompt', async ({ request }) => {
+    const body = await request.json() as { task_id: string };
+    if (!body.task_id) {
+      return HttpResponse.json({ detail: 'task_id required' }, { status: 400 });
+    }
+    return HttpResponse.json({
+      success: true,
+      task_id: body.task_id,
+      output_path: `data/output/${body.task_id}/bugfix-prompt.md`,
+      prompt: `# Bugfix Prompt for ${body.task_id}\n\n## Problem Summary\n- Example bugfix prompt generated for ${body.task_id}`,
+    });
+  }),
 
   // source APIs
   http.post('/api/source/check', async ({ request }) => {
     const body = await request.json() as { path: string };
-    return HttpResponse.json({ allowed: true, path: body.path, name: 'mylogs' });
+    const isZip = body.path.toLowerCase().endsWith('.zip');
+    return HttpResponse.json({
+      allowed: true,
+      path: body.path,
+      name: isZip ? 'logs.zip' : 'mylogs',
+      is_zip: isZip,
+    });
   }),
   http.post('/api/source/scan', async ({ request }) => {
     const body = await request.json() as { path: string };
+    const isZip = body.path.toLowerCase().endsWith('.zip');
+    if (isZip) {
+      return HttpResponse.json({
+        total_files: 2,
+        total_bytes: 1234,
+        file_types: { '.log': 2 },
+        error_count: 1,
+        warn_count: 0,
+        extracted_path: '/data/temp/zip-abc123/logs',
+        zip_task_id: 'abc123',
+      });
+    }
     return HttpResponse.json({
       total_files: 42,
       total_bytes: 1234567,
@@ -43,5 +73,8 @@ export const handlers = [
       error_count: 3,
       warn_count: 7,
     });
+  }),
+  http.delete('/api/source/temp/:taskId', ({ params }) => {
+    return HttpResponse.json({ status: 'cleaned', task_id: params.taskId });
   }),
 ];

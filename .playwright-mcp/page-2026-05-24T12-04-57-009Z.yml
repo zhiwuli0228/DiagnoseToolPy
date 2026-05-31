@@ -1,0 +1,64 @@
+- generic [ref=e3]:
+  - complementary:
+    - generic:
+      - generic: DiagnoseToolPy
+      - menu:
+        - menuitem "dashboard 仪表盘":
+          - img "dashboard" [ref=e9] [cursor=pointer]:
+            - img [ref=e10]
+          - generic [ref=e12] [cursor=pointer]: 仪表盘
+        - menuitem "file-search 分析任务":
+          - img "file-search" [ref=e14] [cursor=pointer]:
+            - img [ref=e15]
+          - generic [ref=e17] [cursor=pointer]: 分析任务
+        - menuitem "folder 案例库":
+          - img "folder" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+          - generic [ref=e22] [cursor=pointer]: 案例库
+        - menuitem "setting 设置":
+          - img "setting" [ref=e24] [cursor=pointer]:
+            - img [ref=e25]
+          - generic [ref=e27] [cursor=pointer]: 设置
+    - img "bars" [ref=e29] [cursor=pointer]:
+      - img [ref=e30]
+  - generic [ref=e32]:
+    - banner [ref=e33]:
+      - button "global 中文" [ref=e87] [cursor=pointer]:
+        - img "global" [ref=e36]:
+          - img [ref=e37]
+        - generic [ref=e39]: 中文
+      - button "robot" [ref=e41] [cursor=pointer]:
+        - img "robot" [ref=e43]:
+          - img [ref=e44]
+    - main [ref=e46]:
+      - generic [ref=e48]:
+        - heading "分析任务" [level=1] [ref=e88]
+        - button "thunderbolt 开始诊断" [ref=e89] [cursor=pointer]:
+          - img "thunderbolt" [ref=e53]:
+            - img [ref=e54]
+          - generic [ref=e56]: 开始诊断
+        - generic [ref=e58]:
+          - generic [ref=e60]:
+            - textbox "Enter directory path (e.g., /data/diagnose/input)" [ref=e61]
+            - generic [ref=e62]:
+              - button "upload ZIP" [ref=e63] [cursor=pointer]:
+                - img "upload" [ref=e65]:
+                  - img [ref=e66]
+                - generic [ref=e68]: ZIP
+              - button "Browse..." [ref=e69] [cursor=pointer]:
+                - generic [ref=e70]: Browse...
+          - generic [ref=e71]:
+            - button "check-circle Check Directory" [ref=e72] [cursor=pointer]:
+              - img "check-circle" [ref=e74]:
+                - img [ref=e75]
+              - generic [ref=e78]: Check Directory
+            - button "file-search Scan Directory" [disabled] [ref=e79]:
+              - generic:
+                - img "file-search":
+                  - img
+              - generic: Scan Directory
+            - button "cluster 异常聚类" [disabled] [ref=e90]:
+              - generic:
+                - img "cluster":
+                  - img
+              - generic: 异常聚类

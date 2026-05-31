@@ -1,0 +1,32 @@
+[      50ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5177/node_modules/.vite/deps/chunk-FD5SMSK5.js?v=23b2d2bb:21608
+[     146ms] [ERROR] Warning: [antd: Input] `addonAfter` is deprecated. Please use `Space.Compact` instead. @ http://localhost:5177/node_modules/.vite/deps/chunk-HKLDFRIY.js?v=23b2d2bb:1247
+[     214ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5177/node_modules/.vite/deps/react-router-dom.js?v=23b2d2bb:4435
+[     214ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5177/node_modules/.vite/deps/react-router-dom.js?v=23b2d2bb:4435
+[     266ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5177/api/diagnosis/conversation/35488f64-451d-4f66-90cc-3d7089efa04d:0
+[     286ms] [WARNING] Failed to load conversation: Error: Session not found
+    at getConversation (http://localhost:5177/src/api/conversationApi.ts:66:11)
+    at async loadConversation (http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779619171945:119:23) @ http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779619171945:132
+[  517813ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5177/api/diagnosis/conversation/35488f64-451d-4f66-90cc-3d7089efa04d:0
+[  517814ms] [WARNING] Failed to load conversation: Error: Session not found
+    at getConversation (http://localhost:5177/src/api/conversationApi.ts:66:11)
+    at async loadConversation (http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620336324:119:23) @ http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620336324:132
+[  524250ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5177/api/diagnosis/conversation/35488f64-451d-4f66-90cc-3d7089efa04d:0
+[  524250ms] [WARNING] Failed to load conversation: Error: Session not found
+    at getConversation (http://localhost:5177/src/api/conversationApi.ts:66:11)
+    at async loadConversation (http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620342768:119:23) @ http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620342768:132
+[  534202ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5177/api/diagnosis/conversation/35488f64-451d-4f66-90cc-3d7089efa04d:0
+[  534203ms] [WARNING] Failed to load conversation: Error: Session not found
+    at getConversation (http://localhost:5177/src/api/conversationApi.ts:66:11)
+    at async loadConversation (http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620352669:119:23) @ http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620352669:132
+[  540152ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5177/api/diagnosis/conversation/35488f64-451d-4f66-90cc-3d7089efa04d:0
+[  540155ms] [WARNING] Failed to load conversation: Error: Session not found
+    at getConversation (http://localhost:5177/src/api/conversationApi.ts:66:11)
+    at async loadConversation (http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620358562:121:23) @ http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620358562:134
+[  552641ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5177/api/diagnosis/conversation/35488f64-451d-4f66-90cc-3d7089efa04d:0
+[  552642ms] [WARNING] Failed to load conversation: Error: Session not found
+    at getConversation (http://localhost:5177/src/api/conversationApi.ts:66:11)
+    at async loadConversation (http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620371095:121:23) @ http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620371095:134
+[  565441ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5177/api/diagnosis/conversation/35488f64-451d-4f66-90cc-3d7089efa04d:0
+[  565442ms] [WARNING] Failed to load conversation: Error: Session not found
+    at getConversation (http://localhost:5177/src/api/conversationApi.ts:66:11)
+    at async loadConversation (http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620383887:121:23) @ http://localhost:5177/src/pages/DiagnosisStudioPage.tsx?t=1779620383887:134

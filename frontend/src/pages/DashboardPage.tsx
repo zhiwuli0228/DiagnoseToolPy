@@ -1,5 +1,6 @@
 import { Card, Row, Col } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   FileSearchOutlined,
   FolderOutlined,
@@ -8,33 +9,34 @@ import {
 
 const { Meta } = Card;
 
-const cardData = [
-  {
-    title: 'Analysis Tasks',
-    description: 'Scan server directories and analyze log files',
-    icon: <FileSearchOutlined style={{ fontSize: 48, color: '#1890ff' }} />,
-    path: '/analysis',
-  },
-  {
-    title: 'Casebase',
-    description: 'Browse and manage fault cases',
-    icon: <FolderOutlined style={{ fontSize: 48, color: '#52c41a' }} />,
-    path: '/cases',
-  },
-  {
-    title: 'Settings',
-    description: 'Configure input roots and application settings',
-    icon: <SettingOutlined style={{ fontSize: 48, color: '#faad14' }} />,
-    path: '/settings',
-  },
-];
-
 function DashboardPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const cardData = [
+    {
+      title: t('dashboard.analysisTasksCard'),
+      description: t('dashboard.analysisTasksDesc'),
+      icon: <FileSearchOutlined style={{ fontSize: 48, color: '#1890ff' }} />,
+      path: '/analysis',
+    },
+    {
+      title: t('dashboard.casebaseCard'),
+      description: t('dashboard.casebaseDesc'),
+      icon: <FolderOutlined style={{ fontSize: 48, color: '#52c41a' }} />,
+      path: '/cases',
+    },
+    {
+      title: t('dashboard.settingsCard'),
+      description: t('dashboard.settingsDesc'),
+      icon: <SettingOutlined style={{ fontSize: 48, color: '#faad14' }} />,
+      path: '/settings',
+    },
+  ];
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <h1>{t('dashboard.title')}</h1>
       <Row gutter={[16, 16]}>
         {cardData.map((card) => (
           <Col xs={24} sm={12} md={8} key={card.path}>
