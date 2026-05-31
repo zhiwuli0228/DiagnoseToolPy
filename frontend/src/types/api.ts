@@ -253,3 +253,14 @@ export interface ExportWorkspaceResponse {
   files_written: string[];
   detection_hint?: string;
 }
+
+export interface BugfixPromptExportRequest {
+  task_id: string;
+}
+
+export interface BugfixPromptExportResponse {
+  success: boolean;
+  task_id: string;
+  output_path: string;
+  prompt: string;
+}

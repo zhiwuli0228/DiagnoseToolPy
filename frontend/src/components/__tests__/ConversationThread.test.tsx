@@ -25,7 +25,7 @@ describe('ConversationThread', () => {
     renderWithRouter(
       <ConversationThread turns={[]} currentQuestion={null} />
     );
-    expect(screen.getByText('输入问题描述和选择日志证据后，点击"开始诊断"发起对话')).toBeInTheDocument();
+    expect(screen.getByText(/Enter problem description and select log evidence/i)).toBeInTheDocument();
   });
 
   it('renders user context with all fields', () => {
@@ -39,10 +39,10 @@ describe('ConversationThread', () => {
       <ConversationThread turns={[turn]} />
     );
 
-    expect(screen.getByText('## 现象')).toBeInTheDocument();
+    expect(screen.getByText('## Phenomenon')).toBeInTheDocument();
     expect(screen.getByText('Service is slow')).toBeInTheDocument();
-    expect(screen.getByText('## 堆栈')).toBeInTheDocument();
-    expect(screen.getByText('## 入参')).toBeInTheDocument();
+    expect(screen.getByText('## Stack')).toBeInTheDocument();
+    expect(screen.getByText('## Parameters')).toBeInTheDocument();
     expect(screen.getByText('timeout=30')).toBeInTheDocument();
   });
 
@@ -56,7 +56,7 @@ describe('ConversationThread', () => {
       <ConversationThread turns={[turn]} />
     );
 
-    expect(screen.getByText('AI 诊断')).toBeInTheDocument();
+    expect(screen.getByText('AI Diagnosis')).toBeInTheDocument();
     expect(screen.getByText('Possible memory leak detected')).toBeInTheDocument();
   });
 
@@ -71,7 +71,7 @@ describe('ConversationThread', () => {
       <ConversationThread turns={[turn]} />
     );
 
-    expect(screen.getByText('AI 追问')).toBeInTheDocument();
+    expect(screen.getByText('AI Question')).toBeInTheDocument();
     expect(screen.getByText('What is the error code?')).toBeInTheDocument();
   });
 
@@ -85,10 +85,10 @@ describe('ConversationThread', () => {
       />
     );
 
-    const textarea = screen.getByPlaceholderText('输入您的回复...');
+    const textarea = screen.getByPlaceholderText('Enter your reply...');
     fireEvent.change(textarea, { target: { value: 'Here is the stack trace' } });
 
-    const sendButton = screen.getByText('发送回复');
+    const sendButton = screen.getByText('Send Reply');
     fireEvent.click(sendButton);
 
     expect(onContinue).toHaveBeenCalledWith('Here is the stack trace');
@@ -105,7 +105,7 @@ describe('ConversationThread', () => {
       />
     );
 
-    const skipButton = screen.getByText('跳过，直接诊断');
+    const skipButton = screen.getByText('Skip and Diagnose');
     fireEvent.click(skipButton);
 
     expect(onSkip).toHaveBeenCalled();
@@ -150,6 +150,6 @@ describe('ConversationThread', () => {
       <ConversationThread turns={[turn]} />
     );
 
-    expect(screen.getByText('用户')).toBeInTheDocument();
+    expect(screen.getByText('User')).toBeInTheDocument();
   });
 });

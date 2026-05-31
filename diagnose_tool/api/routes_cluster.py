@@ -107,7 +107,7 @@ def get_cluster_matched_lines(task_id: str, cluster_index: int) -> dict:
     # Read cluster result to get group keys
     result = read_cluster_result(task_output)
     if result is None:
-        raise HTTPException(status_code=404, detail=f"Cluster result not found")
+        raise HTTPException(status_code=404, detail="Cluster result not found")
 
     if cluster_index < 0 or cluster_index >= len(result.clusters):
         raise HTTPException(status_code=400, detail=f"Invalid cluster index: {cluster_index}")

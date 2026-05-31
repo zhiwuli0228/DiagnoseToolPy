@@ -5,10 +5,23 @@ import { MemoryRouter } from 'react-router-dom';
 import AnalysisTasksPage from '../AnalysisTasksPage';
 import { DiagnosisProvider } from '../../context/DiagnosisContext';
 import * as sourceApi from '../../api/sourceApi';
+import * as clusterApi from '../../api/clusterApi';
+import * as diagnosisApi from '../../api/diagnosisApi';
 import { server } from '../../mocks/server';
 import { http, HttpResponse } from 'msw';
 
 vi.mock('../../api/sourceApi');
+vi.mock('../../api/clusterApi');
+vi.mock('../../api/diagnosisApi', async () => {
+  const actual = await vi.importActual<typeof import('../../api/diagnosisApi')>('../../api/diagnosisApi');
+  return {
+    ...actual,
+    diagnoseFromCluster: vi.fn(),
+    exportWorkspace: vi.fn(),
+    previewPrompt: vi.fn(),
+    exportBugfixPrompt: vi.fn(),
+  };
+});
 
 const renderWithRouter = (ui: React.ReactElement) => {
   return render(<MemoryRouter><DiagnosisProvider>{ui}</DiagnosisProvider></MemoryRouter>);
@@ -86,8 +99,6 @@ describe('AnalysisTasksPage', () => {
 
   describe('Degraded Dialog', () => {
     it('shows degraded modal when cluster diagnosis returns degraded response', async () => {
-      const user = userEvent.setup();
-
       // Override the cluster diagnosis endpoint to return degraded response
       server.use(
         http.post('/api/diagnosis/cluster', () =>
@@ -113,19 +124,15 @@ describe('AnalysisTasksPage', () => {
 
   describe('Export Workspace', () => {
     it('export-workspace API is called with correct parameters', async () => {
-      const user = userEvent.setup();
-
-      let exportRequestBody: unknown = null;
       server.use(
-        http.post('/api/diagnosis/export-workspace', async ({ request }) => {
-          exportRequestBody = await request.json();
-          return HttpResponse.json({
+        http.post('/api/diagnosis/export-workspace', async () =>
+          HttpResponse.json({
             success: true,
             workspace_dir: '/test/workspace',
             files_written: ['README.md', 'prompt.md', 'context/phenomenon.md'],
             detection_hint: 'Save your diagnosis as result.md',
-          });
-        })
+          })
+        )
       );
 
       renderWithRouter(<AnalysisTasksPage />);
@@ -133,6 +140,43 @@ describe('AnalysisTasksPage', () => {
       // The export workspace button should be visible after scanning
       // We can't fully test this without a scanned directory, but we can verify the component renders
       expect(screen.getByRole('button', { name: /scan directory/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('Bugfix Prompt Export', () => {
+    it('shows generate bugfix prompt flow after clustering completes', async () => {
+      const user = userEvent.setup();
+
+      vi.mocked(clusterApi.createClusterTask).mockResolvedValue({ task_id: 'cluster-task-001' });
+      vi.mocked(clusterApi.pollClusterTask).mockResolvedValueOnce({
+        status: 'done',
+        progress: 100,
+        current_step: 'done',
+        clusters: [],
+      });
+      vi.mocked(diagnosisApi.exportBugfixPrompt).mockResolvedValue({
+        success: true,
+        task_id: 'cluster-task-001',
+        output_path: 'data/output/cluster-task-001/bugfix-prompt.md',
+        prompt: '# Bugfix Prompt\n\nTask: cluster-task-001',
+      });
+
+      renderWithRouter(<AnalysisTasksPage />);
+
+      await user.type(screen.getByPlaceholderText(/enter directory path/i), '/data/logs');
+      await user.click(screen.getByRole('button', { name: /Anomaly Clustering/i }));
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /Generate Bugfix Prompt/i })).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: /Generate Bugfix Prompt/i }));
+
+      await waitFor(() => {
+        expect(screen.getAllByText(/Bugfix prompt generated/i).length).toBeGreaterThan(0);
+        expect(screen.getByText(/data\/output\/cluster-task-001\/bugfix-prompt\.md/i)).toBeInTheDocument();
+      });
+      expect(vi.mocked(diagnosisApi.exportBugfixPrompt)).toHaveBeenCalledWith({ task_id: 'cluster-task-001' });
     });
   });
 });

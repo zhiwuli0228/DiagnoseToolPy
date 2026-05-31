@@ -11,7 +11,6 @@ import yaml
 
 from diagnose_tool.core.config import DEFAULT_CONFIG_PATH, load_config
 from diagnose_tool.core.llm_config import load_llm_config
-from diagnose_tool.core.security import PathValidationError
 
 
 router = APIRouter(prefix="/api/config", tags=["config"])

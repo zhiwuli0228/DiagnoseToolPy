@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Row, Col, Card, Typography, Button, message, Alert, List, Tag, Space, Modal, ModalProps } from 'antd';
+import { Row, Col, Card, Typography, Button, message, Alert, List, Tag, Space, Modal } from 'antd';
 import { ThunderboltOutlined, DeleteOutlined, FolderOpenOutlined, CopyOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useSession } from '../hooks/useSession';
@@ -42,7 +42,6 @@ function DiagnosisStudioPage() {
   // Workspace export state
   const [workspaceDir, setWorkspaceDir] = useState<string | null>(null);
   const [exportSuccess, setExportSuccess] = useState(false);
-  const [exportedPrompt, setExportedPrompt] = useState<string | null>(null);
   const [degradedModalOpen, setDegradedModalOpen] = useState(false);
   const [degradedInfo, setDegradedInfo] = useState<DegradedResponse | null>(null);
 
@@ -244,13 +243,6 @@ function DiagnosisStudioPage() {
     setLoading(true);
 
     try {
-      const evidenceRefs = selections.map(sel => {
-        if (sel.type === 'log' && sel.id) return sel.id;
-        if (sel.type === 'group' && sel.group_key) return sel.group_key;
-        if (sel.type === 'cluster' && sel.cluster_index !== undefined) return `cluster:${sel.cluster_index}`;
-        return '';
-      }).filter(Boolean);
-
       const result = await exportWorkspace({
         session_id: currentSessionId || undefined,
         workspace_dir: dir,
@@ -273,15 +265,6 @@ function DiagnosisStudioPage() {
   };
 
   const handleCopyPrompt = async () => {
-    if (!exportedPrompt) {
-      // Try to fetch the prompt.md content
-      try {
-        const response = await fetch(`/api/diagnosis/export-workspace?workspace_dir=${encodeURIComponent(workspaceDir || '')}`);
-        // This won't work as-is, need a separate endpoint
-      } catch {
-        // Fallback - just show success
-      }
-    }
     message.info(t('analysisTasks.copyPromptManual'));
   };
 
@@ -294,7 +277,7 @@ function DiagnosisStudioPage() {
     }
   };
 
-  const handleImportResult = (content: string) => {
+  const handleImportResult = (_content: string) => {
     // For now, just show the result - in full implementation would save to case
     message.success(t('analysisTasks.importSuccess'));
     setExportSuccess(false);
@@ -310,7 +293,10 @@ function DiagnosisStudioPage() {
     setDegradedModalOpen(false);
 
     try {
-      const options = degradedInfo.workspace_export_options;
+      const options = degradedInfo?.workspace_export_options;
+      if (!options) {
+        throw new Error('Missing degraded export options');
+      }
       const result = await exportWorkspace({
         session_id: options.session_id as string | undefined,
         task_id: options.task_id as string | undefined,
@@ -502,6 +488,7 @@ function DiagnosisStudioPage() {
       <input
         ref={directoryInputRef}
         type="file"
+        // @ts-expect-error webkitdirectory is supported by browsers but not React DOM types
         webkitdirectory="webkitdirectory"
         style={{ display: 'none' }}
         onChange={handleDirectorySelect}

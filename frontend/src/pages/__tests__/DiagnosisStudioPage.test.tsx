@@ -19,7 +19,7 @@ vi.mock('../../hooks/useSession', () => ({
 
 // Mock message module to avoid errors
 vi.mock('antd', async () => {
-  const actual = await vi.importActual('antd');
+  const actual = await vi.importActual<typeof import('antd')>('antd');
   return {
     ...actual,
     message: {
@@ -51,44 +51,44 @@ describe('DiagnosisStudioPage', () => {
   describe('Component Structure', () => {
     it('renders the page title', () => {
       renderWithRouter(<DiagnosisStudioPage />);
-      expect(screen.getByText('诊断工作室')).toBeInTheDocument();
+      expect(screen.getByText('Diagnosis Studio')).toBeInTheDocument();
     });
 
     it('renders the evidence card', () => {
       renderWithRouter(<DiagnosisStudioPage />);
-      expect(screen.getByText('已选证据')).toBeInTheDocument();
+      expect(screen.getByText('Selected Evidence')).toBeInTheDocument();
     });
 
     it('renders the problem description card', () => {
       renderWithRouter(<DiagnosisStudioPage />);
-      expect(screen.getByText('问题描述')).toBeInTheDocument();
+      expect(screen.getAllByText('Problem Phenomenon *').length).toBeGreaterThan(0);
     });
 
     it('renders the diagnosis settings card', () => {
       renderWithRouter(<DiagnosisStudioPage />);
-      expect(screen.getByText('诊断设置')).toBeInTheDocument();
+      expect(screen.getByText('Diagnosis Settings')).toBeInTheDocument();
     });
 
     it('shows empty state when no selections', () => {
       renderWithRouter(<DiagnosisStudioPage />);
-      expect(screen.getByText(/从 Analysis Tasks 页面选择日志或聚类后，证据将显示在这里/i)).toBeInTheDocument();
+      expect(screen.getByText(/Evidence will be displayed here after selecting logs or clusters/i)).toBeInTheDocument();
     });
 
     it('shows selection count as 0', () => {
       renderWithRouter(<DiagnosisStudioPage />);
-      expect(screen.getByText(/0 条/)).toBeInTheDocument();
+      expect(screen.getByText(/evidence selected/i)).toBeInTheDocument();
     });
   });
 
   describe('Export Workspace Button', () => {
     it('shows Preview Prompt button', () => {
       renderWithRouter(<DiagnosisStudioPage />);
-      expect(screen.getByRole('button', { name: /预览 Prompt/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Preview Prompt/i })).toBeInTheDocument();
     });
 
     it('Preview Prompt button is disabled when no evidence or context', () => {
       renderWithRouter(<DiagnosisStudioPage />);
-      const previewButton = screen.getByRole('button', { name: /预览 Prompt/i });
+      const previewButton = screen.getByRole('button', { name: /Preview Prompt/i });
       expect(previewButton).toBeDisabled();
     });
 
@@ -96,10 +96,10 @@ describe('DiagnosisStudioPage', () => {
       const user = userEvent.setup();
       renderWithRouter(<DiagnosisStudioPage />);
 
-      const phenomenonInput = screen.getByPlaceholderText(/描述观察到的问题现象/i);
+      const phenomenonInput = screen.getByPlaceholderText(/Describe the observed problem phenomenon/i);
       await user.type(phenomenonInput, 'Connection timeout');
 
-      const previewButton = screen.getByRole('button', { name: /预览 Prompt/i });
+      const previewButton = screen.getByRole('button', { name: /Preview Prompt/i });
       expect(previewButton).not.toBeDisabled();
     });
   });
@@ -107,12 +107,12 @@ describe('DiagnosisStudioPage', () => {
   describe('Start Diagnosis Button', () => {
     it('shows Start Diagnosis button', () => {
       renderWithRouter(<DiagnosisStudioPage />);
-      expect(screen.getByRole('button', { name: /开始诊断/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Start Diagnosis/i })).toBeInTheDocument();
     });
 
     it('Start Diagnosis button is disabled when no evidence or context', () => {
       renderWithRouter(<DiagnosisStudioPage />);
-      const startButton = screen.getByRole('button', { name: /开始诊断/i });
+      const startButton = screen.getByRole('button', { name: /Start Diagnosis/i });
       expect(startButton).toBeDisabled();
     });
 
@@ -120,10 +120,10 @@ describe('DiagnosisStudioPage', () => {
       const user = userEvent.setup();
       renderWithRouter(<DiagnosisStudioPage />);
 
-      const phenomenonInput = screen.getByPlaceholderText(/描述观察到的问题现象/i);
+      const phenomenonInput = screen.getByPlaceholderText(/Describe the observed problem phenomenon/i);
       await user.type(phenomenonInput, 'Connection timeout');
 
-      const startButton = screen.getByRole('button', { name: /开始诊断/i });
+      const startButton = screen.getByRole('button', { name: /Start Diagnosis/i });
       expect(startButton).not.toBeDisabled();
     });
   });
@@ -149,10 +149,10 @@ describe('DiagnosisStudioPage', () => {
 
       renderWithRouter(<DiagnosisStudioPage />);
 
-      const phenomenonInput = screen.getByPlaceholderText(/描述观察到的问题现象/i);
+      const phenomenonInput = screen.getByPlaceholderText(/Describe the observed problem phenomenon/i);
       await user.type(phenomenonInput, 'Database connection failed');
 
-      const startButton = screen.getByRole('button', { name: /开始诊断/i });
+      const startButton = screen.getByRole('button', { name: /Start Diagnosis/i });
 
       // Click start diagnosis - this will trigger the POST request
       await user.click(startButton);

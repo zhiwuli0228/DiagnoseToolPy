@@ -10,6 +10,12 @@ from diagnose_tool.core.config import ConfigError
 from diagnose_tool.core.llm_config import load_llm_config
 
 
+@pytest.fixture(autouse=True)
+def clear_llm_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Ensure env-based API key overrides do not leak into config tests."""
+    monkeypatch.delenv("LLM_API_KEY", raising=False)
+
+
 class TestLoadLLMConfig:
     """Test load_llm_config() from app.yaml."""
 

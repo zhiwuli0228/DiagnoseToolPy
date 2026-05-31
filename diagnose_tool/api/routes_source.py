@@ -141,7 +141,6 @@ async def upload_files(files: list[UploadFile] = File(...)) -> dict:
 
     Files are saved under data/input/uploads/{timestamp}/ preserving relative paths.
     """
-    config = load_config()
     upload_base = Path("data/input/uploads")
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     upload_dir = upload_base / timestamp

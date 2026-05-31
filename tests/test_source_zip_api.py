@@ -5,7 +5,6 @@ from __future__ import annotations
 import zipfile
 from pathlib import Path
 
-import pytest
 from fastapi.testclient import TestClient
 
 from diagnose_tool.api import routes_source

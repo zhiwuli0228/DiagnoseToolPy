@@ -10,6 +10,6 @@ const renderWithRouter = (ui: React.ReactElement) => {
 describe('CasebasePage', () => {
   it('renders under development message', () => {
     renderWithRouter(<CasebasePage />);
-    expect(screen.getByText(/under development/i)).toBeInTheDocument();
+    expect(screen.getByText(/Case list and search functionality coming soon/i)).toBeInTheDocument();
   });
 });

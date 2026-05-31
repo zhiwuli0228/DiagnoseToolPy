@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import shutil
 from pathlib import Path
 from typing import Any
 
@@ -13,11 +12,6 @@ from diagnose_tool.analyzer.evidence_compressor import (
     compress_log_entries,
     build_evidence_markdown,
     truncate_to_token_budget,
-)
-from diagnose_tool.analyzer.diagnosis import (
-    DiagnosisOrchestrator,
-    TaskNotFoundError,
-    EvidenceNotFoundError,
 )
 from diagnose_tool.core.llm_config import AppLLMConfig
 
@@ -270,7 +264,7 @@ class WorkspaceExporter:
             from diagnose_tool.analyzer.session_store import SessionStore
             store = SessionStore(self._data_dir / "sessions")
             try:
-                metadata = store.get_session(session_id)
+                store.get_session(session_id)
             except Exception as exc:
                 raise WorkspaceExportError(f"Session not found: {session_id}") from exc
 
@@ -335,7 +329,7 @@ class WorkspaceExporter:
         store = SessionStore(self._data_dir / "sessions")
 
         try:
-            metadata = store.get_session(session_id)
+            store.get_session(session_id)
         except Exception as exc:
             raise WorkspaceExportError(f"Session not found: {session_id}") from exc
 
@@ -608,7 +602,6 @@ class WorkspaceExporter:
         Returns:
             List of (case_id, score, metadata) tuples.
         """
-        from diagnose_tool.retrieval.prompt_context import generate_prompt_context
         from diagnose_tool.retrieval.query_builder import build_retrieval_query, RetrievalQuery
         from diagnose_tool.retrieval.bm25_search import search_bm25
         from diagnose_tool.retrieval.keyword_search import search_by_keywords

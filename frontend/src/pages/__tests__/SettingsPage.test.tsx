@@ -23,7 +23,7 @@ describe('SettingsPage', () => {
   });
 
   it('displays app name and version from API', async () => {
-    vi.spyOn(global, 'fetch').mockResolvedValueOnce(
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify(mockConfig), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -38,7 +38,7 @@ describe('SettingsPage', () => {
   });
 
   it('displays LLM configuration as read-only', async () => {
-    vi.spyOn(global, 'fetch').mockResolvedValueOnce(
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify(mockConfig), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -54,7 +54,7 @@ describe('SettingsPage', () => {
   });
 
   it('displays allowed input roots list', async () => {
-    vi.spyOn(global, 'fetch').mockResolvedValueOnce(
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(JSON.stringify(mockConfig), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -69,7 +69,7 @@ describe('SettingsPage', () => {
   });
 
   it('shows error and retry button when API fails', async () => {
-    vi.spyOn(global, 'fetch').mockResolvedValueOnce(
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response('Internal Server Error', { status: 500 })
     );
 

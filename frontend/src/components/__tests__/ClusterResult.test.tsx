@@ -64,7 +64,7 @@ describe('ClusterResult', () => {
 
   it('renders empty state when no clusters', () => {
     render(<ClusterResult clusters={[]} taskId="test-task-1" />);
-    expect(screen.getByText(/未发现异常模式/i)).toBeInTheDocument();
+    expect(screen.getByText(/No anomaly patterns found/i)).toBeInTheDocument();
   });
 
   it('renders cluster with exception class and count', () => {
@@ -107,7 +107,7 @@ describe('ClusterResult', () => {
     render(<ClusterResult clusters={clusters} taskId="test-task-1" />);
 
     // Expand the cluster first to reveal matched cases
-    const expandButton = screen.getByText('展开');
+    const expandButton = screen.getByText('Expand');
     userEvent.click(expandButton);
 
     // Wait for the expanded content to appear
@@ -128,12 +128,12 @@ describe('ClusterResult', () => {
 
     render(<ClusterResult clusters={clusters} taskId="test-task-1" />);
 
-    // Expand the cluster first to reveal the "无匹配案例" message
-    const expandButton = screen.getByText('展开');
+    // Expand the cluster first to reveal the no-matched-cases message
+    const expandButton = screen.getByText('Expand');
     userEvent.click(expandButton);
 
     // Wait for the expanded content to appear
-    await screen.findByText(/无匹配案例/i);
+    await screen.findByText(/No matched cases/i);
   });
 
   it('renders time distribution information', () => {
@@ -149,8 +149,8 @@ describe('ClusterResult', () => {
 
     render(<ClusterResult clusters={clusters} taskId="test-task-1" />);
 
-    expect(screen.getByText(/峰值:.*10:00-10:59/i)).toBeInTheDocument();
-    expect(screen.getByText(/范围:.*09:30-10:30/i)).toBeInTheDocument();
+    expect(screen.getByText(/Peak:.*10:00-10:59/i)).toBeInTheDocument();
+    expect(screen.getByText(/Range:.*09:30-10:30/i)).toBeInTheDocument();
   });
 
   it('renders multiple clusters', () => {
@@ -175,6 +175,6 @@ describe('ClusterResult', () => {
 
     expect(screen.getByText('NullPointerException')).toBeInTheDocument();
     expect(screen.getByText('SQLException')).toBeInTheDocument();
-    expect(screen.getByText(/发现 2 个异常模式/)).toBeInTheDocument();
+    expect(screen.getByText(/Found 2 anomaly patterns/)).toBeInTheDocument();
   });
 });

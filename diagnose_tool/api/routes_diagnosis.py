@@ -24,7 +24,13 @@ from diagnose_tool.analyzer.evidence_compressor import (
 )
 from diagnose_tool.core.llm_client import LLMClient, LLMClientError
 from diagnose_tool.core.llm_config import AppLLMConfig, load_llm_config
-from diagnose_tool.exporter import WorkspaceExporter, WorkspaceExportError
+from diagnose_tool.exporter import (
+    BugfixPromptExportError,
+    BugfixPromptExporter,
+    BugfixPromptTaskNotFoundError,
+    WorkspaceExporter,
+    WorkspaceExportError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +102,19 @@ class PreviewPromptRequest(BaseModel):
 
 class PreviewPromptResponse(BaseModel):
     """Response containing generated prompt content."""
+    prompt: str
+
+
+class BugfixPromptExportRequest(BaseModel):
+    """Request to generate a bugfix prompt from a completed analysis task."""
+    task_id: str = Field(min_length=1, description="Analysis task ID")
+
+
+class BugfixPromptExportResponse(BaseModel):
+    """Response after generating a bugfix prompt."""
+    success: bool
+    task_id: str
+    output_path: str
     prompt: str
 
 
@@ -453,6 +472,32 @@ def preview_prompt(request: PreviewPromptRequest) -> PreviewPromptResponse:
     except Exception as exc:
         logger.error("Unexpected error during preview: %s", exc)
         raise HTTPException(status_code=500, detail="Preview failed")
+
+
+@router.post("/diagnosis/export-bugfix-prompt", response_model=BugfixPromptExportResponse)
+def export_bugfix_prompt(request: BugfixPromptExportRequest) -> BugfixPromptExportResponse:
+    """Generate a deterministic bugfix prompt from a completed analysis task."""
+    llm_config = _get_llm_config()
+    exporter = BugfixPromptExporter(llm_config.data_dir)
+
+    try:
+        result = exporter.export_from_task_id(request.task_id)
+    except BugfixPromptTaskNotFoundError as exc:
+        logger.error("Bugfix prompt export task not found: %s", exc)
+        raise HTTPException(status_code=404, detail=str(exc))
+    except BugfixPromptExportError as exc:
+        logger.error("Bugfix prompt export failed: %s", exc)
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        logger.error("Unexpected error during bugfix prompt export: %s", exc)
+        raise HTTPException(status_code=500, detail="Bugfix prompt export failed")
+
+    return BugfixPromptExportResponse(
+        success=True,
+        task_id=result.task_id,
+        output_path=str(Path("data") / "output" / result.task_id / "bugfix-prompt.md"),
+        prompt=result.prompt,
+    )
 
 
 class CheckResultResponse(BaseModel):

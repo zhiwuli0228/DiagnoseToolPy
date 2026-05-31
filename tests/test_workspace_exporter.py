@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -130,7 +129,7 @@ class TestWorkspaceExporter:
         exporter = WorkspaceExporter(default_config)
         workspace_dir.mkdir(parents=True)
 
-        files_written = exporter.export_from_task_id(
+        exporter.export_from_task_id(
             task_id="task-001",
             workspace_dir=workspace_dir,
             user_context={"phenomenon": "Order failed", "stack": "Error at OrderService", "params": "order_id=123"},

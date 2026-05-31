@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import AIDiagnosisPage from '../AIDiagnosisPage';
 
@@ -10,7 +9,6 @@ describe('AIDiagnosisPage (deprecated, redirects to DiagnosisStudioPage)', () =>
   });
 
   it('redirects to /diagnosis-studio on mount', async () => {
-    const user = userEvent.setup();
     let capturedNavigate: ReturnType<typeof useNavigate> | null = null;
 
     function WrapperComponent() {
@@ -25,8 +23,6 @@ describe('AIDiagnosisPage (deprecated, redirects to DiagnosisStudioPage)', () =>
         <WrapperComponent />
       </MemoryRouter>
     );
-
-    await user.setup();
 
     // The component should redirect immediately on mount
     expect(capturedNavigate).not.toBeNull();

@@ -9,7 +9,6 @@ import pytest
 import yaml
 
 from diagnose_tool.analyzer.session_store import (
-    SessionCorruptedError,
     SessionMetadata,
     SessionNotFoundError,
     SessionStore,

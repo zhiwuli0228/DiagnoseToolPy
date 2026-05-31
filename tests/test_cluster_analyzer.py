@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-import pytest
 from pathlib import Path
 
 from diagnose_tool.analyzer.cluster_analyzer import (
     CaseTextExtractor,
     ClusterAnalyzer,
     ClusterGroup,
-    ClusterResult,
     MatchedCase,
     PHASE_AGGREGATE,
     PHASE_DONE,

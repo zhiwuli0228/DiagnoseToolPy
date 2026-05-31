@@ -1,12 +1,19 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, Result, Spin, Alert, Card, Statistic, Row, Col, Collapse, Tag, Table, Tabs, Checkbox, message, Drawer, Space, Modal } from 'antd';
-import { FileSearchOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, ClusterOutlined, FullscreenOutlined, ThunderboltOutlined, FolderOpenOutlined, CopyOutlined, DeleteOutlined, CheckCircleOutlined as CheckCircleFilled } from '@ant-design/icons';
+import { FileSearchOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined, ClusterOutlined, FullscreenOutlined, ThunderboltOutlined, FolderOpenOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type { ColumnsType } from 'antd/es/table';
 import { checkSourceDirectory, scanSourceDirectory, searchLogContent, deleteTempDir } from '../api/sourceApi';
 import { createClusterTask, pollClusterTask } from '../api/clusterApi';
-import { diagnoseFromCluster, exportWorkspace, previewPrompt, isDegradedResponse, type DegradedResponse } from '../api/diagnosisApi';
+import {
+  diagnoseFromCluster,
+  exportWorkspace,
+  exportBugfixPrompt,
+  previewPrompt,
+  isDegradedResponse,
+  type DegradedResponse,
+} from '../api/diagnosisApi';
 import type { SourceCheckResponse, ScanResult, LogSearchResponse, LogSearchResult, AggregatedGroup, ClusterStatusResponse, SelectionItem } from '../types/api';
 import { useDiagnosis } from '../context/DiagnosisContext';
 import ClusterProgress from '../components/ClusterProgress';
@@ -59,6 +66,12 @@ function AnalysisTasksPage() {
   const [previewPromptModalOpen, setPreviewPromptModalOpen] = useState(false);
   const [previewPromptContent, setPreviewPromptContent] = useState<string | null>(null);
   const [previewExportType, setPreviewExportType] = useState<'search' | 'cluster' | null>(null);
+
+  // Bugfix prompt state
+  const [bugfixPromptModalOpen, setBugfixPromptModalOpen] = useState(false);
+  const [bugfixPromptContent, setBugfixPromptContent] = useState<string | null>(null);
+  const [bugfixPromptOutputPath, setBugfixPromptOutputPath] = useState<string | null>(null);
+  const [bugfixPromptLoading, setBugfixPromptLoading] = useState(false);
 
   // Directory picker state
   const directoryInputRef = useRef<HTMLInputElement>(null);
@@ -375,9 +388,39 @@ function AnalysisTasksPage() {
     }
   };
 
-  const handleExportFromPreviewCluster = () => {
-    setPreviewPromptModalOpen(false);
-    triggerDirectoryPicker('cluster');
+  const handleGenerateBugfixPrompt = async () => {
+    if (!clusterTaskId || clusterStatus?.status !== 'done') {
+      message.warning(t('analysisTasks.pleaseRunClusteringFirst'));
+      return;
+    }
+
+    setBugfixPromptLoading(true);
+
+    try {
+      const result = await exportBugfixPrompt({ task_id: clusterTaskId });
+      setBugfixPromptOutputPath(result.output_path);
+      setBugfixPromptContent(result.prompt);
+      setBugfixPromptModalOpen(true);
+      message.success(t('analysisTasks.bugfixPromptGenerated'));
+    } catch (err: unknown) {
+      message.error(err instanceof Error ? err.message : t('analysisTasks.bugfixPromptFailed'));
+    } finally {
+      setBugfixPromptLoading(false);
+    }
+  };
+
+  const handleCopyBugfixPrompt = async () => {
+    if (!bugfixPromptContent) {
+      message.warning(t('analysisTasks.bugfixPromptCopyUnavailable'));
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(bugfixPromptContent);
+      message.success(t('analysisTasks.bugfixPromptCopied'));
+    } catch {
+      message.error(t('analysisTasks.bugfixPromptCopyFailed'));
+    }
   };
 
   const executeClusterExport = async (dir: string) => {
@@ -385,7 +428,7 @@ function AnalysisTasksPage() {
 
     try {
       const result = await exportWorkspace({
-        cache_key: clusterTaskId,
+        cache_key: clusterTaskId || undefined,
         workspace_dir: dir,
         selections: selections.filter(s => s.type === 'cluster'),
       });
@@ -414,7 +457,10 @@ function AnalysisTasksPage() {
     setDegradedModalOpen(false);
 
     try {
-      const options = degradedInfo.workspace_export_options;
+      const options = degradedInfo?.workspace_export_options;
+      if (!options) {
+        throw new Error('Missing degraded export options');
+      }
       const result = await exportWorkspace({
         session_id: options.session_id as string | undefined,
         task_id: options.task_id as string | undefined,
@@ -474,6 +520,7 @@ function AnalysisTasksPage() {
       <input
         ref={directoryInputRef}
         type="file"
+        // @ts-expect-error webkitdirectory is supported by browsers but not React DOM types
         webkitdirectory="webkitdirectory"
         style={{ display: 'none' }}
         onChange={handleDirectorySelect}
@@ -497,6 +544,40 @@ function AnalysisTasksPage() {
         <div style={{ maxHeight: '60vh', overflow: 'auto' }}>
           <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12 }}>
             {previewPromptContent}
+          </pre>
+        </div>
+      </Modal>
+
+      {/* Bugfix Prompt Modal */}
+      <Modal
+        title={t('analysisTasks.bugfixPromptTitle')}
+        open={bugfixPromptModalOpen}
+        onCancel={() => setBugfixPromptModalOpen(false)}
+        width={900}
+        footer={[
+          <Button key="close" onClick={() => setBugfixPromptModalOpen(false)}>
+            {t('analysisTasks.close')}
+          </Button>,
+          <Button key="copy" type="primary" icon={<CopyOutlined />} onClick={handleCopyBugfixPrompt}>
+            {t('analysisTasks.copyBugfixPrompt')}
+          </Button>,
+        ]}
+      >
+        <Alert
+          message={t('analysisTasks.bugfixPromptGenerated')}
+          description={
+            <div>
+              <p>{t('analysisTasks.bugfixPromptOutputPath')}: {bugfixPromptOutputPath}</p>
+              <p>{t('analysisTasks.bugfixPromptGuidance')}</p>
+            </div>
+          }
+          type="success"
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
+        <div style={{ maxHeight: '60vh', overflow: 'auto' }}>
+          <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: 12 }}>
+            {bugfixPromptContent}
           </pre>
         </div>
       </Modal>
@@ -901,20 +982,29 @@ function AnalysisTasksPage() {
       {clusterStatus && (
         <Card title={t('analysisTasks.clusterAnalysis')} style={{ marginTop: 24 }}
           extra={
-            <Space>
-              <Button
-                size="small"
-                icon={<FolderOpenOutlined />}
-                onClick={handlePreviewPromptCluster}
-                loading={exportLoading}
-              >
-                {t('analysisTasks.previewPrompt')}
-              </Button>
-              <Button
-                type="primary"
-                size="small"
-                disabled={!selections.some(s => s.type === 'cluster')}
-                onClick={handleClusterDiagnose}
+          <Space>
+            <Button
+              size="small"
+              icon={<FolderOpenOutlined />}
+              onClick={handlePreviewPromptCluster}
+              loading={exportLoading}
+            >
+              {t('analysisTasks.previewPrompt')}
+            </Button>
+            <Button
+              size="small"
+              icon={<ThunderboltOutlined />}
+              onClick={handleGenerateBugfixPrompt}
+              loading={bugfixPromptLoading}
+              disabled={clusterStatus.status !== 'done'}
+            >
+              {t('analysisTasks.generateBugfixPrompt')}
+            </Button>
+            <Button
+              type="primary"
+              size="small"
+              disabled={!selections.some(s => s.type === 'cluster')}
+              onClick={handleClusterDiagnose}
                 loading={diagnosisLoading}
               >
                 {t('analysisTasks.diagnoseSelectedClusters')}

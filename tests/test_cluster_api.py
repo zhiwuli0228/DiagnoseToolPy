@@ -8,7 +8,6 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from diagnose_tool.analyzer.cluster_analyzer import ClusterAnalyzer
 from diagnose_tool.main import app
 
 

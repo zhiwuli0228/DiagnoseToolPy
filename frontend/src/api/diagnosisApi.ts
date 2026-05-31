@@ -1,4 +1,11 @@
-import type { DiagnosisResponse, CustomDiagnosisRequest, CustomDiagnosisResponse, SelectionItem } from '../types/api';
+import type {
+  DiagnosisResponse,
+  CustomDiagnosisRequest,
+  CustomDiagnosisResponse,
+  SelectionItem,
+  BugfixPromptExportRequest,
+  BugfixPromptExportResponse,
+} from '../types/api';
 
 export interface UserContextModel {
   phenomenon: string;
@@ -116,6 +123,21 @@ export async function exportWorkspace(request: ExportWorkspaceRequest): Promise<
 
 export async function previewPrompt(request: PreviewPromptRequest): Promise<PreviewPromptResponse> {
   const response = await fetch('/api/diagnosis/preview-prompt', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ detail: 'Unknown error' }));
+    throw new Error(err.detail || `HTTP ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function exportBugfixPrompt(
+  request: BugfixPromptExportRequest,
+): Promise<BugfixPromptExportResponse> {
+  const response = await fetch('/api/diagnosis/export-bugfix-prompt', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request),

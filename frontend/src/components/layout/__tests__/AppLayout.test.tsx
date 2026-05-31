@@ -19,7 +19,7 @@ describe('AppLayout', () => {
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Analysis Tasks')).toBeInTheDocument();
     expect(screen.getByText('Casebase')).toBeInTheDocument();
-    expect(screen.getByText('诊断工作室')).toBeInTheDocument();
+    expect(screen.getByText('Diagnosis Studio')).toBeInTheDocument();
     expect(screen.getByText('AI Diagnosis')).toBeInTheDocument();
     expect(screen.getByText('Settings')).toBeInTheDocument();
   });

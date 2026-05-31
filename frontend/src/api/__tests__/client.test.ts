@@ -11,10 +11,10 @@ describe('apiClient', () => {
   });
 
   it('has request interceptor registered', () => {
-    expect(apiClient.interceptors.request.handlers.length).toBeGreaterThan(0);
+    expect(apiClient.interceptors.request.handlers?.length ?? 0).toBeGreaterThan(0);
   });
 
   it('has response interceptor registered', () => {
-    expect(apiClient.interceptors.response.handlers.length).toBeGreaterThan(0);
+    expect(apiClient.interceptors.response.handlers?.length ?? 0).toBeGreaterThan(0);
   });
 });

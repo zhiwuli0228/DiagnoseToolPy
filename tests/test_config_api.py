@@ -1,7 +1,6 @@
 """Tests for /api/config and /api/config/paths endpoints."""
 
 from pathlib import Path
-from unittest.mock import MagicMock
 
 import pytest
 import yaml

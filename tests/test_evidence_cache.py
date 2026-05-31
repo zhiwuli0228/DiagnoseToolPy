@@ -2,14 +2,11 @@
 
 from __future__ import annotations
 
-import pytest
 from pathlib import Path
 
 from diagnose_tool.analyzer.evidence_cache import (
-    CONTEXT_EVENTS,
     CachedLogEntry,
     EvidenceCacheManager,
-    LogEvent,
     generate_entry_id,
 )
 

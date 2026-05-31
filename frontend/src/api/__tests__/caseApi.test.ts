@@ -1,6 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { server } from '../../mocks/server';
-import { http, HttpResponse } from 'msw';
 import { listCases, getCase, getHealth } from '../caseApi';
 
 describe('caseApi', () => {

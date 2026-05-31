@@ -9,8 +9,8 @@ from pathlib import Path
 from diagnose_tool.analyzer.header_parser import parse_log_record
 from diagnose_tool.analyzer.reader import read_log_lines
 from diagnose_tool.analyzer.scanner import scan_directory
-from diagnose_tool.analyzer.multiline import is_continuation_line, is_log_start
-from diagnose_tool.core.security import PathValidationError, validate_server_directory
+from diagnose_tool.analyzer.multiline import is_log_start
+from diagnose_tool.core.security import validate_server_directory
 from diagnose_tool.core.config import load_config
 
 logger = logging.getLogger(__name__)

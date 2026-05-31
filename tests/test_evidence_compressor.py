@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
 
 from diagnose_tool.analyzer.evidence_compressor import (
     CompressionOptions,

@@ -12,6 +12,10 @@ from diagnose_tool.analyzer.diagnosis import (
     TaskNotFoundError,
 )
 from diagnose_tool.core.llm_client import LLMClientError
+from diagnose_tool.exporter.bugfix_prompt_exporter import (
+    BugfixPromptExportError,
+    BugfixPromptTaskNotFoundError,
+)
 
 
 @pytest.fixture
@@ -352,7 +356,7 @@ class TestExportWorkspaceEndpoint:
         assert "At least one of task_id, session_id, or cache_key must be provided" in response.json()["detail"]
 
     def test_export_workspace_rejects_nonexistent_directory(
-        self, app_client: TestClient
+        self, app_client: TestClient, tmp_path: Path
     ) -> None:
         """Non-existent workspace_dir returns 400."""
         with patch(
@@ -390,10 +394,10 @@ class TestExportWorkspaceEndpoint:
         data_dir.mkdir()
 
         # Create evidence cache
-        cache_dir = data_dir / "cache" / "test-cache-key"
+        cache_dir = data_dir / "output" / "test-cache-key"
         cache_dir.mkdir(parents=True)
         (cache_dir / "matched-lines.jsonl").write_text(
-            '{"id": "log-1", "event": {"timestamp": "2026-05-23 10:00:00", "level": "ERROR", "thread": "main", "message": "Connection failed"}, "group_key": "error"}',
+            '{"id": "log-1", "event": {"timestamp": "2026-05-23 10:00:00", "level": "ERROR", "thread": "main", "message": "Connection failed", "raw": "2026-05-23 10:00:00 ERROR main Connection failed", "file_path": "/tmp/app.log", "line_no": 1}, "group_key": "error"}',
             encoding="utf-8"
         )
 
@@ -440,10 +444,10 @@ class TestExportWorkspaceEndpoint:
         data_dir.mkdir()
 
         # Create evidence cache
-        cache_dir = data_dir / "cache" / "test-cache-key-2"
+        cache_dir = data_dir / "output" / "test-cache-key-2"
         cache_dir.mkdir(parents=True)
         (cache_dir / "matched-lines.jsonl").write_text(
-            '{"id": "log-1", "event": {"timestamp": "2026-05-23 10:00:00", "level": "ERROR", "thread": "main", "message": "Connection failed"}, "group_key": "error"}',
+            '{"id": "log-1", "event": {"timestamp": "2026-05-23 10:00:00", "level": "ERROR", "thread": "main", "message": "Connection failed", "raw": "2026-05-23 10:00:00 ERROR main Connection failed", "file_path": "/tmp/app.log", "line_no": 1}, "group_key": "error"}',
             encoding="utf-8"
         )
 
@@ -477,3 +481,115 @@ class TestExportWorkspaceEndpoint:
         assert isinstance(data["workspace_dir"], str)
         assert isinstance(data["files_written"], list)
         assert "detection_hint" in data
+
+
+class TestBugfixPromptExportEndpoint:
+    """Tests for POST /api/diagnosis/export-bugfix-prompt endpoint."""
+
+    def test_export_bugfix_prompt_returns_prompt_and_output_path(
+        self, app_client: TestClient, tmp_path: Path
+    ) -> None:
+        """Valid task_id → 200 with prompt and output_path."""
+        with patch(
+            "diagnose_tool.api.routes_diagnosis._get_llm_config"
+        ) as mock_get_config, patch(
+            "diagnose_tool.api.routes_diagnosis.BugfixPromptExporter"
+        ) as mock_exporter_cls:
+            from diagnose_tool.core.llm_config import AppLLMConfig
+            from diagnose_tool.exporter.bugfix_prompt_exporter import (
+                BugfixPromptExportResult,
+            )
+
+            mock_config = AppLLMConfig(
+                enabled=False,
+                model="gpt-4o-mini",
+                base_url="https://api.openai.com/v1",
+                api_key="",
+                timeout=60,
+                data_dir=tmp_path / "data",
+            )
+            mock_get_config.return_value = mock_config
+
+            mock_exporter_cls.return_value.export_from_task_id.return_value = (
+                BugfixPromptExportResult(
+                    task_id="task-001",
+                    output_path=tmp_path / "data" / "output" / "task-001" / "bugfix-prompt.md",
+                    prompt="# Bugfix Prompt\n\nImplement the fix.",
+                )
+            )
+
+            response = app_client.post(
+                "/api/diagnosis/export-bugfix-prompt",
+                json={"task_id": "task-001"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is True
+        assert data["task_id"] == "task-001"
+        assert data["output_path"].replace("\\", "/") == "data/output/task-001/bugfix-prompt.md"
+        assert "Bugfix Prompt" in data["prompt"]
+
+    def test_export_bugfix_prompt_returns_404_when_task_missing(
+        self, app_client: TestClient, tmp_path: Path
+    ) -> None:
+        """Missing task output → 404."""
+        with patch(
+            "diagnose_tool.api.routes_diagnosis._get_llm_config"
+        ) as mock_get_config, patch(
+            "diagnose_tool.api.routes_diagnosis.BugfixPromptExporter"
+        ) as mock_exporter_cls:
+            from diagnose_tool.core.llm_config import AppLLMConfig
+
+            mock_config = AppLLMConfig(
+                enabled=False,
+                model="gpt-4o-mini",
+                base_url="https://api.openai.com/v1",
+                api_key="",
+                timeout=60,
+                data_dir=tmp_path / "data",
+            )
+            mock_get_config.return_value = mock_config
+            mock_exporter_cls.return_value.export_from_task_id.side_effect = (
+                BugfixPromptTaskNotFoundError("Task output directory not found")
+            )
+
+            response = app_client.post(
+                "/api/diagnosis/export-bugfix-prompt",
+                json={"task_id": "missing-task"},
+            )
+
+        assert response.status_code == 404
+        assert "Task output directory not found" in response.json()["detail"]
+
+    def test_export_bugfix_prompt_returns_400_on_invalid_artifact(
+        self, app_client: TestClient, tmp_path: Path
+    ) -> None:
+        """Invalid artifact content → 400."""
+        with patch(
+            "diagnose_tool.api.routes_diagnosis._get_llm_config"
+        ) as mock_get_config, patch(
+            "diagnose_tool.api.routes_diagnosis.BugfixPromptExporter"
+        ) as mock_exporter_cls:
+            from diagnose_tool.core.llm_config import AppLLMConfig
+
+            mock_config = AppLLMConfig(
+                enabled=False,
+                model="gpt-4o-mini",
+                base_url="https://api.openai.com/v1",
+                api_key="",
+                timeout=60,
+                data_dir=tmp_path / "data",
+            )
+            mock_get_config.return_value = mock_config
+            mock_exporter_cls.return_value.export_from_task_id.side_effect = (
+                BugfixPromptExportError("Invalid YAML in task artifact")
+            )
+
+            response = app_client.post(
+                "/api/diagnosis/export-bugfix-prompt",
+                json={"task_id": "task-001"},
+            )
+
+        assert response.status_code == 400
+        assert "Invalid YAML in task artifact" in response.json()["detail"]

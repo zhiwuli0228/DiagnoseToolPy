@@ -4,10 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import re
-import shutil
-import tempfile
 import uuid
 from collections import defaultdict
 from dataclasses import asdict, dataclass, field
@@ -16,7 +13,6 @@ from pathlib import Path
 from typing import Iterator
 
 from diagnose_tool.analyzer.evidence_cache import (
-    EvidenceCacheManager,
     generate_entry_id,
     LogEvent,
     CachedLogEntry,
@@ -413,7 +409,7 @@ class ClusterAnalyzer:
         Returns:
             List of AggregatedGroup sorted by count descending.
         """
-        from diagnose_tool.analyzer.log_aggregator import aggregate_log_lines_streaming, AggregationOptions
+        from diagnose_tool.analyzer.log_aggregator import AggregationOptions
 
         error_level_pattern = re.compile(r"\b(ERROR|WARN|WARNING|SEVERE|FATAL)\b", re.IGNORECASE)
         timestamp_pattern = re.compile(

@@ -212,7 +212,6 @@ class TestDiagnoseFromClusterEndpoint:
     ):
         """Valid cluster diagnosis request returns 200."""
         # For cluster, cache_key is the task_id
-        cache_mgr = EvidenceCacheManager(tmp_path)
         matched_lines = [
             {
                 "timestamp": "2026-05-23 10:01:01",
