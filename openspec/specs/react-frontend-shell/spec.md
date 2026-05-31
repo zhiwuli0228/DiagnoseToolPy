@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Provide the React frontend shell, routing, and API proxy integration that form the UI foundation for DiagnoseToolPy without changing backend behavior.
+
+## Requirements
 
 ### Requirement: Frontend Shell Application
 The system SHALL provide a React-based frontend shell that serves as the UI foundation for DiagnoseToolPy.
