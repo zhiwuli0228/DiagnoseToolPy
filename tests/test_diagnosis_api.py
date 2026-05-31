@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
+import yaml
 
 from diagnose_tool.analyzer.diagnosis import (
     TaskNotFoundError,
@@ -23,6 +25,101 @@ def app_client():
     app = FastAPI()
     app.include_router(router)
     return TestClient(app)
+
+
+def _write_bugfix_task_output(tmp_path: Path, task_id: str) -> Path:
+    task_output = tmp_path / "output" / task_id
+    task_output.mkdir(parents=True)
+    (task_output / "task.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "task_id": task_id,
+                "source_type": "SERVER_DIRECTORY",
+                "source_path": "/data/logs",
+                "mode": "STANDARD",
+                "status": "SUCCESS",
+                "created_at": "2026-05-31 10:00:00",
+                "started_at": "2026-05-31 10:00:01",
+                "finished_at": "2026-05-31 10:03:00",
+                "total_files": 2,
+                "processed_files": 2,
+                "total_bytes": 1024,
+                "processed_bytes": 1024,
+                "error_count": 3,
+                "warn_count": 1,
+                "outputs": {
+                    "summary": "summary.html",
+                    "evidence_pack": "evidence-pack.md",
+                    "key_logs": "key-logs.txt",
+                    "case_draft": "case-draft.md",
+                },
+            },
+            allow_unicode=True,
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    (task_output / "evidence-pack.md").write_text(
+        "# Evidence Pack\n\n## 1. 基本信息\n- 任务ID：task-001\n- ERROR数量：3\n",
+        encoding="utf-8",
+    )
+    (task_output / "case-draft.md").write_text(
+        "# NullPointerException 导致任务失败\n\n## 故障描述\n\n服务抛出空指针异常。\n",
+        encoding="utf-8",
+    )
+    (task_output / "case-metadata-draft.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "case_id": "CASE-001",
+                "title": "NullPointerException 导致任务失败",
+                "slug": "null-pointer-exception",
+                "source_type": "auto",
+                "status": "draft",
+                "confidence": "unconfirmed",
+                "tags": [],
+                "components": ["diagnose_tool.api"],
+                "fault_modes": ["null_pointer"],
+                "exception_classes": ["NullPointerException"],
+                "key_phrases": ["空指针"],
+            },
+            allow_unicode=True,
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    (task_output / "retrieval-query.json").write_text(
+        json.dumps(
+            {
+                "task_id": task_id,
+                "summary": "null_pointer 故障类型的故障; 涉及组件: diagnose_tool.api",
+                "components": ["diagnose_tool.api"],
+                "fault_modes": ["null_pointer"],
+                "exception_classes": ["NullPointerException"],
+                "keywords": ["空指针"],
+                "stack_symbols": ["com.demo.Service.handle"],
+                "log_templates": ["NullPointerException at service layer"],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    (task_output / "progress.json").write_text(
+        json.dumps(
+            {
+                "status": "SUCCESS",
+                "processed_files": 2,
+                "total_files": 2,
+                "processed_bytes": 1024,
+                "total_bytes": 1024,
+                "message": "analysis complete",
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    (task_output / "summary.html").write_text("<html><body><h1>Summary</h1></body></html>", encoding="utf-8")
+    (task_output / "key-logs.txt").write_text("[error] NullPointerException\n", encoding="utf-8")
+    return task_output
 
 
 class TestDiagnosisAPI:
@@ -352,7 +449,7 @@ class TestExportWorkspaceEndpoint:
         assert "At least one of task_id, session_id, or cache_key must be provided" in response.json()["detail"]
 
     def test_export_workspace_rejects_nonexistent_directory(
-        self, app_client: TestClient
+        self, app_client: TestClient, tmp_path: Path
     ) -> None:
         """Non-existent workspace_dir returns 400."""
         with patch(
@@ -390,10 +487,10 @@ class TestExportWorkspaceEndpoint:
         data_dir.mkdir()
 
         # Create evidence cache
-        cache_dir = data_dir / "cache" / "test-cache-key"
+        cache_dir = data_dir / "output" / "test-cache-key"
         cache_dir.mkdir(parents=True)
         (cache_dir / "matched-lines.jsonl").write_text(
-            '{"id": "log-1", "event": {"timestamp": "2026-05-23 10:00:00", "level": "ERROR", "thread": "main", "message": "Connection failed"}, "group_key": "error"}',
+            '{"id": "log-1", "event": {"timestamp": "2026-05-23 10:00:00", "level": "ERROR", "thread": "main", "message": "Connection failed", "raw": "Connection failed", "file_path": "/data/logs/app.log", "line_no": 42}, "group_key": "error"}',
             encoding="utf-8"
         )
 
@@ -440,10 +537,10 @@ class TestExportWorkspaceEndpoint:
         data_dir.mkdir()
 
         # Create evidence cache
-        cache_dir = data_dir / "cache" / "test-cache-key-2"
+        cache_dir = data_dir / "output" / "test-cache-key-2"
         cache_dir.mkdir(parents=True)
         (cache_dir / "matched-lines.jsonl").write_text(
-            '{"id": "log-1", "event": {"timestamp": "2026-05-23 10:00:00", "level": "ERROR", "thread": "main", "message": "Connection failed"}, "group_key": "error"}',
+            '{"id": "log-1", "event": {"timestamp": "2026-05-23 10:00:00", "level": "ERROR", "thread": "main", "message": "Connection failed", "raw": "Connection failed", "file_path": "/data/logs/app.log", "line_no": 42}, "group_key": "error"}',
             encoding="utf-8"
         )
 
@@ -477,3 +574,102 @@ class TestExportWorkspaceEndpoint:
         assert isinstance(data["workspace_dir"], str)
         assert isinstance(data["files_written"], list)
         assert "detection_hint" in data
+
+
+class TestBugfixPromptExportEndpoint:
+    """Tests for POST /api/diagnosis/export-bugfix-prompt endpoint."""
+
+    def test_export_bugfix_prompt_success(
+        self, app_client: TestClient, tmp_path: Path
+    ) -> None:
+        """Valid task_id returns generated bugfix prompt content and output path."""
+        _write_bugfix_task_output(tmp_path, "task-001")
+
+        with patch(
+            "diagnose_tool.api.routes_diagnosis._get_llm_config"
+        ) as mock_get_config:
+            from diagnose_tool.core.llm_config import AppLLMConfig
+
+            mock_config = AppLLMConfig(
+                enabled=True,
+                model="gpt-4o-mini",
+                base_url="https://api.openai.com/v1",
+                api_key="test-key",
+                timeout=60,
+                data_dir=tmp_path,
+            )
+            mock_get_config.return_value = mock_config
+
+            response = app_client.post(
+                "/api/diagnosis/export-bugfix-prompt",
+                json={"task_id": "task-001"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["success"] is True
+        assert data["task_id"] == "task-001"
+        assert data["output_path"].endswith("bugfix-prompt.md")
+        assert "Bugfix Prompt for NullPointerException 导致任务失败" in data["prompt"]
+
+    def test_export_bugfix_prompt_missing_task_returns_404(
+        self, app_client: TestClient, tmp_path: Path
+    ) -> None:
+        """Missing task output directory returns 404."""
+        with patch(
+            "diagnose_tool.api.routes_diagnosis._get_llm_config"
+        ) as mock_get_config:
+            from diagnose_tool.core.llm_config import AppLLMConfig
+
+            mock_config = AppLLMConfig(
+                enabled=True,
+                model="gpt-4o-mini",
+                base_url="https://api.openai.com/v1",
+                api_key="test-key",
+                timeout=60,
+                data_dir=tmp_path,
+            )
+            mock_get_config.return_value = mock_config
+
+            response = app_client.post(
+                "/api/diagnosis/export-bugfix-prompt",
+                json={"task_id": "missing-task"},
+            )
+
+        assert response.status_code == 404
+        assert "Task output directory not found" in response.json()["detail"]
+
+    def test_export_bugfix_prompt_missing_artifact_returns_404(
+        self, app_client: TestClient, tmp_path: Path
+    ) -> None:
+        """Missing required artifacts return 404 and do not create output."""
+        task_output = tmp_path / "output" / "task-002"
+        task_output.mkdir(parents=True)
+        (task_output / "task.yaml").write_text(
+            yaml.safe_dump({"task_id": "task-002"}, allow_unicode=True, sort_keys=False),
+            encoding="utf-8",
+        )
+
+        with patch(
+            "diagnose_tool.api.routes_diagnosis._get_llm_config"
+        ) as mock_get_config:
+            from diagnose_tool.core.llm_config import AppLLMConfig
+
+            mock_config = AppLLMConfig(
+                enabled=True,
+                model="gpt-4o-mini",
+                base_url="https://api.openai.com/v1",
+                api_key="test-key",
+                timeout=60,
+                data_dir=tmp_path,
+            )
+            mock_get_config.return_value = mock_config
+
+            response = app_client.post(
+                "/api/diagnosis/export-bugfix-prompt",
+                json={"task_id": "task-002"},
+            )
+
+        assert response.status_code == 404
+        assert "Required task artifact" in response.json()["detail"]
+        assert not (task_output / "bugfix-prompt.md").exists()

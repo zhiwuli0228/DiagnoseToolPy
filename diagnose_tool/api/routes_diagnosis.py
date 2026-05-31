@@ -24,7 +24,14 @@ from diagnose_tool.analyzer.evidence_compressor import (
 )
 from diagnose_tool.core.llm_client import LLMClient, LLMClientError
 from diagnose_tool.core.llm_config import AppLLMConfig, load_llm_config
-from diagnose_tool.exporter import WorkspaceExporter, WorkspaceExportError
+from diagnose_tool.exporter import (
+    BugfixPromptArtifactError,
+    BugfixPromptExportError,
+    BugfixPromptExporter,
+    BugfixPromptTaskNotFoundError,
+    WorkspaceExporter,
+    WorkspaceExportError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +103,19 @@ class PreviewPromptRequest(BaseModel):
 
 class PreviewPromptResponse(BaseModel):
     """Response containing generated prompt content."""
+    prompt: str
+
+
+class BugfixPromptExportRequest(BaseModel):
+    """Request to export a bugfix prompt from an analysis task."""
+    task_id: str = Field(min_length=1, description="Analysis task ID")
+
+
+class BugfixPromptExportResponse(BaseModel):
+    """Response containing generated bugfix prompt content."""
+    success: bool
+    task_id: str
+    output_path: str
     prompt: str
 
 
@@ -453,6 +473,29 @@ def preview_prompt(request: PreviewPromptRequest) -> PreviewPromptResponse:
     except Exception as exc:
         logger.error("Unexpected error during preview: %s", exc)
         raise HTTPException(status_code=500, detail="Preview failed")
+
+
+@router.post("/diagnosis/export-bugfix-prompt", response_model=BugfixPromptExportResponse)
+def export_bugfix_prompt(request: BugfixPromptExportRequest) -> BugfixPromptExportResponse:
+    """Generate and persist a structured bugfix prompt for an analysis task."""
+    llm_config = _get_llm_config()
+    exporter = BugfixPromptExporter(llm_config)
+
+    try:
+        result = exporter.export_from_task_id(request.task_id)
+    except BugfixPromptTaskNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except BugfixPromptArtifactError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except BugfixPromptExportError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    return BugfixPromptExportResponse(
+        success=True,
+        task_id=result.task_id,
+        output_path=str(result.output_path),
+        prompt=result.prompt,
+    )
 
 
 class CheckResultResponse(BaseModel):
