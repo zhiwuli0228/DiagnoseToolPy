@@ -1,0 +1,20 @@
+change_id: 2026-05-31-bugfix-prompt-export
+created: 2026-05-31
+status: proposed
+type: feature
+affected_modules:
+  - exporter
+  - api
+  - frontend
+  - docs
+spec_driven: true
+hard_constraints:
+  - No mandatory external database
+  - File system remains the source of truth
+  - No full log file read into memory
+  - Retrieval remains embedding-free by default
+out_of_scope:
+  - Real business implementation
+  - Automatic code changes
+  - Worktree creation
+  - Git closeout automation
