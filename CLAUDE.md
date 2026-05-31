@@ -233,3 +233,15 @@ The `useResultDetection` hook handles polling for `result.md` in exported worksp
 - 30-minute timeout
 - localStorage persistence for page reload recovery
 - Validates result.md content (not empty, >100 chars, not prompt template)
+
+## SuperSpec Workflow
+
+DiagnoseToolPy uses the active SuperSpec lifecycle for governed work:
+
+```text
+brainstorm → proposal → specs → tasks → plan → apply → verify → finalize → archive
+```
+
+- Use the smallest change shape that fits the task.
+- Small bug fixes may use a minimal path, but still require tests and validation.
+- Keep the standard engineering constraints intact: file-system truth, streaming log handling, optional vector retrieval, and AI-as-assistive output.

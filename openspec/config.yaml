@@ -49,22 +49,22 @@ rules:
   tasks:
     - Keep tasks small, dependency-ordered, and individually verifiable.
     - Each task should identify files, behavior, tests, and validation steps.
-    - Update durable docs, including current-state, only when an approved change alters long-term capabilities, architecture boundaries, operations contracts, or recorded limitations.
+    - Update durable docs, including current-state, when a completed change alters long-term capabilities, architecture boundaries, operations contracts, or recorded limitations.
   plan:
     - Break work into micro-steps with exact paths and validation checkpoints.
     - Prefer test-first execution where feasible and stop if new out-of-scope work appears.
     - Keep the plan focused on the active change only.
   apply:
-    - Implement only approved paths and record any deviation before proceeding.
-    - Keep work constrained to the active change and avoid unrelated refactors or scope expansion.
-    - Preserve evidence of tests and task completion in the apply receipt.
-    - "Do not execute real business implementation through SuperSpec apply until Phase 3 approves the implementation tool, Superpowers availability, worktree behavior, review discipline, and Git-safety prerequisites for this repository."
+    - Execute the approved active change through the SuperSpec apply workflow.
+    - Use the schema-defined worktree and executor flow when available; fall back to direct task-by-task implementation only when the required skill/runtime capability is unavailable.
+    - Keep modifications within the active change scope; record material deviations in the apply receipt rather than waiting for a separate approval gate.
+    - Run the required tests and preserve implementation evidence in apply.md.
   verify:
     - Run structural validation and confirm task completion, scope compliance, and spec coherence.
     - Fail on unauthorized file changes or missing durable-asset updates.
-    - Do not recommend finalize while a blocking issue remains.
+    - Verification PASS means the change is ready for finalize and archive under the schema workflow.
   finalize:
-    - Close out only after verify passes and repository-specific Git safety prerequisites are approved.
-    - Do not broaden merge, push, cleanup, or PR actions beyond the active change and approved workflow.
-    - Record the final outcome and evidence for archive and human review.
-    - "Do not execute Git/PR closeout through SuperSpec finalize until Phase 3 approves repository-specific merge, push, worktree cleanup, and pull-request safety prerequisites."
+    - After verify passes or passes with non-blocking warnings, execute the schema-defined finalize workflow for the active change.
+    - Allow commit, merge back to the feature branch, push, worktree cleanup, and PR closeout/comment actions when supported by the current Git/authentication environment.
+    - If an external authentication or remote permission failure prevents push or PR operations, complete all local closeout steps possible and report BLOCKED with evidence.
+    - Record final outcome and evidence in finalize.md for archive.

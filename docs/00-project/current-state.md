@@ -4,7 +4,7 @@ This file is the **project continuity snapshot**. Update it after every complete
 
 ## Current Phase
 
-V0.4 Bugfix Prompt Export pilot implemented. Remaining: test suggestion export and monitoring suggestion export.
+SuperSpec autonomous validation workflow enabled on `claude_master`. Bugfix Prompt Export delivered.
 
 ## Implemented
 
@@ -82,8 +82,8 @@ DiagnoseToolPy/
 
 ## Next Recommended Work
 
-1. Implement complete log analysis UI.
-2. Implement complete case management UI.
-3. Implement test suggestion generation (V0.4 extended).
-4. Implement monitoring suggestion generation (V0.4 extended).
-5. Extend the bugfix prompt export pattern to additional assistant-ready artifacts if needed.
+1. Use the SuperSpec validation workflow for the next governed change.
+2. Implement complete log analysis UI.
+3. Implement complete case management UI.
+4. Implement test suggestion generation (V0.4 extended).
+5. Implement monitoring suggestion generation (V0.4 extended).

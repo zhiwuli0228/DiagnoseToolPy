@@ -663,15 +663,14 @@ Project-level constraints in these files take precedence over generated artifact
 
 ## 14. Recommended Development Flow
 
-For non-trivial features:
+For SuperSpec-managed work:
 
 ```text
-/opsx:explore
-→ /opsx:propose
-→ review proposal/design/spec/tasks
+/opsx:new or existing change
+→ brainstorm → proposal → specs → tasks → plan
 → /opsx:apply
-→ tests
-→ update current-state.md
+→ tests / verify
+→ /opsx:finalize
 → /opsx:archive
 ```
 

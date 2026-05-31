@@ -32,6 +32,7 @@ Also read:
 2. `docs/03-openspec/design-rule.md`
 3. `docs/03-openspec/spec-rule.md`
 4. `docs/03-openspec/tasks-rule.md`
+5. `docs/03-openspec/superspec-validation-project-workflow.md`
 
 ### Log Analyzer Work
 
