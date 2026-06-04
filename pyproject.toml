@@ -16,11 +16,15 @@ dependencies = [
     "filelock>=3.29.0",
 ]
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
 [dependency-groups]
 dev = [
     "httpx>=0.28.1",
     "mypy>=2.1.0",
     "pytest>=9.0.3",
+    "pytest-asyncio>=1.4.0",
     "pytest-cov>=7.1.0",
     "ruff>=0.15.13",
 ]
