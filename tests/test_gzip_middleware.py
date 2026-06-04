@@ -35,30 +35,45 @@ def test_health_response_under_threshold_not_gzipped(client: TestClient) -> None
     assert response.headers.get("content-encoding") != "gzip"
 
 
-@pytest.mark.asyncio
-async def test_gzip_middleware_actually_compresses_large_payload() -> None:
-    """Spin up a minimal app with the middleware and verify gzip header is set for large responses."""
-    import json
+def test_gzip_middleware_actually_compresses_large_payload() -> None:
+    """Large payloads should be genuinely gzipped: header + body magic + round-trip.
+
+    Uses a real HTTP server + urllib so we get raw wire bytes (TestClient and
+    httpx ASGITransport auto-decompress, hiding the compressed body).
+    """
+    import gzip
+    import threading
+    import urllib.request
     from fastapi.middleware.gzip import GZipMiddleware
-    from fastapi.responses import StreamingResponse
+    from fastapi.responses import JSONResponse
+    import uvicorn
 
     test_app = FastAPI()
     test_app.add_middleware(GZipMiddleware, minimum_size=1000)
+    test_app.add_api_route("/big", lambda: JSONResponse({"data": "x" * 5000}))
 
-    def gen():
-        large_payload = json.dumps({"data": "x" * 5000})
-        yield large_payload
+    server_port = 18767
 
-    test_app.add_api_route("/big", lambda: StreamingResponse(gen(), media_type="application/json"))
+    def run_server() -> None:
+        uvicorn.run(test_app, host="127.0.0.1", port=server_port, log_level="error")
 
-    transport = ASGITransport(app=test_app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        response = await ac.get("/big", headers={"Accept-Encoding": "gzip"})
-    assert response.status_code == 200
-    # Verify the middleware sets the content-encoding header
-    assert response.headers.get("content-encoding") == "gzip"
-    # Note: due to httpx/ASGITransport auto-decompression, body appears decompressed
-    # The header verification above confirms the middleware is wired correctly
+    server_thread = threading.Thread(target=run_server, daemon=True)
+    server_thread.start()
+    import time
+    time.sleep(1.2)  # wait for server startup
+
+    req = urllib.request.Request(
+        f"http://127.0.0.1:{server_port}/big",
+        headers={"Accept-Encoding": "gzip"},
+    )
+    with urllib.request.urlopen(req) as resp:
+        assert resp.headers.get("content-encoding") == "gzip"
+        raw_body = resp.read()
+        # Raw wire body must start with gzip magic bytes
+        assert raw_body[:2] == b"\x1f\x8b", f"Expected gzip magic, got {raw_body[:4]!r}"
+        # Decompresses back to original payload
+        decompressed = gzip.decompress(raw_body).decode("utf-8")
+        assert "xxxxx" in decompressed
 
 
 def test_gzip_middleware_skips_small_payload() -> None:
