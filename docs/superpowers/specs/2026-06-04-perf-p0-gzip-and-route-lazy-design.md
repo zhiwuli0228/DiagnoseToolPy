@@ -249,7 +249,9 @@ Per user choice, granular = 3 tasks:
 
 1. **task-1-route-lazy-loading**: 方案 A — convert 6 page imports to `React.lazy`, add `Suspense`, optional `manualChunks`, unit tests. Independent commit.
 2. **task-2-gzip-middleware**: 方案 F — add `GZIPMiddleware` in `main.py`, unit tests. Independent commit.
-3. **task-3-load-test-and-acceptance**: Locust `locustfile.py` + `run_bench.sh` + `diff_results.py` + `README.md`; run baseline (on main) and after (on branch); emit `tests/load/results_diff.md`. Final commit.
+3. **task-3-load-test-and-acceptance**: Locust `locustfile.py` + `run_bench.sh` + `diff_results.py` + `README.md`; run baseline (on main) and after (on branch); emit `tests/load/results_diff.md`; **also scaffold `openspec/changes/perf-p0-gzip-and-route-lazy/`** with `proposal.md`, `specs/`, `design.md`, `tasks.md`, `plan.md`; generate `docs/rectification/24-…-perf-p0-design-report.md` (Phase 4 style closure report). Final commit.
+
+Dependency: task-3 depends on task-1 and task-2 being merged (or at least committed) so the "after" Locust run exercises the post-change code.
 
 Each task is independently committable and verifiable.
 
