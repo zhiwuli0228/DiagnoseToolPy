@@ -36,7 +36,7 @@ acceptance verification.
 
 | Metric | Baseline | After | Δ | Threshold | Pass? |
 |---|---|---|---|---|---|
-| Throughput (sum req/s) | 48.60 | 48.77 | +0.18 | ≥ 6.0 | yes |
+| Throughput (sum req/s) | 24.30 | 24.39 | +0.09 | ≥ 6.0 | yes |
 | P95 (ms) | 8 | 9 | +1 | < 6000 | yes |
 | Avg (ms) | 5 | 5 | +0 | — | yes |
 | Failure rate (%) | 0.00 | 0.00 | +0.00 | < 5.0 | yes |
@@ -60,6 +60,10 @@ Notes on the numbers:
   exceeds 40 req/s for the same mix. The relevant signal here is
   *threshold pass* (no regression, no new failures), not absolute
   req/s parity with the original number.
+- **RPS numbers in this report are post-`fix(load)` corrected; the
+  previous version double-counted per-endpoint RPS and reported
+  48.60/48.77. The 24.30/24.39 figures are the correct readings of
+  the same Windows-box run.**
 
 ## 4. Deviations from the Plan
 
