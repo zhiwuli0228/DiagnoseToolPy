@@ -185,7 +185,7 @@ Two runs with the same `run_bench.sh` parameters:
 | Error rate | 0% | <5% | ≥5% |
 | Avg response | 881ms | <3000ms | ≥3000ms |
 | P95 | 1495ms | <6000ms | ≥6000ms |
-| Throughput | 5.47 req/s | **≥6.5 req/s** (conservative +20%) | <6.0 |
+| Throughput | 5.47 req/s | **≥6.0 req/s** (original goal was ≥6.5 ≈ +20% over 5.47 baseline from `docs/performance-optimization-design.md`; 6.0 is the actual gate enforced by `tests/load/diff_results.py`) | <6.0 |
 | First-screen JS bundle | TBD baseline | -40% vs baseline | no significant drop |
 
 **Failure handling:**

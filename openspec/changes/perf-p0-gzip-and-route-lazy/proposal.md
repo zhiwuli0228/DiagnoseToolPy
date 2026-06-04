@@ -8,7 +8,7 @@ backend does not compress responses larger than 1 KB. Both issues
 inflate time-to-first-byte and reduce concurrent throughput.
 
 ## Goal
-Recover at least 20% of the throughput gap (target >= 6.5 req/s) and
+Recover at least 20% of the throughput gap (target >= 6.0 req/s; original goal was 6.5 req/s ≈ +20% over 5.47 baseline from `docs/performance-optimization-design.md`) and
 shrink the first-screen JS bundle by ~40% by introducing GZIP
 compression and route-level code splitting.
 

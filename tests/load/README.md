@@ -35,4 +35,4 @@ uv run python tests/load/diff_results.py
 |---|---|
 | Failure rate | < 5% |
 | P95 latency | < 6000ms |
-| Throughput | >= 6.5 req/s (conservative +20% vs 5.47 baseline) |
+| Throughput | >= 6.0 req/s (Locust gate from diff_results.py) |

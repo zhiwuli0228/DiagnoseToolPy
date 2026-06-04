@@ -50,8 +50,16 @@ def aggregate(rows: List[Dict[str, str]]) -> Tuple[float, float, float, float]:
     avg = weighted_avg / total_requests
     fail_pct = 100.0 * total_failures / total_requests
     # RPS = total_requests / wall-clock seconds. Locust CSV doesn't store
-    # wall time, so compute from "Requests/s" column if present.
-    rps = sum(float(row.get("Requests/s", 0) or 0) for row in rows)
+    # wall time, so read from the Aggregated row directly to avoid
+    # double-counting per-endpoint rows.
+    rps = 0.0
+    for row in rows:
+        if row.get("Name") == "Aggregated":
+            try:
+                rps = float(row.get("Requests/s", 0) or 0)
+            except ValueError:
+                rps = 0.0
+            break
     return (rps, p95, fail_pct, avg)
 
 
