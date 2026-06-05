@@ -26,9 +26,17 @@ build/
 # Playwright MCP logs
 .playwright-mcp/
 
-# Analysis output (task results, temp data)
-data/output/
+# Analysis/runtime data
+data/input/uploads/
+data/output/*
+!data/output/.gitkeep
 data/temp/
+data/runtime/*
+!data/runtime/.gitkeep
+data/sessions/
+data/indexes/*
+!data/indexes/.gitkeep
+data/cases/_drafts/
 data/indexes/bm25/corpus.jsonl
 
 # Screenshots and page logs from testing
