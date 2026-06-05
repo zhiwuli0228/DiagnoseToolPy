@@ -4,7 +4,7 @@ This file is the **project continuity snapshot**. Update it after every complete
 
 ## Current Phase
 
-SuperSpec autonomous validation workflow enabled on `claude_master`. Bugfix Prompt Export delivered. Performance benchmark evidence chain remediated on `perf/p0-gzip-and-route-lazy`.
+SuperSpec autonomous validation workflow enabled on `claude_master`. Bugfix Prompt Export delivered. Performance benchmark evidence chain remediated and merged into `claude_master`.
 
 ## Implemented
 
