@@ -8,8 +8,140 @@ from __future__ import annotations
 
 import csv
 import sys
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import List
+
+
+class InvalidBenchmarkArtifact(Exception):
+    """Raised when a benchmark CSV is missing, malformed, or has no Aggregated row."""
+    pass
+
+
+@dataclass(frozen=True)
+class AggregatedMetrics:
+    """Metrics sourced entirely from the single Locust 'Aggregated' row."""
+    requests_per_sec: float
+    p95_ms: float
+    avg_ms: float
+    request_count: int
+    failure_count: int
+    failure_rate_pct: float
+
+
+def load_stats(path: Path) -> List[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def _parse_float(value: str | None, field_name: str) -> float:
+    if value is None:
+        raise InvalidBenchmarkArtifact(f"Missing value for '{field_name}' in Aggregated row")
+    try:
+        return float(value)
+    except ValueError:
+        raise InvalidBenchmarkArtifact(
+            f"Could not parse '{field_name}' as float: {value!r}"
+        )
+
+
+def _parse_int(value: str | None, field_name: str) -> int:
+    if value is None:
+        raise InvalidBenchmarkArtifact(f"Missing value for '{field_name}' in Aggregated row")
+    try:
+        return int(value)
+    except ValueError:
+        raise InvalidBenchmarkArtifact(
+            f"Could not parse '{field_name}' as int: {value!r}"
+        )
+
+
+def aggregate(rows: List[dict[str, str]]) -> AggregatedMetrics:
+    """Return AggregatedMetrics from the single 'Aggregated' CSV row.
+
+    Raises InvalidBenchmarkArtifact if the row is missing, duplicated, or
+    contains unparseable fields.
+    """
+    aggregated_rows = [row for row in rows if row.get("Name") == "Aggregated"]
+    if len(aggregated_rows) == 0:
+        raise InvalidBenchmarkArtifact(
+            "No 'Aggregated' row found in benchmark CSV. "
+            "Ensure the CSV contains a row with Name='Aggregated'."
+        )
+    if len(aggregated_rows) > 1:
+        raise InvalidBenchmarkArtifact(
+            f"Multiple ({len(aggregated_rows)}) 'Aggregated' rows found; "
+            "expected exactly one."
+        )
+
+    row = aggregated_rows[0]
+
+    requests_per_sec = _parse_float(row.get("Requests/s"), "Requests/s")
+    p95_ms = _parse_float(row.get("95%"), "95%")
+    avg_ms = _parse_float(row.get("Average Response Time"), "Average Response Time")
+    request_count = _parse_int(row.get("Request Count"), "Request Count")
+    failure_count = _parse_int(row.get("Failure Count"), "Failure Count")
+
+    if request_count > 0:
+        failure_rate_pct = 100.0 * failure_count / request_count
+    else:
+        failure_rate_pct = 0.0
+
+    return AggregatedMetrics(
+        requests_per_sec=requests_per_sec,
+        p95_ms=p95_ms,
+        avg_ms=avg_ms,
+        request_count=request_count,
+        failure_count=failure_count,
+        failure_rate_pct=failure_rate_pct,
+    )
+
+
+def parse_aggregated(path: Path) -> AggregatedMetrics:
+    """Load a Locust stats CSV and return its AggregatedMetrics."""
+    return aggregate(load_stats(path))
+
+
+def render_md(
+    baseline: AggregatedMetrics,
+    after: AggregatedMetrics,
+) -> str:
+    b = baseline
+    a = after
+    return f"""# Locust Diff Report
+
+| Metric | Baseline | After | Δ |
+|---|---|---|---|
+| Throughput (req/s) | {b.requests_per_sec:.2f} | {a.requests_per_sec:.2f} | {a.requests_per_sec - b.requests_per_sec:+.2f} |
+| P95 (ms) | {b.p95_ms:.0f} | {a.p95_ms:.0f} | {a.p95_ms - b.p95_ms:+.0f} |
+| Avg (ms) | {b.avg_ms:.0f} | {a.avg_ms:.0f} | {a.avg_ms - b.avg_ms:+.0f} |
+| Failure rate (%) | {b.failure_rate_pct:.2f} | {a.failure_rate_pct:.2f} | {a.failure_rate_pct - b.failure_rate_pct:+.2f} |
+
+## Thresholds
+- Failure rate must be < {THRESHOLDS['fail_rate_max_pct']}%
+- P95 must be < {THRESHOLDS['p95_max_ms']}ms
+- Throughput must be >= {THRESHOLDS['rps_min']} req/s
+"""
+
+
+def check_thresholds(after: AggregatedMetrics) -> List[str]:
+    failures: List[str] = []
+    if after.failure_rate_pct >= THRESHOLDS["fail_rate_max_pct"]:
+        failures.append(
+            f"FAIL: failure rate {after.failure_rate_pct:.2f}% >= "
+            f"{THRESHOLDS['fail_rate_max_pct']}%"
+        )
+    if after.p95_ms >= THRESHOLDS["p95_max_ms"]:
+        failures.append(
+            f"FAIL: p95 {after.p95_ms:.0f}ms >= {THRESHOLDS['p95_max_ms']}ms"
+        )
+    if after.requests_per_sec < THRESHOLDS["rps_min"]:
+        failures.append(
+            f"FAIL: throughput {after.requests_per_sec:.2f} req/s < "
+            f"{THRESHOLDS['rps_min']} req/s"
+        )
+    return failures
+
 
 # Acceptance thresholds (must match docs/performance-optimization-design.md
 # and the P0 design spec).
@@ -20,94 +152,29 @@ THRESHOLDS = {
 }
 
 
-def load_stats(path: Path) -> List[Dict[str, str]]:
-    with path.open(newline="", encoding="utf-8") as f:
-        return list(csv.DictReader(f))
-
-
-def aggregate(rows: List[Dict[str, str]]) -> Tuple[float, float, float, float]:
-    """Return (total_rps, p95_ms, fail_rate_pct, avg_ms)."""
-    total_requests = 0
-    total_failures = 0
-    weighted_p95 = 0.0
-    weighted_avg = 0.0
-    for row in rows:
-        if row.get("Name") == "Aggregated":
-            continue
-        try:
-            n = int(row["Request Count"])
-        except (KeyError, ValueError):
-            continue
-        if n == 0:
-            continue
-        total_requests += n
-        total_failures += int(row.get("Failure Count", 0) or 0)
-        weighted_p95 += float(row.get("95%", 0) or 0) * n
-        weighted_avg += float(row.get("Average Response Time", 0) or 0) * n
-    if total_requests == 0:
-        return (0.0, 0.0, 0.0, 0.0)
-    p95 = weighted_p95 / total_requests
-    avg = weighted_avg / total_requests
-    fail_pct = 100.0 * total_failures / total_requests
-    # RPS = total_requests / wall-clock seconds. Locust CSV doesn't store
-    # wall time, so read from the Aggregated row directly to avoid
-    # double-counting per-endpoint rows.
-    rps = 0.0
-    for row in rows:
-        if row.get("Name") == "Aggregated":
-            try:
-                rps = float(row.get("Requests/s", 0) or 0)
-            except ValueError:
-                rps = 0.0
-            break
-    return (rps, p95, fail_pct, avg)
-
-
-def render_md(baseline: Tuple[float, float, float, float],
-              after: Tuple[float, float, float, float]) -> str:
-    b_rps, b_p95, b_fail, b_avg = baseline
-    a_rps, a_p95, a_fail, a_avg = after
-    return f"""# Locust Diff Report
-
-| Metric | Baseline | After | Δ |
-|---|---|---|---|
-| Throughput (req/s) | {b_rps:.2f} | {a_rps:.2f} | {a_rps - b_rps:+.2f} |
-| P95 (ms) | {b_p95:.0f} | {a_p95:.0f} | {a_p95 - b_p95:+.0f} |
-| Avg (ms) | {b_avg:.0f} | {a_avg:.0f} | {a_avg - b_avg:+.0f} |
-| Failure rate (%) | {b_fail:.2f} | {a_fail:.2f} | {a_fail - b_fail:+.2f} |
-
-## Thresholds
-- Failure rate must be < {THRESHOLDS['fail_rate_max_pct']}%
-- P95 must be < {THRESHOLDS['p95_max_ms']}ms
-- Throughput must be >= {THRESHOLDS['rps_min']} req/s
-"""
-
-
-def check_thresholds(after: Tuple[float, float, float, float]) -> List[str]:
-    a_rps, a_p95, a_fail, _ = after
-    failures: List[str] = []
-    if a_fail >= THRESHOLDS["fail_rate_max_pct"]:
-        failures.append(f"FAIL: failure rate {a_fail:.2f}% >= {THRESHOLDS['fail_rate_max_pct']}%")
-    if a_p95 >= THRESHOLDS["p95_max_ms"]:
-        failures.append(f"FAIL: p95 {a_p95:.0f}ms >= {THRESHOLDS['p95_max_ms']}ms")
-    if a_rps < THRESHOLDS["rps_min"]:
-        failures.append(f"FAIL: throughput {a_rps:.2f} req/s < {THRESHOLDS['rps_min']} req/s")
-    return failures
-
-
 def main() -> int:
     here = Path(__file__).parent
     base_path = here / "results_baseline_stats.csv"
     after_path = here / "results_after_stats.csv"
     if not base_path.exists() or not after_path.exists():
-        print(f"ERROR: need both {base_path.name} and {after_path.name}", file=sys.stderr)
+        print(
+            f"ERROR: need both {base_path.name} and {after_path.name}",
+            file=sys.stderr,
+        )
         return 2
-    baseline = aggregate(load_stats(base_path))
-    after = aggregate(load_stats(after_path))
+
+    try:
+        baseline = parse_aggregated(base_path)
+        after = parse_aggregated(after_path)
+    except InvalidBenchmarkArtifact as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+
     md = render_md(baseline, after)
     out = here / "results_diff.md"
     out.write_text(md, encoding="utf-8")
     print(md)
+
     failures = check_thresholds(after)
     if failures:
         print("\nThreshold violations:", file=sys.stderr)
