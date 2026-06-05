@@ -10,9 +10,6 @@ import csv
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
-
-
 class InvalidBenchmarkArtifact(Exception):
     """Raised when a benchmark CSV is missing, malformed, or has no Aggregated row."""
     pass
@@ -29,7 +26,7 @@ class AggregatedMetrics:
     failure_rate_pct: float
 
 
-def load_stats(path: Path) -> List[dict[str, str]]:
+def load_stats(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
 
@@ -56,7 +53,7 @@ def _parse_int(value: str | None, field_name: str) -> int:
         )
 
 
-def aggregate(rows: List[dict[str, str]]) -> AggregatedMetrics:
+def aggregate(rows: list[dict[str, str]]) -> AggregatedMetrics:
     """Return AggregatedMetrics from the single 'Aggregated' CSV row.
 
     Raises InvalidBenchmarkArtifact if the row is missing, duplicated, or
@@ -124,8 +121,8 @@ def render_md(
 """
 
 
-def check_thresholds(after: AggregatedMetrics) -> List[str]:
-    failures: List[str] = []
+def check_thresholds(after: AggregatedMetrics) -> list[str]:
+    failures: list[str] = []
     if after.failure_rate_pct >= THRESHOLDS["fail_rate_max_pct"]:
         failures.append(
             f"FAIL: failure rate {after.failure_rate_pct:.2f}% >= "
@@ -153,6 +150,17 @@ THRESHOLDS = {
 
 
 def main() -> int:
+    """Run the benchmark diff.
+
+    Exit codes:
+        0 — thresholds satisfied
+        1 — one or more thresholds violated
+        2 — invalid benchmark artifact (missing file, missing or duplicated
+            Aggregated row, unparseable numeric field)
+
+    Returns:
+        Process exit code per the contract above.
+    """
     here = Path(__file__).parent
     base_path = here / "results_baseline_stats.csv"
     after_path = here / "results_after_stats.csv"
