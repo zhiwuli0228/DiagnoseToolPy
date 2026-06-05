@@ -16,6 +16,16 @@ DURATION=60s
 
 cd "$HERE"
 
+# Preflight: verify the target server is reachable.
+HEALTH_URL="${HOST%/}/health"
+echo "preflight: GET $HEALTH_URL"
+if ! curl --silent --fail --max-time 5 "$HEALTH_URL" >/dev/null; then
+  echo "preflight FAILED: $HEALTH_URL did not return 200 within 5s." >&2
+  echo "  Start the backend (e.g., uv run uvicorn diagnose_tool.main:app --host 127.0.0.1 --port 18080) and rerun." >&2
+  exit 3
+fi
+echo "preflight OK"
+
 uv run locust -f locustfile.py \
   --headless \
   --host "$HOST" \
