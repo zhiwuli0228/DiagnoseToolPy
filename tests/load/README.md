@@ -84,6 +84,10 @@ uv run python tests/load/diff_results.py
 This reads the current CSV files, recomputes the diff, and writes
 `results_diff.md`.
 
+All metrics in `results_diff.md` (P95, average latency, throughput, failure rate) are
+read from Locust's single `Aggregated` row only — not computed across per-endpoint
+rows. This matches the design's "source of truth from Locust's aggregated data path" rule.
+
 ## Invalid Runs
 
 A run is **invalid** if:
