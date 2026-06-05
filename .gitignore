@@ -42,3 +42,11 @@ data/indexes/bm25/corpus.jsonl
 # Locust load test artifacts
 tests/load/results_*.csv
 tests/load/report_*.html
+
+# External governance operation docs kept outside repository history
+docs/rectification/18-superspec-phase3c-autonomous-integration-validation-and-admission-closure-operation.md
+docs/rectification/19-superspec-phase3c-final-autonomous-evidence-closure-and-governance-admission-operation.md
+docs/rectification/20-superspec-phase4-first-controlled-pilot-change-autonomous-design-operation.md
+docs/rectification/21-superspec-final-bugfix-prompt-export-end-to-end-delivery-closure-operation.md
+docs/rectification/22-claude-master-final-compliance-remediation-and-delivery-operation.md
+docs/rectification/23-codex-enable-superspec-autonomous-validation-workflow-task.md
