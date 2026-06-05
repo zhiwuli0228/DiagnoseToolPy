@@ -4,7 +4,7 @@ This file is the **project continuity snapshot**. Update it after every complete
 
 ## Current Phase
 
-SuperSpec autonomous validation workflow enabled on `claude_master`. Bugfix Prompt Export delivered.
+SuperSpec autonomous validation workflow enabled on `claude_master`. Bugfix Prompt Export delivered. Performance benchmark evidence chain remediated on `perf/p0-gzip-and-route-lazy`.
 
 ## Implemented
 
@@ -49,6 +49,7 @@ SuperSpec autonomous validation workflow enabled on `claude_master`. Bugfix Prom
 - [x] Smart evidence compression module
 - [x] Cluster matched lines retrieval API
 - [x] Bugfix prompt generation export
+- [x] Performance benchmark evidence chain remediated (`tests/load/diff_results.py` reads Locust `Aggregated` row only; `tests/load/run_bench.sh` performs `/health` preflight; `tests/load/results_diff.md` regenerated from current baseline/after CSVs; `data/indexes/bm25/corpus.jsonl` untracked as rebuildable cache)
 
 ## Current Constraints
 
