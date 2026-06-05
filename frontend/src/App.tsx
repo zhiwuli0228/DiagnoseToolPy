@@ -7,15 +7,18 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { lazy, Suspense } from 'react';
+import { Spin } from 'antd';
 import AIDiagnosisButton from './components/AIDiagnosisButton';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { useDiagnosis } from './context/DiagnosisContext';
-import DashboardPage from './pages/DashboardPage';
-import AnalysisTasksPage from './pages/AnalysisTasksPage';
-import CasebasePage from './pages/CasebasePage';
-import AIDiagnosisPage from './pages/AIDiagnosisPage';
-import DiagnosisStudioPage from './pages/DiagnosisStudioPage';
-import SettingsPage from './pages/SettingsPage';
+
+const DashboardPage       = lazy(() => import('./pages/DashboardPage'));
+const AnalysisTasksPage   = lazy(() => import('./pages/AnalysisTasksPage'));
+const CasebasePage        = lazy(() => import('./pages/CasebasePage'));
+const AIDiagnosisPage     = lazy(() => import('./pages/AIDiagnosisPage'));
+const DiagnosisStudioPage = lazy(() => import('./pages/DiagnosisStudioPage'));
+const SettingsPage        = lazy(() => import('./pages/SettingsPage'));
 
 const { Sider, Content, Header } = Layout;
 
@@ -88,73 +91,81 @@ function App() {
   const getBasePath = (path: string) => '/' + path.split('/')[1];
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider breakpoint="lg" collapsedWidth="0">
-        <div
-          style={{
-            height: 64,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: 18,
-            fontWeight: 'bold',
-          }}
-        >
-          DiagnoseToolPy
+    <Suspense
+      fallback={
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+          <Spin size="large" />
         </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[selectedKey]}
-          items={menuItems}
-          onClick={({ key }) => navigate(key)}
-        />
-      </Sider>
-      <Layout>
-        <Header
-          style={{
-            background: '#fff',
-            padding: '0 24px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            borderBottom: '1px solid #f0f0f0',
-          }}
-        >
-          <LanguageSwitcher />
-          <AIDiagnosisButton
-            selections={selections}
-            onRemove={removeSelection}
-            onClear={clearSelections}
-            onDiagnose={handleDiagnose}
-            loading={loading}
+      }
+    >
+      <Layout style={{ minHeight: '100vh' }}>
+        <Sider breakpoint="lg" collapsedWidth="0">
+          <div
+            style={{
+              height: 64,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: 18,
+              fontWeight: 'bold',
+            }}
+          >
+            DiagnoseToolPy
+          </div>
+          <Menu
+            theme="dark"
+            mode="inline"
+            selectedKeys={[selectedKey]}
+            items={menuItems}
+            onClick={({ key }) => navigate(key)}
           />
-        </Header>
-        <Content style={{ margin: 24, height: 'calc(100vh - 112px)', overflow: 'auto' }}>
-          {PRESERVE_STATE_PATHS.map(path => {
-            const Component = {
-              '/analysis': AnalysisTasksPage,
-              '/diagnosis-studio': DiagnosisStudioPage,
-              '/cases': CasebasePage,
-              '/diagnosis': AIDiagnosisPage,
-            }[path];
+        </Sider>
+        <Layout>
+          <Header
+            style={{
+              background: '#fff',
+              padding: '0 24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              borderBottom: '1px solid #f0f0f0',
+            }}
+          >
+            <LanguageSwitcher />
+            <AIDiagnosisButton
+              selections={selections}
+              onRemove={removeSelection}
+              onClear={clearSelections}
+              onDiagnose={handleDiagnose}
+              loading={loading}
+            />
+          </Header>
+          <Content style={{ margin: 24, height: 'calc(100vh - 112px)', overflow: 'auto' }}>
+            {PRESERVE_STATE_PATHS.map(path => {
+              const Component = {
+                '/analysis': AnalysisTasksPage,
+                '/diagnosis-studio': DiagnosisStudioPage,
+                '/cases': CasebasePage,
+                '/diagnosis': AIDiagnosisPage,
+              }[path];
 
-            return (
-              <TabContent key={path} path={path}>
-                {Component && <Component />}
-              </TabContent>
-            );
-          })}
-          {!PRESERVE_STATE_PATHS.includes(getBasePath(currentPath)) && (
-            <div style={{ height: '100%' }}>
-              {currentPath === '/' && <DashboardPage />}
-              {currentPath === '/settings' && <SettingsPage />}
-            </div>
-          )}
-        </Content>
+              return (
+                <TabContent key={path} path={path}>
+                  {Component && <Component />}
+                </TabContent>
+              );
+            })}
+            {!PRESERVE_STATE_PATHS.includes(getBasePath(currentPath)) && (
+              <div style={{ height: '100%' }}>
+                {currentPath === '/' && <DashboardPage />}
+                {currentPath === '/settings' && <SettingsPage />}
+              </div>
+            )}
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </Suspense>
   );
 }
 
