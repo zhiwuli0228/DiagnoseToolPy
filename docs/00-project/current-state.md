@@ -51,6 +51,7 @@ SuperSpec autonomous validation workflow enabled on `claude_master`. Bugfix Prom
 - [x] Bugfix prompt generation export
 - [x] Performance benchmark evidence chain remediated (`tests/load/diff_results.py` reads Locust `Aggregated` row only; `tests/load/run_bench.sh` performs `/health` preflight; `tests/load/results_diff.md` regenerated from current baseline/after CSVs; `data/indexes/bm25/corpus.jsonl` untracked as rebuildable cache)
 - [x] Runtime/generated data removed from Git tracking (`data/input/uploads/`, `data/output/`, `data/sessions/`, `data/temp/`, `data/runtime/`, rebuildable indexes, and case drafts are now treated as local/generated artifacts)
+- [x] Playwright/debug local artifacts removed from Git tracking; `.playwright-mcp/` and root-level temporary screenshots/page dumps/console captures remain local-only instead of repository history
 
 ## Current Constraints
 

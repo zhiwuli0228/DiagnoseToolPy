@@ -25,6 +25,12 @@ build/
 
 # Playwright MCP logs
 .playwright-mcp/
+/analysis-tasks-page.png
+/cluster-analysis-form.png
+/cluster-form-visible.png
+/page-*.yml
+/console*.txt
+/errors*.txt
 
 # Analysis/runtime data
 data/input/uploads/
@@ -38,10 +44,6 @@ data/indexes/*
 !data/indexes/.gitkeep
 data/cases/_drafts/
 data/indexes/bm25/corpus.jsonl
-
-# Screenshots and page logs from testing
-*.png
-*.yml
 
 # Local claude settings
 .claude/settings.json
