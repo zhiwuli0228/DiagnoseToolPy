@@ -314,47 +314,20 @@ def test_rendered_markdown_matches_aggregated_values() -> None:
     assert "+20" in md
 
 
-# Test 8 (design §6.2 / §8): main() must exit 2 when the required
-# stats files are missing. We patch sys.argv to avoid depending on the
-# pre-existing CSVs in tests/load/ and then point diff_results at
-# synthetic files by re-binding its module-level constants via
-# monkeypatch.
-def test_main_missing_stats_file_exits_two(tmp_path: Path, monkeypatch, capsys) -> None:
-    # Import here so the sys.path manipulation above is in effect.
-    import diff_results
+def test_main_missing_stats_file_exits_two(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys) -> None:
+    """main() exits 2 when the stats files are missing.
 
-    # Create empty dir with NO stats files.
-    empty_dir = tmp_path / "no_stats"
-    empty_dir.mkdir()
+    Uses monkeypatch to redirect __file__ into an empty tmp dir, so
+    main()'s Path(__file__).parent lookup misses both CSVs cleanly
+    without touching any real fixture files.
+    """
+    import diff_results  # re-use module already imported via sys.path trick above
 
-    # main() reads the script's own directory by default; we
-    # monkey-patch the module-level Path resolution by stubbing the
-    # file existence check via direct invocation through parse_aggregated
-    # on a non-existent path. That covers the InvalidBenchmarkArtifact
-    # path; the file-existence path is exercised by calling main() but
-    # pointing it at empty_dir by patching Path(__file__).parent.
-    #
-    # Simplest portable approach: directly test the file-existence
-    # branch by reading main's source path.
-    here = Path(diff_results.__file__).parent
-    base_path = here / "results_baseline_stats.csv"
-    after_path = here / "results_after_stats.csv"
+    fake_path = tmp_path / "fake_diff_results.py"
+    fake_path.write_text("")  # must exist so Path(fake_path).parent resolves
+    monkeypatch.setattr(diff_results, "__file__", str(fake_path))
 
-    # If the real artifacts happen to be present, move them aside
-    # for the duration of the test.
-    moved: list[tuple[Path, Path | None]] = []
-    for p in (base_path, after_path):
-        if p.exists():
-            backup = p.with_suffix(p.suffix + ".bak_test")
-            p.rename(backup)
-            moved.append((p, backup))
-
-    try:
-        rc = diff_results.main()
-        captured = capsys.readouterr()
-        assert rc == 2, f"expected exit code 2, got {rc}; stderr={captured.err!r}"
-        assert "ERROR" in captured.err
-    finally:
-        for original, backup in moved:
-            if backup is not None and backup.exists():
-                backup.rename(original)
+    rc = diff_results.main()
+    captured = capsys.readouterr()
+    assert rc == 2, f"expected exit code 2, got {rc}; stderr={captured.err!r}"
+    assert "ERROR" in captured.err
