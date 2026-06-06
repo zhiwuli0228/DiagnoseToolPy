@@ -32,6 +32,10 @@ The system MUST provide an API that recursively scans an allowed server-side sou
 - **WHEN** a client scans a directory that resolves outside all configured allowed input roots
 - **THEN** the system rejects the request before directory traversal starts
 
+#### Scenario: Scan metadata feeds large-task byte accounting
+- **WHEN** a large-directory scan result is later used to create a long-running analysis or cluster task
+- **THEN** the reported `total_bytes` and per-file sizes are sufficient to drive byte-based progress accounting without reopening files for metadata-only totals
+
 ### Requirement: Metadata-Only Recursive Scanner
 The system MUST recursively scan filesystem metadata without opening or reading log file contents.
 
