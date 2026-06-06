@@ -31,6 +31,8 @@ build/
 /page-*.yml
 /console*.txt
 /errors*.txt
+/.bench-server.log
+/.bench-server.err.log
 
 # Analysis/runtime data
 data/input/uploads/
@@ -52,6 +54,10 @@ data/indexes/bm25/corpus.jsonl
 # Locust load test artifacts
 tests/load/results_*.csv
 tests/load/report_*.html
+tests/load/artifacts/
+
+# Git worktrees
+.worktrees/
 
 # External governance operation docs kept outside repository history
 docs/rectification/18-superspec-phase3c-autonomous-integration-validation-and-admission-closure-operation.md
