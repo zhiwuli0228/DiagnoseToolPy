@@ -12,6 +12,7 @@ from pydantic import BaseModel
 
 from diagnose_tool.analyzer.cluster_analyzer import (
     ClusterAnalyzer,
+    _atomic_write_text,
     read_cluster_result,
     read_progress,
 )
@@ -98,16 +99,17 @@ def create_cluster_task(request: ClusterRequest, background_tasks: BackgroundTas
     # landing a few ms later sees the active task.
     _active_tasks.register_new(source_key, task_id)
 
-    # Write initial progress before returning
+    # Write initial progress before returning (atomically, so the second
+    # worker polling the same task does not catch a half-written file).
     progress_path = task_output / "progress.json"
-    progress_path.write_text(
+    _atomic_write_text(
+        progress_path,
         json.dumps({
             "status": "scanning",
             "progress": 0,
             "current_step": "准备扫描...",
             "updated_at": datetime.now().isoformat(),
         }, ensure_ascii=False),
-        encoding="utf-8"
     )
 
     # Schedule background task

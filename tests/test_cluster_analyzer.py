@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+import threading
 from pathlib import Path
 
 import pytest
 
 from diagnose_tool.analyzer.cluster_analyzer import (
+    _atomic_write_text,
     CaseTextExtractor,
     ClusterAnalyzer,
     ClusterGroup,
@@ -363,3 +365,126 @@ class TestByteProgress:
         assert progress["status"] == "failed"
         assert "error" in progress
         assert "simulated scan failure" in progress["error"]
+
+
+class TestAtomicProgressWrite:
+    def test_atomic_write_text_leaves_no_temp_files(self, tmp_path: Path) -> None:
+        target = tmp_path / "progress.json"
+        _atomic_write_text(target, '{"a": 1}')
+        assert target.exists()
+        assert json.loads(target.read_text(encoding="utf-8")) == {"a": 1}
+        # No leftover temp files in the same directory
+        leftover = [p for p in tmp_path.iterdir() if p.name != "progress.json"]
+        assert leftover == []
+
+    def test_atomic_write_text_overwrites_existing(self, tmp_path: Path) -> None:
+        target = tmp_path / "progress.json"
+        target.write_text('{"old": true}', encoding="utf-8")
+        _atomic_write_text(target, '{"new": true}')
+        assert json.loads(target.read_text(encoding="utf-8")) == {"new": True}
+
+    def test_update_progress_is_safe_under_concurrent_reads(self, tmp_path: Path) -> None:
+        """A reader polling the file must never see a half-written/empty value.
+
+        Reproduces the race that the press test caught: the analyzer writes
+        progress.json frequently while a benchmark worker polls the same
+        file. Before the atomic-write fix, a reader could see `''` or
+        partial bytes and `read_progress` would return None → 404.
+        """
+        from diagnose_tool.analyzer.cluster_analyzer import (
+            ClusterAnalyzer,
+            read_progress,
+        )
+
+        analyzer = ClusterAnalyzer(tmp_path)
+        _, task_output = analyzer.create_task("/logs")
+        # Seed the file with a valid initial write so the reader never sees
+        # a "no file yet" condition (which is a legitimate return, not a
+        # race). After this the test only fails if a half-written file
+        # leaks through.
+        analyzer._update_progress(
+            task_output,
+            "scanning",
+            0,
+            processed_files=0,
+            total_files=100,
+            processed_bytes=0,
+            total_bytes=100_000_000,
+            current_file="seed",
+        )
+        assert read_progress(task_output) is not None
+
+        stop = threading.Event()
+        bad_reads: list[str] = []
+        read_count = 0
+
+        def writer() -> None:
+            i = 0
+            while not stop.is_set():
+                analyzer._update_progress(
+                    task_output,
+                    "scanning",
+                    i % 101,
+                    processed_files=i,
+                    total_files=100,
+                    processed_bytes=i * 1_000_000,
+                    total_bytes=100_000_000,
+                    current_file=f"file-{i}.log",
+                    message=f"tick {i}",
+                )
+                i += 1
+
+        def reader() -> None:
+            nonlocal read_count
+            import time
+            while not stop.is_set():
+                progress = read_progress(task_output)
+                read_count += 1
+                if progress is None:
+                    bad_reads.append("None")
+                else:
+                    if not isinstance(progress.status, str) or not progress.status:
+                        bad_reads.append(f"empty status: {progress.status!r}")
+                    if not isinstance(progress.progress, int) or not (
+                        0 <= progress.progress <= 100
+                    ):
+                        bad_reads.append(
+                            f"bad progress: {progress.progress!r}"
+                        )
+                time.sleep(0.001)
+
+        w = threading.Thread(target=writer, daemon=True)
+        r = threading.Thread(target=reader, daemon=True)
+        w.start()
+        r.start()
+        # Let the race run long enough that many writes and reads happen.
+        import time
+        time.sleep(0.4)
+        stop.set()
+        w.join(timeout=2)
+        r.join(timeout=2)
+
+        assert read_count > 20, f"reader did not poll enough: {read_count}"
+        assert not bad_reads, (
+            f"reader observed partial/empty progress.json: {bad_reads[:5]}"
+        )
+
+    def test_update_progress_keeps_under_load(self, tmp_path: Path) -> None:
+        """Many sequential updates leave exactly the expected final state."""
+        from diagnose_tool.analyzer.cluster_analyzer import ClusterAnalyzer
+
+        analyzer = ClusterAnalyzer(tmp_path)
+        _, task_output = analyzer.create_task("/logs")
+        for i in range(200):
+            analyzer._update_progress(
+                task_output,
+                "scanning",
+                i % 101,
+                processed_bytes=i * 1024,
+                total_bytes=10_000_000,
+                current_file=f"file-{i}.log",
+            )
+        # Final state must be the last write
+        data = json.loads((task_output / "progress.json").read_text(encoding="utf-8"))
+        assert data["processed_bytes"] == 199 * 1024
+        assert data["current_file"] == "file-199.log"

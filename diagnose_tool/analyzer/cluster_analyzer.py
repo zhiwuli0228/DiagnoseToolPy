@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
+import tempfile
+import threading
 import uuid
 from collections import defaultdict
 from dataclasses import asdict, dataclass, field
@@ -94,6 +97,74 @@ _TIMESTAMP_RE = re.compile(r'\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?')
 _NUMERIC_RE = re.compile(r'\b\d+\b')
 _STRING_RE = re.compile(r'"[^"]*"')
 _HEX_RE = re.compile(r'0x[0-9a-fA-F]+')
+
+
+def _atomic_write_text(path: Path, content: str) -> None:
+    """Write `content` to `path` atomically.
+
+    Combines a per-path threading lock with a write-to-temp + rename
+    sequence. The lock makes the read and write windows mutually exclusive
+    on Windows (where concurrent open handles defeat pure rename-based
+    atomicity); the temp-file + rename keeps the on-disk state valid even
+    if the process is killed mid-write.
+
+    Concurrent readers should also acquire the same lock via
+    `_locked_read_text` so they never observe a half-written file.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with _progress_lock(path):
+        fd, tmp_name = tempfile.mkstemp(
+            prefix=path.name + ".",
+            suffix=".tmp",
+            dir=str(path.parent),
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as tmp_file:
+                tmp_file.write(content)
+            os.replace(tmp_name, path)
+        except OSError:
+            # Best-effort cleanup of the temp file, then fall back to a
+            # direct write so callers in test or single-process contexts
+            # still succeed.
+            try:
+                os.unlink(tmp_name)
+            except OSError:
+                pass
+            path.write_text(content, encoding="utf-8")
+
+
+# Per-path lock registry for serialized progress.json read/write access.
+# Locks are created on first use and kept for the life of the process,
+# which is fine because the number of distinct task_output paths is small.
+_progress_locks: dict[str, threading.Lock] = {}
+_progress_locks_guard = threading.Lock()
+
+
+def _progress_lock(path: Path) -> threading.Lock:
+    """Return a per-path lock, creating it on first use."""
+    key = str(path.resolve())
+    with _progress_locks_guard:
+        lock = _progress_locks.get(key)
+        if lock is None:
+            lock = threading.Lock()
+            _progress_locks[key] = lock
+    return lock
+
+
+def _locked_read_text(path: Path) -> str | None:
+    """Read `path` while holding the same lock used for writes.
+
+    Returns `None` if the file does not exist. Callers that need a parsed
+    progress should hold the lock around the JSON parse too (see
+    `read_progress`).
+    """
+    with _progress_lock(path):
+        if not path.exists():
+            return None
+        try:
+            return path.read_text(encoding="utf-8")
+        except OSError:
+            return None
 
 
 def _normalize_message(message: str) -> str:
@@ -282,7 +353,13 @@ class ClusterAnalyzer:
         current_file: str | None = None,
         message: str | None = None,
     ) -> None:
-        """Write progress.json at each phase transition or scan tick."""
+        """Write progress.json at each phase transition or scan tick.
+
+        Writes are atomic: the new content is written to a sibling temp file
+        and then renamed over the target, so concurrent readers (e.g. another
+        benchmark worker polling the same task) never observe a half-written
+        or empty file.
+        """
         progress_path = task_output / "progress.json"
         data: dict[str, object] = {
             "status": status,
@@ -302,7 +379,7 @@ class ClusterAnalyzer:
             data["current_file"] = current_file
         if message is not None:
             data["message"] = message
-        progress_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        _atomic_write_text(progress_path, json.dumps(data, ensure_ascii=False))
 
     def _record_terminal_failure(self, task_output: Path, reason: str) -> None:
         """Persist a terminal failed state, preserving the last known progress.
@@ -335,7 +412,7 @@ class ClusterAnalyzer:
                 ):
                     if key in prior:
                         data[key] = prior[key]
-        progress_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        _atomic_write_text(progress_path, json.dumps(data, ensure_ascii=False))
 
     def _prepare_file_list(self, source_path: str) -> tuple[list, Path | None]:
         """Prepare the list of files to scan.
@@ -1008,19 +1085,26 @@ class ClusterAnalyzer:
 
 
 def read_progress(task_output: Path) -> TaskProgress | None:
-    """Read progress.json from task output directory."""
+    """Read progress.json from task output directory.
+
+    Holds the same per-path lock used by `_atomic_write_text` so the read
+    window cannot overlap a write. Without this serialization the reader
+    can observe a half-written / empty file on Windows, which surfaced as
+    the press-test 404 on concurrent cluster polls.
+    """
     progress_path = task_output / "progress.json"
-    if not progress_path.exists():
-        return None
-    try:
-        data = json.loads(progress_path.read_text(encoding="utf-8"))
-        return TaskProgress(
-            status=data.get("status", "unknown"),
-            progress=data.get("progress", 0),
-            current_step=data.get("current_step", ""),
-        )
-    except (OSError, json.JSONDecodeError):
-        return None
+    with _progress_lock(progress_path):
+        if not progress_path.exists():
+            return None
+        try:
+            data = json.loads(progress_path.read_text(encoding="utf-8"))
+            return TaskProgress(
+                status=data.get("status", "unknown"),
+                progress=data.get("progress", 0),
+                current_step=data.get("current_step", ""),
+            )
+        except (OSError, json.JSONDecodeError):
+            return None
 
 
 def read_cluster_result(task_output: Path) -> ClusterResult | None:
