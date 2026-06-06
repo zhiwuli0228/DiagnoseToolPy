@@ -1,0 +1,81 @@
+version: 1
+defaults:
+  host: http://127.0.0.1:18080
+  poll_interval_seconds: 2
+  cluster_timeout_seconds: 1800
+  request_timeout_seconds: 300
+  warmup_seconds: 0
+  output_dir: tests/load/artifacts
+thresholds:
+  scan_p95_ms_max: 20000
+  scan_failure_rate_max_pct: 5.0
+  cluster_submit_p95_ms_max: 3000
+  cluster_submit_failure_rate_max_pct: 5.0
+  cluster_completion_rate_min_pct: 95.0
+  cluster_wall_time_max_seconds: 1800
+datasets:
+  - id: sample_zip
+    description: Small ZIP sanity dataset
+    source_path: E:\006tooldevelop\logsearch\log.zip
+    kind: zip
+  - id: medium_zip
+    description: Medium multi-service ZIP dataset
+    source_path: E:\006tooldevelop\logsearch\out-30g-18services.zip
+    kind: zip
+  - id: large_zip
+    description: Large expanded ZIP dataset
+    source_path: E:\006tooldevelop\logsearch\out-final-expanded.zip
+    kind: zip
+  - id: expanded_directory
+    description: Prepared large expanded directory dataset from out-final-expanded.zip
+    source_path: E:\006tooldevelop\logsearch\prepared\out-final-expanded
+    kind: directory
+    prepare_from_zip: E:\006tooldevelop\logsearch\out-final-expanded.zip
+    expected_min_bytes: 1000000000
+profiles:
+  - id: smoke_scan_sample
+    description: Minimal smoke validation for wrapper and sample ZIP scan
+    concurrency: 1
+    iterations: 1
+    scenarios:
+      - type: source_scan
+        datasets: [sample_zip]
+  - id: scan_baseline
+    description: Single-user metadata scan baseline
+    concurrency: 1
+    iterations: 1
+    scenarios:
+      - type: source_scan
+        datasets: [sample_zip, medium_zip, large_zip, expanded_directory]
+  - id: cluster_baseline
+    description: Single-user cluster baseline
+    concurrency: 1
+    iterations: 1
+    scenarios:
+      - type: cluster_task
+        datasets: [medium_zip, large_zip, expanded_directory]
+  - id: cluster_concurrency_light
+    description: Light concurrent cluster pressure
+    concurrency: 3
+    iterations: 1
+    scenarios:
+      - type: cluster_task
+        datasets: [medium_zip]
+  - id: directory_concurrency_baseline
+    description: Large-directory concurrent scan and cluster baseline
+    concurrency: 2
+    iterations: 1
+    scenarios:
+      - type: source_scan
+        datasets: [expanded_directory]
+      - type: cluster_task
+        datasets: [expanded_directory]
+  - id: directory_concurrency_heavy
+    description: Heavier large-directory cluster pressure
+    concurrency: 5
+    iterations: 1
+    scenarios:
+      - type: source_scan
+        datasets: [expanded_directory]
+      - type: cluster_task
+        datasets: [expanded_directory]

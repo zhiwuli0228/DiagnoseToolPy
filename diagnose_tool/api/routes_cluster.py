@@ -16,12 +16,17 @@ from diagnose_tool.analyzer.cluster_analyzer import (
     read_progress,
 )
 from diagnose_tool.core.config import load_config
+from diagnose_tool.core.cluster_runtime import (
+    get_registry,
+    normalize_source_key,
+)
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["cluster"])
 
 _config = None
+_active_tasks = get_registry()
 
 
 def _get_config():
@@ -37,6 +42,7 @@ class ClusterRequest(BaseModel):
 
 class ClusterResponse(BaseModel):
     task_id: str
+    reused: bool = False
 
 
 class ClusterStatusResponse(BaseModel):
@@ -46,13 +52,22 @@ class ClusterStatusResponse(BaseModel):
     clusters: list | None = None
 
 
-def _run_cluster_task(task_id: str, source_path: str, data_dir: Path) -> None:
+def _run_cluster_task(task_id: str, source_path: str, data_dir: Path, source_key: str) -> None:
     """Background task that runs the clustering analysis."""
     try:
         analyzer = ClusterAnalyzer(data_dir)
         analyzer.run(task_id, source_path)
+        _active_tasks.update_status(source_key, "done")
     except Exception as exc:
         logger.error("Cluster task %s failed: %s", task_id, exc)
+        try:
+            task_output = data_dir / "output" / task_id
+            ClusterAnalyzer(data_dir)._record_terminal_failure(
+                task_output, reason=str(exc)
+            )
+        except Exception as inner:  # pragma: no cover - defensive
+            logger.error("Could not persist failure state for %s: %s", task_id, inner)
+        _active_tasks.update_status(source_key, "failed")
 
 
 @router.post("/cluster", response_model=ClusterResponse)
@@ -60,7 +75,9 @@ def create_cluster_task(request: ClusterRequest, background_tasks: BackgroundTas
     """Create a new cluster analysis task.
 
     The task runs asynchronously in the background. Poll GET /api/cluster/{task_id}
-    for progress and results.
+    for progress and results. If the same source already has an active task
+    (scanning/aggregating/matching), the active task_id is returned with
+    `reused: true` instead of starting a duplicate full scan.
     """
     config = _get_config()
 
@@ -69,8 +86,17 @@ def create_cluster_task(request: ClusterRequest, background_tasks: BackgroundTas
     if not source.exists():
         raise HTTPException(status_code=400, detail=f"Source path does not exist: {request.source_path}")
 
+    source_key = normalize_source_key(source)
+    active_task_id = _active_tasks.active_task_id(source_key)
+    if active_task_id is not None:
+        return ClusterResponse(task_id=active_task_id, reused=True)
+
     analyzer = ClusterAnalyzer(config.data_dir)
     task_id, task_output = analyzer.create_task(request.source_path)
+
+    # Register before scheduling the background work so a duplicate submit
+    # landing a few ms later sees the active task.
+    _active_tasks.register_new(source_key, task_id)
 
     # Write initial progress before returning
     progress_path = task_output / "progress.json"
@@ -85,9 +111,9 @@ def create_cluster_task(request: ClusterRequest, background_tasks: BackgroundTas
     )
 
     # Schedule background task
-    background_tasks.add_task(_run_cluster_task, task_id, str(source), config.data_dir)
+    background_tasks.add_task(_run_cluster_task, task_id, str(source), config.data_dir, source_key)
 
-    return ClusterResponse(task_id=task_id)
+    return ClusterResponse(task_id=task_id, reused=False)
 
 
 @router.get("/cluster/{task_id}/matched-lines/{cluster_index}")

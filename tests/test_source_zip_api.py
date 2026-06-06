@@ -87,7 +87,7 @@ class TestScanSourceDirectoryZip:
     def test_scan_extracts_and_scans_zip(
         self, tmp_path: Path, monkeypatch
     ) -> None:
-        """scan endpoint extracts ZIP and returns results from extracted contents."""
+        """scan endpoint inspects ZIP metadata without extracting contents."""
         allowed_root = tmp_path / "input"
         allowed_root.mkdir()
         data_dir = tmp_path / "data"
@@ -104,13 +104,11 @@ class TestScanSourceDirectoryZip:
 
         assert response.status_code == 200
         data = response.json()
-        # Should have scanned extracted contents
         assert data["file_count"] == 2
-        # Should return extracted_path and zip_task_id
-        assert "extracted_path" in data
-        assert "zip_task_id" in data
-        # extracted_path should be under data_dir/temp/
-        assert "zip-" in data["extracted_path"]
+        assert data["is_zip"] is True
+        assert "extracted_path" not in data
+        assert "zip_task_id" not in data
+        assert not any((data_dir / "temp").glob("zip-*")) if (data_dir / "temp").exists() else True
 
     def test_scan_regular_directory_no_extracted_path(
         self, tmp_path: Path, monkeypatch
@@ -181,26 +179,21 @@ class TestCleanupTempDir:
         data_dir = tmp_path / "data"
         data_dir.mkdir()
 
-        # First extract a ZIP to create a temp dir
         zip_path = allowed_root / "logs.zip"
         _create_test_zip(zip_path, {"app.log": "test\n"})
         _patch_config(monkeypatch, allowed_root, data_dir)
 
-        # Scan to extract
-        scan_response = TestClient(app).post("/api/source/scan", json={"path": str(zip_path)})
-        assert scan_response.status_code == 200
-        task_id = scan_response.json()["zip_task_id"]
+        from diagnose_tool.api.routes_source import _extract_zip_to_temp
 
-        # Verify temp dir exists
+        _, task_id = _extract_zip_to_temp(zip_path)
+
         temp_dir = data_dir / "temp" / f"zip-{task_id}"
         assert temp_dir.exists(), f"Temp dir {temp_dir} should exist before cleanup"
 
-        # Cleanup
         cleanup_response = TestClient(app).delete(f"/api/source/temp/{task_id}")
         assert cleanup_response.status_code == 200
         assert cleanup_response.json()["status"] == "cleaned"
 
-        # Verify temp dir no longer exists
         assert not temp_dir.exists(), f"Temp dir {temp_dir} should not exist after cleanup"
 
     def test_cleanup_returns_404_for_unknown_task_id(self, tmp_path: Path, monkeypatch) -> None:
@@ -227,9 +220,9 @@ class TestCleanupTempDir:
         _create_test_zip(zip_path, {"app.log": "test\n"})
         _patch_config(monkeypatch, allowed_root, data_dir)
 
-        # Scan to extract
-        scan_response = TestClient(app).post("/api/source/scan", json={"path": str(zip_path)})
-        task_id = scan_response.json()["zip_task_id"]
+        from diagnose_tool.api.routes_source import _extract_zip_to_temp
+
+        _, task_id = _extract_zip_to_temp(zip_path)
 
         # First cleanup succeeds
         response1 = TestClient(app).delete(f"/api/source/temp/{task_id}")

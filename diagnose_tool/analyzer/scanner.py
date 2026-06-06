@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import zipfile
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -61,7 +62,7 @@ def scan_directory(root_path: str | Path) -> DirectoryScanResult:
     total_bytes = 0
     supported_count = 0
 
-    for path in sorted(root.rglob("*")):
+    for path in root.rglob("*"):
         if path.is_symlink() or not path.is_file():
             continue
 
@@ -85,6 +86,42 @@ def scan_directory(root_path: str | Path) -> DirectoryScanResult:
 
     return DirectoryScanResult(
         root_path=str(root),
+        file_count=len(files),
+        supported_file_count=supported_count,
+        unsupported_file_count=len(files) - supported_count,
+        total_bytes=total_bytes,
+        files=tuple(files),
+    )
+
+
+def scan_zip_archive(zip_path: str | Path) -> DirectoryScanResult:
+    """Scan ZIP metadata without extracting archive contents to disk."""
+
+    archive_path = Path(zip_path).resolve()
+    files: list[ScannedFile] = []
+    total_bytes = 0
+    supported_count = 0
+
+    with zipfile.ZipFile(archive_path, "r") as zf:
+        for info in zf.infolist():
+            if info.is_dir():
+                continue
+
+            file_type = detect_file_type(info.filename)
+            if file_type != "unsupported":
+                supported_count += 1
+            total_bytes += info.file_size
+            files.append(
+                ScannedFile(
+                    path=f"{archive_path}!{info.filename}",
+                    name=Path(info.filename).name,
+                    size=info.file_size,
+                    type=file_type,
+                )
+            )
+
+    return DirectoryScanResult(
+        root_path=str(archive_path),
         file_count=len(files),
         supported_file_count=supported_count,
         unsupported_file_count=len(files) - supported_count,

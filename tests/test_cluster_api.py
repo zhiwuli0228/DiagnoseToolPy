@@ -153,6 +153,112 @@ class TestGetCluster:
         assert response.status_code == 404
 
 
+class TestSameSourceAdmission:
+    def test_duplicate_same_source_returns_existing_task_id(
+        self, client, mock_cluster_config, tmp_path: Path
+    ) -> None:
+        """Duplicate same-source request returns the same active task_id."""
+        from diagnose_tool.api import routes_cluster as rc_module
+        from diagnose_tool.core.cluster_runtime import normalize_source_key
+        rc_module._active_tasks.clear()
+
+        log_dir = tmp_path / "logs"
+        log_dir.mkdir()
+        (log_dir / "app.log").write_text(
+            "2026-05-23 10:00:00 ERROR Test error\n", encoding="utf-8"
+        )
+
+        # Pre-register an active in-flight task so the second POST sees reuse
+        # (test-mode BackgroundTasks completes synchronously, so the registry
+        # is normally already terminal by the time the second POST runs).
+        key = normalize_source_key(str(log_dir.resolve()))
+        rc_module._active_tasks.register_new(key, "cluster-pre-existing-1")
+
+        first = client.post("/api/cluster", json={"source_path": str(log_dir)})
+        assert first.status_code == 200
+        first_task_id = first.json()["task_id"]
+        assert first.json()["reused"] is True
+        assert first_task_id == "cluster-pre-existing-1"
+
+        second = client.post("/api/cluster", json={"source_path": str(log_dir)})
+        assert second.status_code == 200
+        assert second.json()["task_id"] == first_task_id
+        assert second.json()["reused"] is True
+
+    def test_different_source_creates_new_task(
+        self, client, mock_cluster_config, tmp_path: Path
+    ) -> None:
+        """Different source paths each get their own task."""
+        from diagnose_tool.api import routes_cluster as rc_module
+        rc_module._active_tasks.clear()
+
+        logs_a = tmp_path / "logs_a"
+        logs_a.mkdir()
+        (logs_a / "a.log").write_text(
+            "2026-05-23 10:00:00 ERROR Test A\n", encoding="utf-8"
+        )
+        logs_b = tmp_path / "logs_b"
+        logs_b.mkdir()
+        (logs_b / "b.log").write_text(
+            "2026-05-23 10:00:00 ERROR Test B\n", encoding="utf-8"
+        )
+
+        first = client.post("/api/cluster", json={"source_path": str(logs_a)})
+        second = client.post("/api/cluster", json={"source_path": str(logs_b)})
+        assert first.status_code == 200
+        assert second.status_code == 200
+        assert first.json()["task_id"] != second.json()["task_id"]
+
+    def test_failed_task_allows_resubmission(
+        self, client, mock_cluster_config, tmp_path: Path
+    ) -> None:
+        """A source whose last task is terminal-failed allows a new submission."""
+        from diagnose_tool.api import routes_cluster as rc_module
+        rc_module._active_tasks.clear()
+
+        log_dir = tmp_path / "logs"
+        log_dir.mkdir()
+        (log_dir / "app.log").write_text(
+            "2026-05-23 10:00:00 ERROR Test error\n", encoding="utf-8"
+        )
+
+        first = client.post("/api/cluster", json={"source_path": str(log_dir)})
+        first_task_id = first.json()["task_id"]
+
+        # Manually mark the task as terminal-failed in the active registry
+        from diagnose_tool.core.cluster_runtime import normalize_source_key
+        key = normalize_source_key(str(log_dir.resolve()))
+        rc_module._active_tasks.update_status(key, "failed")
+
+        second = client.post("/api/cluster", json={"source_path": str(log_dir)})
+        assert second.status_code == 200
+        assert second.json()["task_id"] != first_task_id
+
+    def test_done_task_allows_resubmission(
+        self, client, mock_cluster_config, tmp_path: Path
+    ) -> None:
+        """A source whose last task is terminal-done allows a new submission."""
+        from diagnose_tool.api import routes_cluster as rc_module
+        rc_module._active_tasks.clear()
+
+        log_dir = tmp_path / "logs"
+        log_dir.mkdir()
+        (log_dir / "app.log").write_text(
+            "2026-05-23 10:00:00 ERROR Test error\n", encoding="utf-8"
+        )
+
+        first = client.post("/api/cluster", json={"source_path": str(log_dir)})
+        first_task_id = first.json()["task_id"]
+
+        from diagnose_tool.core.cluster_runtime import normalize_source_key
+        key = normalize_source_key(str(log_dir.resolve()))
+        rc_module._active_tasks.update_status(key, "done")
+
+        second = client.post("/api/cluster", json={"source_path": str(log_dir)})
+        assert second.status_code == 200
+        assert second.json()["task_id"] != first_task_id
+
+
 class TestClusterWorkflow:
     def test_full_cluster_workflow(self, client, mock_cluster_config, tmp_path: Path):
         """Test complete workflow: create task -> poll -> get results."""

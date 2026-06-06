@@ -218,10 +218,29 @@ class ClusterAnalyzer:
 
         # Phase 1: Scan and extract ERROR/WARN lines with streaming aggregation
         self._update_progress(task_output, PHASE_SCAN, 20)
-        files, zip_source_path = self._prepare_file_list(source_path)
+        try:
+            files, zip_source_path = self._prepare_file_list(source_path)
+        except Exception as exc:
+            self._record_terminal_failure(task_output, reason=str(exc))
+            raise
+
         total_files = len(files)
+        total_bytes = sum(getattr(f, "size", 0) for f in files)
+        self._update_progress(
+            task_output,
+            PHASE_SCAN,
+            20,
+            processed_files=0,
+            total_files=total_files,
+            processed_bytes=0,
+            total_bytes=total_bytes,
+            current_file="",
+            message=f"扫描 {total_files} 个文件 ({total_bytes} 字节)",
+        )
+
         aggregated_groups = self._scan_and_aggregate_streaming(
-            task_output, files, total_files, zip_source_path=zip_source_path
+            task_output, files, total_files, zip_source_path=zip_source_path,
+            total_bytes=total_bytes,
         )
 
         if not aggregated_groups:
@@ -243,22 +262,79 @@ class ClusterAnalyzer:
         )
         self._write_result(task_output, result)
 
-        # Phase 4: Write matched-lines.jsonl for diagnosis cache
-        # Use streaming when zip_source_path is available (no extractall)
-        error_lines = self._scan_and_extract_errors_from_files(files, zip_source_path)
-        self._write_matched_lines_cache(task_output, aggregated_groups, error_lines)
+        # Phase 4: Write matched-lines.jsonl for diagnosis cache using bounded
+        # per-cluster samples only. This preserves diagnosis drill-down without
+        # rebuilding a full in-memory error list for large directories/archives.
+        self._write_matched_lines_cache(task_output, aggregated_groups)
 
         return result
 
-    def _update_progress(self, task_output: Path, status: str, progress: int) -> None:
-        """Write progress.json at each phase transition."""
+    def _update_progress(
+        self,
+        task_output: Path,
+        status: str,
+        progress: int,
+        *,
+        processed_files: int | None = None,
+        total_files: int | None = None,
+        processed_bytes: int | None = None,
+        total_bytes: int | None = None,
+        current_file: str | None = None,
+        message: str | None = None,
+    ) -> None:
+        """Write progress.json at each phase transition or scan tick."""
         progress_path = task_output / "progress.json"
-        data = {
+        data: dict[str, object] = {
             "status": status,
             "progress": progress,
             "current_step": PROGRESS_LABELS.get(status, status),
             "updated_at": datetime.now().isoformat(),
         }
+        if processed_files is not None:
+            data["processed_files"] = processed_files
+        if total_files is not None:
+            data["total_files"] = total_files
+        if processed_bytes is not None:
+            data["processed_bytes"] = processed_bytes
+        if total_bytes is not None:
+            data["total_bytes"] = total_bytes
+        if current_file is not None:
+            data["current_file"] = current_file
+        if message is not None:
+            data["message"] = message
+        progress_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+
+    def _record_terminal_failure(self, task_output: Path, reason: str) -> None:
+        """Persist a terminal failed state, preserving the last known progress.
+
+        Reads the existing progress.json (if any) so the user can still see
+        how far the scan got, then overwrites with a terminal `failed` state
+        and the error reason. The task MUST NOT remain stuck in `scanning`.
+        """
+        progress_path = task_output / "progress.json"
+        data: dict[str, object] = {
+            "status": "failed",
+            "progress": 0,
+            "current_step": "分析失败",
+            "error": reason,
+            "updated_at": datetime.now().isoformat(),
+        }
+        if progress_path.exists():
+            try:
+                prior = json.loads(progress_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                prior = None
+            if isinstance(prior, dict):
+                for key in (
+                    "processed_files",
+                    "total_files",
+                    "processed_bytes",
+                    "total_bytes",
+                    "current_file",
+                    "message",
+                ):
+                    if key in prior:
+                        data[key] = prior[key]
         progress_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
 
     def _prepare_file_list(self, source_path: str) -> tuple[list, Path | None]:
@@ -395,6 +471,7 @@ class ClusterAnalyzer:
         files: list,
         total_files: int,
         zip_source_path: Path | None = None,
+        total_bytes: int = 0,
     ) -> list:
         """Scan files and aggregate clusters in a streaming fashion.
 
@@ -405,6 +482,8 @@ class ClusterAnalyzer:
             task_output: Task output directory for progress updates.
             files: List of files to scan.
             total_files: Total number of files for progress calculation.
+            zip_source_path: Optional ZIP path for streaming reads.
+            total_bytes: Total bytes across files (for byte-based progress).
 
         Returns:
             List of AggregatedGroup sorted by count descending.
@@ -429,6 +508,12 @@ class ClusterAnalyzer:
         group_samples: dict[str, list[dict]] = defaultdict(list)
 
         processed_files = 0
+        processed_bytes = 0
+        # Emit a progress update at most every 64 MiB processed within a file,
+        # but always at file boundaries. This keeps the per-line cost tiny
+        # while still updating within a single very large file.
+        last_progress_bytes = 0
+        progress_byte_interval = 64 * 1024 * 1024
         # 如果传入了 zip_source_path，直接流式读取 ZIP，跳过 files 列表
         if zip_source_path is not None:
             from diagnose_tool.analyzer.reader import read_log_lines_from_zip_streaming
@@ -442,10 +527,24 @@ class ClusterAnalyzer:
                     if len(group_samples[key]) < MAX_SAMPLE_MESSAGES:
                         group_samples[key].append(parsed)
             processed_files = total_files
+            processed_bytes = total_bytes
+            self._update_progress(
+                task_output,
+                PHASE_SCAN,
+                50,
+                processed_files=processed_files,
+                total_files=total_files,
+                processed_bytes=processed_bytes,
+                total_bytes=total_bytes,
+                current_file=Path(zip_source_path).name,
+                message=f"扫描 {Path(zip_source_path).name} 完成",
+            )
         else:
             # 现有的 for file_info in files: 循环
             for file_info in files:
                 file_path = Path(file_info.path)
+                file_size = getattr(file_info, "size", 0) or 0
+                current_file_name = file_path.name
                 try:
                     for log_line in self._read_log_lines(file_path):
                         if error_level_pattern.search(log_line.raw):
@@ -461,10 +560,31 @@ class ClusterAnalyzer:
                     logger.warning("Failed to read %s: %s", file_path, e)
 
                 processed_files += 1
-                # Update progress every 10 files or at the end
-                if processed_files % 10 == 0 or processed_files == total_files:
-                    progress = 20 + int(30 * processed_files / total_files)
-                    self._update_progress(task_output, PHASE_SCAN, progress)
+                processed_bytes += file_size
+                # Update progress on file boundary, by byte threshold, or at the end
+                if (
+                    processed_files % 10 == 0
+                    or processed_files == total_files
+                    or processed_bytes - last_progress_bytes >= progress_byte_interval
+                ):
+                    last_progress_bytes = processed_bytes
+                    progress_pct = (
+                        int(30 * processed_bytes / total_bytes)
+                        if total_bytes > 0
+                        else int(30 * processed_files / max(total_files, 1))
+                    )
+                    progress = 20 + progress_pct
+                    self._update_progress(
+                        task_output,
+                        PHASE_SCAN,
+                        progress,
+                        processed_files=processed_files,
+                        total_files=total_files,
+                        processed_bytes=processed_bytes,
+                        total_bytes=total_bytes,
+                        current_file=current_file_name,
+                        message=f"扫描 {current_file_name} ({processed_files}/{total_files})",
+                    )
 
         # Build AggregatedGroup list from accumulators
         results: list = []
@@ -828,21 +948,16 @@ class ClusterAnalyzer:
         self,
         task_output: Path,
         aggregated_groups: list[AggregatedGroup],
-        error_lines: list[dict],
     ) -> None:
         """Write matched-lines.jsonl for cluster diagnosis cache.
 
         Args:
             task_output: The task output directory path.
             aggregated_groups: List of AggregatedGroup from log aggregator.
-            error_lines: Full list of error log lines for context.
         """
         matched_lines_path = task_output / "matched-lines.jsonl"
         if not aggregated_groups:
             return
-
-        # Build event index from error_lines for context lookup
-        event_index = self._build_event_index(error_lines)
 
         # Write each group's matched lines to cache, deduplicating by entry ID
         # to avoid hash collisions from repeated log entries with same file/line/timestamp
@@ -859,28 +974,15 @@ class ClusterAnalyzer:
                     if entry_id in seen_ids:
                         continue
                     seen_ids.add(entry_id)
-                    entry = self._build_cache_entry(line_dict, group_key, event_index, error_lines)
+                    entry = self._build_cache_entry(line_dict, group_key)
                     f.write(json.dumps(asdict(entry), ensure_ascii=False) + "\n")
-
-    def _build_event_index(self, error_lines: list[dict]) -> dict[str, int]:
-        """Build an index of error lines by ID for context lookup."""
-        index = {}
-        for i, line in enumerate(error_lines):
-            ts = line.get("timestamp") or ""
-            fp = line.get("file_path") or ""
-            ln = line.get("line_no") or 0
-            entry_id = generate_entry_id(fp, ln, ts)
-            index[entry_id] = i
-        return index
 
     def _build_cache_entry(
         self,
         line_dict: dict,
         group_key: str,
-        event_index: dict[str, int],
-        error_lines: list[dict],
     ) -> CachedLogEntry:
-        """Build a cache entry with context events."""
+        """Build a cache entry from a sampled cluster line."""
         ts = line_dict.get("timestamp") or ""
         fp = line_dict.get("file_path") or ""
         ln = line_dict.get("line_no") or 0
@@ -896,50 +998,13 @@ class ClusterAnalyzer:
             line_no=ln,
         )
 
-        # Get context from error_lines using index
-        context_before = self._get_context_events(event_index, entry_id, error_lines, direction=-1)
-        context_after = self._get_context_events(event_index, entry_id, error_lines, direction=1)
-
         return CachedLogEntry(
             id=entry_id,
             group_key=group_key,
             event=event,
-            context_before=context_before,
-            context_after=context_after,
+            context_before=[],
+            context_after=[],
         )
-
-    def _get_context_events(
-        self,
-        event_index: dict[str, int],
-        current_id: str,
-        error_lines: list[dict],
-        direction: int,
-    ) -> list[LogEvent]:
-        """Get context events in a direction from error_lines."""
-        if current_id not in event_index:
-            return []
-        current_pos = event_index[current_id]
-        result = []
-        pos = current_pos + direction
-        for _ in range(5):  # CONTEXT_EVENTS = 5
-            if 0 <= pos < len(error_lines):
-                line = error_lines[pos]
-                ts = line.get("timestamp") or ""
-                fp = line.get("file_path") or ""
-                ln = line.get("line_no") or 0
-                result.append(LogEvent(
-                    timestamp=ts,
-                    level=line.get("level") or "",
-                    thread=line.get("thread") or "",
-                    message=line.get("message") or "",
-                    raw=line.get("raw") or "",
-                    file_path=fp,
-                    line_no=ln,
-                ))
-                pos += direction
-            else:
-                break
-        return result
 
 
 def read_progress(task_output: Path) -> TaskProgress | None:

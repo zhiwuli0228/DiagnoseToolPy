@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
+
+import pytest
 
 from diagnose_tool.analyzer.cluster_analyzer import (
     CaseTextExtractor,
@@ -17,6 +20,7 @@ from diagnose_tool.analyzer.cluster_analyzer import (
     read_cluster_result,
     read_progress,
 )
+from diagnose_tool.analyzer.log_aggregator import AggregatedGroup
 
 
 class TestCaseTextExtractor:
@@ -205,3 +209,157 @@ class TestMatchedCaseDataclass:
         mc = MatchedCase(case_id="case-001", score=0.5, summary="Test")
         assert mc.root_cause is None
         assert mc.solution is None
+
+
+class TestClusterAnalyzerPerformanceGuards:
+    def test_run_does_not_rebuild_full_error_list_for_cache(self, tmp_path: Path, monkeypatch) -> None:
+        analyzer = ClusterAnalyzer(tmp_path)
+        task_id, _ = analyzer.create_task("/logs")
+
+        aggregated_groups = [
+            AggregatedGroup(
+                key="NullPointerException",
+                count=50000,
+                sample_message="ERROR NullPointerException",
+                sample_timestamp="2026-06-06T10:00:00",
+                sample_thread="worker-1",
+                sample_level="ERROR",
+                file_path="/logs/app.log",
+                matched_lines=[
+                    {
+                        "timestamp": "2026-06-06T10:00:00",
+                        "level": "ERROR",
+                        "thread": "worker-1",
+                        "message": "NullPointerException happened",
+                        "raw": "2026-06-06 10:00:00 ERROR NullPointerException happened",
+                        "file_path": "/logs/app.log",
+                        "line_no": 100,
+                    }
+                ],
+            )
+        ]
+        matched_clusters = [
+            ClusterGroup(
+                exception_class="NullPointerException",
+                count=50000,
+                sample_messages=["NullPointerException happened"],
+                time_distribution={"peak_hour": "10:00-10:59", "range": "10:00 - 10:00"},
+                matched_cases=[],
+            )
+        ]
+
+        monkeypatch.setattr(analyzer, "_prepare_file_list", lambda source_path: ([], None))
+        monkeypatch.setattr(
+            analyzer,
+            "_scan_and_aggregate_streaming",
+            lambda task_output, files, total_files, zip_source_path=None, total_bytes=0: aggregated_groups,
+        )
+        monkeypatch.setattr(analyzer, "_match_historical_cases", lambda groups: matched_clusters)
+        monkeypatch.setattr(
+            analyzer,
+            "_scan_and_extract_errors_from_files",
+            lambda files, zip_source_path=None: (_ for _ in ()).throw(
+                AssertionError("full error list rebuild should not be called")
+            ),
+        )
+
+        result = analyzer.run(task_id, "/logs")
+
+        assert result.total_errors == 50000
+        cache_path = tmp_path / "output" / task_id / "matched-lines.jsonl"
+        assert cache_path.exists()
+
+
+class TestByteProgress:
+    def test_progress_includes_total_bytes_and_current_file(self, tmp_path: Path, monkeypatch) -> None:
+        """During a scan, progress.json includes processed_bytes, total_bytes, current_file."""
+        from diagnose_tool.analyzer.scanner import ScannedFile
+
+        analyzer = ClusterAnalyzer(tmp_path)
+        task_id, _ = analyzer.create_task("/logs")
+
+        files = [
+            ScannedFile(path="/logs/a.log", name="a.log", size=2048, type="log"),
+            ScannedFile(path="/logs/b.log", name="b.log", size=4096, type="log"),
+        ]
+        captured: list[dict] = []
+
+        def fake_scan(task_output, files, total_files, zip_source_path=None, total_bytes=0):
+            progress_path = task_output / "progress.json"
+            captured.append(json.loads(progress_path.read_text(encoding="utf-8")))
+            return []
+
+        monkeypatch.setattr(analyzer, "_prepare_file_list", lambda source_path: (files, None))
+        monkeypatch.setattr(analyzer, "_scan_and_aggregate_streaming", fake_scan)
+        monkeypatch.setattr(analyzer, "_match_historical_cases", lambda groups: [])
+
+        analyzer.run(task_id, "/logs")
+
+        assert captured, "expected at least one progress write during scan"
+        snapshot = captured[0]
+        assert "total_bytes" in snapshot
+        assert snapshot["total_bytes"] == 6144
+        assert "processed_bytes" in snapshot
+        assert "current_file" in snapshot
+
+    def test_progress_advances_within_very_large_file(self, tmp_path: Path, monkeypatch) -> None:
+        """Progress advances before a single very large file finishes."""
+        from diagnose_tool.analyzer.scanner import ScannedFile
+
+        analyzer = ClusterAnalyzer(tmp_path)
+        task_id, task_output = analyzer.create_task("/logs")
+
+        large_file = ScannedFile(path="/logs/big.log", name="big.log", size=200 * 1024 * 1024, type="log")
+        files = [large_file]
+
+        progress_writes: list[dict] = []
+
+        def fake_scan(task_output, files, total_files, zip_source_path=None, total_bytes=0):
+            progress_path = task_output / "progress.json"
+            # Capture the initial write
+            progress_writes.append(json.loads(progress_path.read_text(encoding="utf-8")))
+            # Simulate a scan-stage write with current_file set
+            (task_output / "progress.json").write_text(
+                json.dumps({
+                    "status": "scanning",
+                    "progress": 30,
+                    "current_file": "big.log",
+                    "processed_bytes": 64 * 1024 * 1024,
+                    "total_bytes": total_bytes,
+                })
+            )
+            progress_writes.append(json.loads(progress_path.read_text(encoding="utf-8")))
+            return []
+
+        monkeypatch.setattr(analyzer, "_prepare_file_list", lambda source_path: (files, None))
+        monkeypatch.setattr(analyzer, "_scan_and_aggregate_streaming", fake_scan)
+        monkeypatch.setattr(analyzer, "_match_historical_cases", lambda groups: [])
+
+        analyzer.run(task_id, "/logs")
+
+        assert progress_writes, "expected at least one progress write"
+        first = progress_writes[0]
+        assert first["total_bytes"] == 200 * 1024 * 1024
+        # A second progress write within the large file should advertise the
+        # current file so users can see progress before the file completes.
+        later = progress_writes[-1]
+        assert later["current_file"] == "big.log"
+        assert later["processed_bytes"] == 64 * 1024 * 1024
+
+    def test_terminal_failure_state_is_persisted(self, tmp_path: Path, monkeypatch) -> None:
+        """If the background scan raises, progress.json records terminal failed state."""
+        analyzer = ClusterAnalyzer(tmp_path)
+        task_id, task_output = analyzer.create_task("/logs")
+
+        def boom(*args, **kwargs):
+            raise RuntimeError("simulated scan failure")
+
+        monkeypatch.setattr(analyzer, "_prepare_file_list", boom)
+
+        with pytest.raises(RuntimeError):
+            analyzer.run(task_id, "/logs")
+
+        progress = json.loads((task_output / "progress.json").read_text(encoding="utf-8"))
+        assert progress["status"] == "failed"
+        assert "error" in progress
+        assert "simulated scan failure" in progress["error"]

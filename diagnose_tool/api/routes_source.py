@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel, Field
 
 from diagnose_tool.analyzer.log_search import search_log_content
-from diagnose_tool.analyzer.scanner import scan_directory
+from diagnose_tool.analyzer.scanner import scan_directory, scan_zip_archive
 from diagnose_tool.core.config import load_config
 
 
@@ -65,10 +65,8 @@ def scan_source_directory(request: SourcePathRequest) -> dict[str, object]:
         path = _validate_source_file(request.path)
         if not zipfile.is_zipfile(path):
             raise HTTPException(status_code=400, detail="Not a valid ZIP file")
-        extracted_path, task_id = _extract_zip_to_temp(path)
-        result = scan_directory(extracted_path).to_dict()
-        result["extracted_path"] = str(extracted_path)
-        result["zip_task_id"] = task_id
+        result = scan_zip_archive(path).to_dict()
+        result["is_zip"] = True
         return result
 
     # Regular directory scan
@@ -157,9 +155,9 @@ async def upload_files(files: list[UploadFile] = File(...)) -> dict:
             if rel.parent and rel.parent.name:
                 file_path = upload_dir / file.webkitRelativePath
         file_path.parent.mkdir(parents=True, exist_ok=True)
-        content = await file.read()
         with file_path.open("wb") as f:
-            f.write(content)
+            while chunk := await file.read(1024 * 1024):
+                f.write(chunk)
         saved_count += 1
 
     # Register upload dir in allowed_input_roots dynamically if not already present

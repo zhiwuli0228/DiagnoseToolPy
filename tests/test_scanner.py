@@ -1,9 +1,11 @@
 from pathlib import Path
+import zipfile
 
 from diagnose_tool.analyzer.scanner import (
     detect_file_type,
     is_supported_log_file,
     scan_directory,
+    scan_zip_archive,
 )
 
 
@@ -56,3 +58,20 @@ def test_scan_directory_skips_directory_symlinks(tmp_path: Path) -> None:
 
     assert result.file_count == 1
     assert result.files[0].name == "app.log"
+
+
+def test_scan_zip_archive_returns_metadata_without_extracting(tmp_path: Path) -> None:
+    zip_path = tmp_path / "bundle.zip"
+    with zipfile.ZipFile(zip_path, "w") as zf:
+        zf.writestr("logs/app.log", "abc")
+        zf.writestr("logs/readme.md", "no")
+
+    result = scan_zip_archive(zip_path)
+
+    assert result.root_path == str(zip_path.resolve())
+    assert result.file_count == 2
+    assert result.supported_file_count == 1
+    assert result.unsupported_file_count == 1
+    assert result.total_bytes == 5
+    assert {file.name for file in result.files} == {"app.log", "readme.md"}
+    assert any("bundle.zip!logs/app.log" in file.path for file in result.files)
