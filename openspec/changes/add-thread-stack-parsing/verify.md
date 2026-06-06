@@ -87,6 +87,15 @@ All design decisions followed:
 
 No CRITICAL, WARNING, or SUGGESTION issues found.
 
+## Re-verification on `claude_master`
+
+Post-merge verification (2026-06-07):
+- All 65/65 tests pass on `claude_master`
+- Implementation files present: `diagnose_tool/analyzer/thread_stack_parser.py`, `tests/test_thread_stack_parser.py`
+- Docs updated: `docs/05-domain/log-format-guide.md`, `docs/00-project/current-state.md`
+- Zero FastAPI imports in parser module
+- `stack_parser.py` unchanged
+
 ## Final Assessment
 
 All checks passed. Ready for archive.
