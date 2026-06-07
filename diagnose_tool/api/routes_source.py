@@ -12,6 +12,7 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel, Field
 
+from diagnose_tool.analyzer import task_reader
 from diagnose_tool.analyzer.log_search import search_log_content
 from diagnose_tool.analyzer.scanner import scan_directory, scan_zip_archive
 from diagnose_tool.core.config import load_config
@@ -238,3 +239,69 @@ def cleanup_temp_dir(task_id: str) -> dict[str, str]:
     if extracted_path.exists():
         shutil.rmtree(extracted_path)
     return {"status": "cleaned", "task_id": task_id}
+
+
+# ---------------------------------------------------------------------------
+# Task detail read endpoints
+#
+# These endpoints are the read-side surface for the new TaskDetailPage. They
+# never mutate disk state. The analyzer/task_reader.py service owns path
+# validation and file IO; the routes here only translate exceptions and
+# shape the response.
+# ---------------------------------------------------------------------------
+
+
+@router.get("/tasks")
+def list_tasks_route() -> dict[str, object]:
+    """List historical analysis tasks, sorted by ``updated_at`` desc."""
+
+    summaries = task_reader.list_tasks()
+    return {"tasks": [summary.to_dict() for summary in summaries]}
+
+
+@router.get("/task/{task_id}/progress")
+def get_task_progress(task_id: str) -> dict[str, object]:
+    """Return the parsed ``progress.json`` for ``task_id`` or ``null``."""
+
+    try:
+        progress = task_reader.read_progress(task_id)
+    except task_reader.InvalidTaskIdError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"progress": progress}
+
+
+@router.get("/task/{task_id}/evidence-pack")
+def get_task_evidence_pack(task_id: str) -> dict[str, object]:
+    """Return the text of ``evidence-pack.md`` for ``task_id`` or ``null``."""
+
+    try:
+        content = task_reader.read_evidence_pack(task_id)
+    except task_reader.InvalidTaskIdError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"content": content}
+
+
+@router.get("/task/{task_id}/key-logs")
+def get_task_key_logs(task_id: str) -> dict[str, object]:
+    """Return the text of ``key-logs.txt`` for ``task_id`` or ``null``.
+
+    The analyzer writes ``key-logs.txt`` as plain text (one log line
+    per non-empty line), not JSON.
+    """
+
+    try:
+        content = task_reader.read_key_logs(task_id)
+    except task_reader.InvalidTaskIdError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"content": content}
+
+
+@router.get("/task/{task_id}/case-draft")
+def get_task_case_draft(task_id: str) -> dict[str, object]:
+    """Return the text of ``case-draft.md`` for ``task_id`` or ``null``."""
+
+    try:
+        content = task_reader.read_case_draft(task_id)
+    except task_reader.InvalidTaskIdError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"content": content}

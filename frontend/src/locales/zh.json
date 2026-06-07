@@ -260,7 +260,82 @@
     "extractUploadSuccess": "解压并上传成功：{{count}} 个文件",
     "zipExtractFailed": "ZIP解压失败",
     "copyPromptManual": "请手动复制 prompt.md 文件内容",
-    "detectingResult": "正在检测结果文件..."
+    "detectingResult": "正在检测结果文件...",
+    "taskTable": {
+      "title": "历史任务",
+      "refresh": "刷新",
+      "retry": "重试",
+      "empty": "暂无历史任务",
+      "loadError": "任务列表加载失败",
+      "taskId": "任务 ID",
+      "status": "状态",
+      "progress": "进度",
+      "currentStep": "当前步骤",
+      "updatedAt": "更新时间"
+    }
+  },
+  "taskDetail": {
+    "back": "返回分析页",
+    "title": "任务详情",
+    "tabs": {
+      "overview": "概览",
+      "evidence": "证据与线程栈",
+      "keyLogs": "关键日志与案例草稿",
+      "actions": "操作"
+    },
+    "overview": {
+      "title": "任务概览",
+      "taskId": "任务 ID",
+      "status": "状态",
+      "progress": "进度",
+      "currentStep": "当前步骤",
+      "updatedAt": "更新时间",
+      "startedAt": "开始时间",
+      "finishedAt": "结束时间",
+      "failure": "失败信息",
+      "notProduced": "此任务未记录进度。"
+    },
+    "evidence": {
+      "title": "证据包",
+      "notProduced": "此任务未生成证据包。"
+    },
+    "keyLogs": {
+      "title": "关键日志",
+      "empty": "此任务没有关键日志。",
+      "addAll": "全部加入证据篮",
+      "added": "已加入证据篮",
+      "lineCount": "共 {{n}} 行",
+      "preview": "首行预览："
+    },
+    "caseDraft": {
+      "title": "案例草稿",
+      "notProduced": "此任务未生成案例草稿。"
+    },
+    "actions": {
+      "startDiagnosis": {
+        "label": "开始诊断",
+        "previewTitle": "诊断 Prompt 预览"
+      },
+      "export": {
+        "label": "导出工作区",
+        "title": "导出工作区",
+        "path": "路径",
+        "success": "工作区已导出"
+      },
+      "rerun": {
+        "label": "重新扫描"
+      },
+      "delete": {
+        "label": "删除任务",
+        "confirmTitle": "确认删除？",
+        "confirmOk": "删除",
+        "confirmBody": "将删除任务 {{id}} 的临时目录。",
+        "success": "任务已删除"
+      }
+    }
+  },
+  "common": {
+    "cancel": "取消"
   },
   "useResultDetection": {
     "pleaseExportWorkspaceFirst": "请先导出工作区",

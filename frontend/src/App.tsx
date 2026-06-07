@@ -15,6 +15,7 @@ import { useDiagnosis } from './context/DiagnosisContext';
 
 const DashboardPage       = lazy(() => import('./pages/DashboardPage'));
 const AnalysisTasksPage   = lazy(() => import('./pages/AnalysisTasksPage'));
+const TaskDetailPage      = lazy(() => import('./pages/TaskDetailPage'));
 const CasebasePage        = lazy(() => import('./pages/CasebasePage'));
 const AIDiagnosisPage     = lazy(() => import('./pages/AIDiagnosisPage'));
 const DiagnosisStudioPage = lazy(() => import('./pages/DiagnosisStudioPage'));
@@ -26,9 +27,10 @@ const { Sider, Content, Header } = Layout;
 const PRESERVE_STATE_PATHS = ['/analysis', '/diagnosis-studio', '/cases', '/diagnosis'];
 
 // Wrapper that keeps component mounted but only renders when active
-function TabContent({ path, children }: { path: string; children: React.ReactNode }) {
+function TabContent({ path, children, currentPath }: { path: string; children: React.ReactNode; currentPath?: string }) {
   const location = useLocation();
-  const isActive = location.pathname === path || location.pathname.startsWith(path + '/');
+  const pathForCheck = currentPath ?? location.pathname;
+  const isActive = pathForCheck === path || pathForCheck.startsWith(path + '/');
 
   if (!isActive && PRESERVE_STATE_PATHS.includes(path)) {
     return (
@@ -142,9 +144,11 @@ function App() {
             />
           </Header>
           <Content style={{ margin: 24, height: 'calc(100vh - 112px)', overflow: 'auto' }}>
-            {PRESERVE_STATE_PATHS.map(path => {
+            <TabContent path="/analysis" currentPath={currentPath}>
+              {currentPath === '/analysis' ? <AnalysisTasksPage /> : <TaskDetailPage />}
+            </TabContent>
+            {PRESERVE_STATE_PATHS.filter(p => p !== '/analysis').map(path => {
               const Component = {
-                '/analysis': AnalysisTasksPage,
                 '/diagnosis-studio': DiagnosisStudioPage,
                 '/cases': CasebasePage,
                 '/diagnosis': AIDiagnosisPage,

@@ -260,7 +260,82 @@
     "extractUploadSuccess": "Extracted and uploaded successfully: {{count}} files",
     "zipExtractFailed": "ZIP extraction failed",
     "copyPromptManual": "Please manually copy prompt.md file content",
-    "detectingResult": "Detecting result file..."
+    "detectingResult": "Detecting result file...",
+    "taskTable": {
+      "title": "Historical Tasks",
+      "refresh": "Refresh",
+      "retry": "Retry",
+      "empty": "No historical tasks",
+      "loadError": "Failed to load tasks",
+      "taskId": "Task ID",
+      "status": "Status",
+      "progress": "Progress",
+      "currentStep": "Current Step",
+      "updatedAt": "Updated"
+    }
+  },
+  "taskDetail": {
+    "back": "Back to Analysis",
+    "title": "Task Detail",
+    "tabs": {
+      "overview": "Overview",
+      "evidence": "Evidence & Threads",
+      "keyLogs": "Key Logs & Case Draft",
+      "actions": "Actions"
+    },
+    "overview": {
+      "title": "Task Overview",
+      "taskId": "Task ID",
+      "status": "Status",
+      "progress": "Progress",
+      "currentStep": "Current Step",
+      "updatedAt": "Updated At",
+      "startedAt": "Started At",
+      "finishedAt": "Finished At",
+      "failure": "Failure",
+      "notProduced": "No progress recorded for this task."
+    },
+    "evidence": {
+      "title": "Evidence Pack",
+      "notProduced": "No evidence pack produced for this task."
+    },
+    "keyLogs": {
+      "title": "Key Logs",
+      "empty": "No key logs in this task.",
+      "addAll": "Add all to evidence basket",
+      "added": "Added to evidence basket",
+      "lineCount": "{{n}} lines",
+      "preview": "First line: "
+    },
+    "caseDraft": {
+      "title": "Case Draft",
+      "notProduced": "No case draft produced for this task."
+    },
+    "actions": {
+      "startDiagnosis": {
+        "label": "Start diagnosis",
+        "previewTitle": "Diagnosis Prompt Preview"
+      },
+      "export": {
+        "label": "Export workspace",
+        "title": "Export Workspace",
+        "path": "Path",
+        "success": "Workspace exported"
+      },
+      "rerun": {
+        "label": "Re-run scan"
+      },
+      "delete": {
+        "label": "Delete task",
+        "confirmTitle": "Delete task?",
+        "confirmOk": "Delete",
+        "confirmBody": "This will remove the temporary directory for task {{id}}.",
+        "success": "Task deleted"
+      }
+    }
+  },
+  "common": {
+    "cancel": "Cancel"
   },
   "useResultDetection": {
     "pleaseExportWorkspaceFirst": "Please export workspace first",

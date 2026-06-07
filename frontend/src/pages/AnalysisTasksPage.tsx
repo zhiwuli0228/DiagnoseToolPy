@@ -12,13 +12,14 @@ import {
   exportBugfixPrompt,
   previewPrompt,
   isDegradedResponse,
-  getThreadResults,
   type DegradedResponse,
 } from '../api/diagnosisApi';
-import type { SourceCheckResponse, ScanResult, LogSearchResponse, LogSearchResult, AggregatedGroup, ClusterStatusResponse, SelectionItem, ThreadResultsResponse, ThreadResultItem } from '../types/api';
+import type { SourceCheckResponse, ScanResult, LogSearchResponse, LogSearchResult, AggregatedGroup, ClusterStatusResponse, SelectionItem } from '../types/api';
 import { useDiagnosis } from '../context/DiagnosisContext';
 import ClusterProgress from '../components/ClusterProgress';
 import ClusterResultComponent from '../components/ClusterResult';
+import ThreadResultsPanel from '../components/ThreadResultsPanel';
+import TaskHistoryTable from '../components/TaskHistoryTable';
 
 function AnalysisTasksPage() {
   const { t } = useTranslation();
@@ -54,9 +55,7 @@ function AnalysisTasksPage() {
   const [clusterLoading, setClusterLoading] = useState(false);
 
   // Thread results state
-  const [threadResults, setThreadResults] = useState<ThreadResultsResponse | null>(null);
-  const [threadLoading, setThreadLoading] = useState(false);
-  const [threadTaskId, setThreadTaskId] = useState<string | null>(null);
+  const [threadTaskId, setThreadTaskId] = useState<string>('');
 
   // Diagnosis drawer state
   const [diagnosisLoading, setDiagnosisLoading] = useState(false);
@@ -149,35 +148,6 @@ function AnalysisTasksPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fetchThreadResults = async (taskId: string) => {
-    setThreadLoading(true);
-    try {
-      const result = await getThreadResults(taskId);
-      setThreadResults(result);
-      setThreadTaskId(taskId);
-    } catch {
-      // Thread results are optional — silently ignore if not available
-      setThreadResults(null);
-      setThreadTaskId(null);
-    } finally {
-      setThreadLoading(false);
-    }
-  };
-
-  // Thread selection helpers
-  const addAllThreads = () => {
-    if (!threadResults) return;
-    const newSelections: SelectionItem[] = threadResults.threads.map(t => ({
-      type: 'thread' as const,
-      id: t.thread_ref,
-    }));
-    setSelections(prev => {
-      const existingIds = new Set(prev.filter(s => s.type === 'thread').map(s => s.id));
-      const toAdd = newSelections.filter(s => !existingIds.has(s.id));
-      return [...prev, ...toAdd];
-    });
   };
 
   const handleSearch = async () => {
@@ -733,16 +703,17 @@ function AnalysisTasksPage() {
                   placeholder={t('analysisTasks.enterTaskId', 'Enter task ID')}
                   size="small"
                   style={{ width: 200 }}
+                  value={threadTaskId}
+                  onChange={(e) => setThreadTaskId(e.target.value)}
                   onPressEnter={(e) => {
                     const val = (e.target as HTMLInputElement).value.trim();
-                    if (val) fetchThreadResults(val);
+                    if (val) setThreadTaskId(val);
                   }}
                 />
                 <Button
                   size="small"
                   onClick={() => {
-                    const input = document.querySelector<HTMLInputElement>('input[placeholder*="task ID"]');
-                    if (input?.value.trim()) fetchThreadResults(input.value.trim());
+                    if (threadTaskId.trim()) setThreadTaskId(threadTaskId.trim());
                   }}
                 >
                   {t('analysisTasks.loadThreadResults', 'Load')}
@@ -750,12 +721,12 @@ function AnalysisTasksPage() {
               </Space>
             }
           >
-            {threadLoading && <Spin size="small" />}
-            {!threadLoading && !threadResults && (
-              <span style={{ color: '#999' }}>{t('analysisTasks.noThreadResults', 'Enter a task ID to load thread stack results.')}</span>
-            )}
-            {!threadLoading && threadResults && threadResults.total_threads === 0 && (
-              <span style={{ color: '#999' }}>{t('analysisTasks.noThreadResultsFound', 'No thread results found for this task.')}</span>
+            {threadTaskId ? (
+              <ThreadResultsPanel taskId={threadTaskId} />
+            ) : (
+              <span style={{ color: '#999' }}>
+                {t('analysisTasks.noThreadResults', 'Enter a task ID to load thread stack results.')}
+              </span>
             )}
           </Card>
 
@@ -1105,93 +1076,7 @@ function AnalysisTasksPage() {
         </Card>
       )}
 
-      {/* Thread Stack Results */}
-      {threadResults && threadResults.total_threads > 0 && (
-        <Card
-          title={
-            <Space>
-              <span>{t('analysisTasks.threadResults', 'Thread Stack Results')}</span>
-              <Tag>{threadResults.total_threads} {t('analysisTasks.threads', 'threads')}</Tag>
-              {threadResults.status_counts.FULL && <Tag color="green">FULL {threadResults.status_counts.FULL}</Tag>}
-              {threadResults.status_counts.PARTIAL && <Tag color="orange">PARTIAL {threadResults.status_counts.PARTIAL}</Tag>}
-            </Space>
-          }
-          size="small"
-          style={{ marginTop: 16 }}
-          extra={
-            <Space>
-              <Button
-                size="small"
-                onClick={addAllThreads}
-                disabled={threadResults.threads.every(t => isSelected({ type: 'thread', id: t.thread_ref }))}
-              >
-                {t('analysisTasks.addAllThreads', 'Add All')}
-              </Button>
-            </Space>
-          }
-        >
-          <Table
-            dataSource={threadResults.threads}
-            rowKey="thread_ref"
-            size="small"
-            pagination={threadResults.threads.length > 20 ? { pageSize: 20 } : false}
-            columns={[
-              {
-                title: '',
-                width: 40,
-                render: (_: unknown, record: ThreadResultItem) => (
-                  <Checkbox
-                    checked={isSelected({ type: 'thread', id: record.thread_ref })}
-                    onChange={() => {
-                      const sel: SelectionItem = { type: 'thread', id: record.thread_ref };
-                      if (isSelected(sel)) {
-                        setSelections(prev => prev.filter(s => !(s.type === 'thread' && s.id === record.thread_ref)));
-                      } else {
-                        setSelections(prev => [...prev, sel]);
-                      }
-                    }}
-                  />
-                ),
-              },
-              {
-                title: t('analysisTasks.threadName', 'Thread Name'),
-                dataIndex: 'thread_name',
-                render: (name: string | null) => name || <span style={{ color: '#999' }}>(unnamed)</span>,
-              },
-              {
-                title: t('analysisTasks.threadState', 'State'),
-                dataIndex: 'thread_state',
-                width: 140,
-                render: (state: string | null) => {
-                  const colorMap: Record<string, string> = {
-                    RUNNABLE: 'green', BLOCKED: 'red', WAITING: 'blue', TIMED_WAITING: 'cyan',
-                  };
-                  return state ? <Tag color={colorMap[state] || 'default'}>{state}</Tag> : '-';
-                },
-              },
-              {
-                title: t('analysisTasks.parseStatus', 'Parse'),
-                dataIndex: 'parse_status',
-                width: 90,
-                render: (status: string) => {
-                  const colorMap: Record<string, string> = { FULL: 'green', PARTIAL: 'orange', RAW: 'red' };
-                  return <Tag color={colorMap[status] || 'default'}>{status}</Tag>;
-                },
-              },
-              {
-                title: t('analysisTasks.frames', 'Frames'),
-                dataIndex: 'frame_count',
-                width: 70,
-              },
-            ]}
-          />
-        </Card>
-      )}
-      {threadLoading && (
-        <Card size="small" style={{ marginTop: 16 }}>
-          <Spin size="small" /> {t('analysisTasks.loadingThreadResults', 'Loading thread results...')}
-        </Card>
-      )}
+      {/* Thread Stack Results are now rendered inside the Loader Card via <ThreadResultsPanel> above. */}
 
       {/* Diagnosis Result Drawer */}
       <Drawer
@@ -1295,6 +1180,8 @@ function AnalysisTasksPage() {
           {t('analysisTasks.viewDiagnosisResult')}
         </Button>
       )}
+
+      <TaskHistoryTable />
     </div>
   );
 }
