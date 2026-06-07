@@ -1,0 +1,56 @@
+{
+  "benchmarks": [
+    {
+      "n_blocks": 100,
+      "raw_bytes": 68777,
+      "total_seconds": 0.0126,
+      "avg_us": 99.27,
+      "p50_us": 94.5,
+      "p95_us": 129.1,
+      "p99_us": 275.3,
+      "peak_memory_bytes": 581459,
+      "failures": 0,
+      "result_count": 100,
+      "status_distribution": {
+        "FULL": 100,
+        "PARTIAL": 0,
+        "RAW": 0
+      }
+    },
+    {
+      "n_blocks": 1000,
+      "raw_bytes": 689125,
+      "total_seconds": 0.146,
+      "avg_us": 103.73,
+      "p50_us": 92.3,
+      "p95_us": 162.2,
+      "p99_us": 292.0,
+      "peak_memory_bytes": 5720301,
+      "failures": 0,
+      "result_count": 1000,
+      "status_distribution": {
+        "FULL": 1000,
+        "PARTIAL": 0,
+        "RAW": 0
+      }
+    },
+    {
+      "n_blocks": 10000,
+      "raw_bytes": 6909057,
+      "total_seconds": 1.6649,
+      "avg_us": 157.58,
+      "p50_us": 153.2,
+      "p95_us": 251.5,
+      "p99_us": 377.3,
+      "peak_memory_bytes": 57264143,
+      "failures": 0,
+      "result_count": 10000,
+      "status_distribution": {
+        "FULL": 10000,
+        "PARTIAL": 0,
+        "RAW": 0
+      }
+    }
+  ],
+  "timestamp": "2026-06-07T17:05:51+0800"
+}
