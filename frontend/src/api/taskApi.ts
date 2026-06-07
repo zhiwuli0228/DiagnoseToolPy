@@ -47,3 +47,10 @@ export async function getTaskCaseDraft(taskId: string): Promise<string | null> {
   );
   return response.data.content;
 }
+
+export async function getTaskTestSuggestions(taskId: string): Promise<string | null> {
+  const response = await api.get<TaskTextPayload>(
+    `/source/task/${encodeURIComponent(taskId)}/test-suggestions`,
+  );
+  return response.data.content;
+}

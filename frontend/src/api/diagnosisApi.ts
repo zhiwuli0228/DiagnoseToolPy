@@ -158,3 +158,21 @@ export async function getThreadResults(taskId: string): Promise<ThreadResultsRes
   }
   return response.json();
 }
+
+export interface TestSuggestionsResponse {
+  content: string;
+  path: string;
+}
+
+export async function generateTestSuggestions(taskId: string): Promise<TestSuggestionsResponse> {
+  const response = await fetch('/api/diagnosis/test-suggestions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ task_id: taskId }),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ detail: 'Unknown error' }));
+    throw new Error(err.detail || `HTTP ${response.status}`);
+  }
+  return response.json();
+}

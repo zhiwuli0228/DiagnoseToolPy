@@ -15,6 +15,10 @@ from diagnose_tool.analyzer.diagnosis import (
     TaskNotFoundError,
     EvidenceNotFoundError,
 )
+from diagnose_tool.analyzer.test_suggester import (
+    TestSuggester,
+    DiagnosisNotFoundError as TestDiagnosisNotFoundError,
+)
 from diagnose_tool.analyzer.evidence_cache import EvidenceCacheManager
 from diagnose_tool.analyzer.evidence_compressor import (
     CompressionOptions,
@@ -622,6 +626,58 @@ def check_result(workspace_dir: str) -> CheckResultResponse:
     except OSError as exc:
         logger.error("Failed to read result.md: %s", exc)
         raise HTTPException(status_code=500, detail="Failed to read result file")
+
+
+# ---------------------------------------------------------------------------
+# Test suggestion generation
+#
+# Generates executable test scenarios (reproduction / verification / negative)
+# from a completed diagnosis. Writes the result to
+# data/output/{task_id}/test-suggestions.md.
+# ---------------------------------------------------------------------------
+
+
+class TestSuggestionsRequest(BaseModel):
+    task_id: str = Field(min_length=1)
+
+
+class TestSuggestionsResponse(BaseModel):
+    content: str
+    path: str
+
+
+@router.post("/diagnosis/test-suggestions", response_model=TestSuggestionsResponse)
+def generate_test_suggestions(request: TestSuggestionsRequest) -> TestSuggestionsResponse:
+    """Generate executable test scenarios for ``request.task_id``.
+
+    Reads the existing ``ai-diagnosis.md`` and ``evidence-pack.md`` from
+    disk, calls the LLM, and writes the result to
+    ``data/output/{task_id}/test-suggestions.md``. A failure is a 4xx
+    (missing diagnosis / task) or 5xx (LLM error).
+    """
+
+    llm_config = _get_llm_config()
+    if not llm_config.enabled:
+        raise HTTPException(
+            status_code=503,
+            detail="LLM is not enabled. Set llm.enabled to true in config/app.yaml",
+        )
+
+    suggester = TestSuggester(llm_config, llm_config.data_dir)
+    try:
+        content, output_path = suggester.run_and_save(request.task_id)
+    except TestDiagnosisNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except TaskNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except LLMClientError as exc:
+        logger.warning("LLM API error during test suggestion generation: %s", exc)
+        raise HTTPException(status_code=502, detail="LLM call failed") from exc
+    except DiagnosisError as exc:
+        logger.error("Test suggestion generation error: %s", exc)
+        raise HTTPException(status_code=500, detail="Test suggestion generation failed") from exc
+
+    return TestSuggestionsResponse(content=content, path=str(output_path))
 
 
 def _is_prompt_template(content: str) -> bool:

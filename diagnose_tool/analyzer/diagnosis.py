@@ -131,6 +131,20 @@ class DiagnosisOrchestrator:
         ai_diagnosis_path = case_dir / "ai-diagnosis.md"
         ai_diagnosis_path.write_text(diagnosis_md, encoding="utf-8")
 
+        # Best-effort test-suggestion generation. A failure here is logged
+        # and does NOT affect the diagnosis return value or the
+        # ai-diagnosis.md write.
+        if getattr(self, "_auto_generate_tests", True):
+            try:
+                from diagnose_tool.analyzer.test_suggester import TestSuggester
+                TestSuggester(self._llm, self._data_dir).run_and_save(task_id)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(
+                    "test suggestion auto-generation failed for %s: %s",
+                    task_id,
+                    exc,
+                )
+
         return case_id, diagnosis_text
 
     def run_with_context(

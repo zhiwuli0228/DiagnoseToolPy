@@ -60,6 +60,7 @@ SuperSpec autonomous validation workflow enabled on `claude_master`. Bugfix Prom
 - [x] JVM thread dump parser implemented (change `add-thread-stack-parsing`; `diagnose_tool/analyzer/thread_stack_parser.py`; parses HotSpot/OpenJDK thread dump blocks into structured ThreadDumpResult with thread name, state, ordered frames, lock hints; conservative: returns RAW/PARTIAL on malformed input; 38 tests in `tests/test_thread_stack_parser.py`)
 - [x] Thread stack parser load + capability evidence (change `add-thread-stack-bench`; `tests/load/thread_stack_bench.py` synthetic HotSpot block generator + two-pass timing + `tracemalloc` peak memory; `tests/load/thread_stack_bench.json` snapshot for `[100, 1,000, 10,000]`; `tests/load/real_dump_sample{1,2}.txt` Java 8 and Java 11 jstack samples; `tests/load/thread-stack-capability-report.md` and `thread-stack-load-report.md` human-review reports)
 - [x] Thread stack evidence basket (thread evidence is now selectable as diagnosis evidence; parsed thread blocks stored as rebuildable task artifacts under data/output/{task_id}/artifacts/thread-stack-results.jsonl; stable thread_ref for downstream resolution; API endpoint GET /api/diagnosis/thread-results/{task_id}; frontend thread results panel with add-one/add-all; thread evidence carried through preview, diagnosis, and workspace export)
+- [x] Test suggestion generation (change `add-test-suggestion-generation`; `diagnose_tool/analyzer/test_suggester.py` reads completed `ai-diagnosis.md` + `evidence-pack.md`, calls LLM with focused prompt from `docs/05-domain/test-suggestion-template.md`, writes `data/output/{task_id}/test-suggestions.md`; `POST /api/diagnosis/test-suggestions` manual endpoint; auto-hook at end of `DiagnosisOrchestrator.run()` (configurable, default on); frontend `TestSuggestionsPanel` parses `### Test:` headings into copyable code cards; fifth Tab "测试建议" on `TaskDetailPage`; "Generate test suggestions" button in Actions Tab)
 
 ## Current Constraints
 
@@ -85,7 +86,7 @@ DiagnoseToolPy/
 
 ## Known Gaps
 
-- Test suggestion generation not implemented.
+- Monitoring suggestion generation not implemented.
 - Monitoring suggestion generation not implemented.
 - Vector retrieval not implemented.
 - Complete log analysis UI not implemented.

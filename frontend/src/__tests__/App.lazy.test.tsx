@@ -13,10 +13,10 @@ const appSourceGlob = import.meta.glob('../App.tsx', { query: '?raw', import: 'd
 const appSource = appSourceGlob['../App.tsx'] as string;
 
 describe('App.tsx — route lazy loading', () => {
-  it('uses React.lazy for all 6 page components', () => {
-    // Count occurrences of `lazy(() => import(` — should be exactly 6
+  it('uses React.lazy for all 7 page components', () => {
+    // Count occurrences of `lazy(() => import(` — should be exactly 7
     const matches = appSource.match(/lazy\(\s*\(\)\s*=>\s*import\(/g) || [];
-    expect(matches.length).toBe(6);
+    expect(matches.length).toBe(7);
   });
 
   it('has no static page imports', () => {

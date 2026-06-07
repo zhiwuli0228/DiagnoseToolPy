@@ -281,6 +281,7 @@
       "overview": "概览",
       "evidence": "证据与线程栈",
       "keyLogs": "关键日志与案例草稿",
+      "testSuggestions": "测试建议",
       "actions": "操作"
     },
     "overview": {
@@ -311,6 +312,17 @@
       "title": "案例草稿",
       "notProduced": "此任务未生成案例草稿。"
     },
+    "testSuggestions": {
+      "title": "测试建议",
+      "notProduced": "暂无测试建议。请在操作 Tab 点击「生成测试建议」生成。",
+      "empty": "测试建议文件为空或无法解析。",
+      "loadError": "测试建议加载失败",
+      "copy": "复制",
+      "copied": "已复制",
+      "copyFailed": "复制失败",
+      "goal": "目标",
+      "expected": "预期结果"
+    },
     "actions": {
       "startDiagnosis": {
         "label": "开始诊断",
@@ -331,6 +343,11 @@
         "confirmOk": "删除",
         "confirmBody": "将删除任务 {{id}} 的临时目录。",
         "success": "任务已删除"
+      },
+      "generateTests": {
+        "label": "生成测试建议",
+        "success": "测试建议已生成",
+        "failed": "测试建议生成失败"
       }
     }
   },

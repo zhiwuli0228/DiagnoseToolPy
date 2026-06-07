@@ -281,6 +281,7 @@
       "overview": "Overview",
       "evidence": "Evidence & Threads",
       "keyLogs": "Key Logs & Case Draft",
+      "testSuggestions": "Test Suggestions",
       "actions": "Actions"
     },
     "overview": {
@@ -311,6 +312,17 @@
       "title": "Case Draft",
       "notProduced": "No case draft produced for this task."
     },
+    "testSuggestions": {
+      "title": "Test Suggestions",
+      "notProduced": "No test suggestions yet. Use the Generate button in Actions to produce them.",
+      "empty": "The test-suggestions file is empty or could not be parsed.",
+      "loadError": "Failed to load test suggestions",
+      "copy": "Copy",
+      "copied": "Copied",
+      "copyFailed": "Copy failed",
+      "goal": "Goal",
+      "expected": "Expected"
+    },
     "actions": {
       "startDiagnosis": {
         "label": "Start diagnosis",
@@ -331,6 +343,11 @@
         "confirmOk": "Delete",
         "confirmBody": "This will remove the temporary directory for task {{id}}.",
         "success": "Task deleted"
+      },
+      "generateTests": {
+        "label": "Generate test suggestions",
+        "success": "Test suggestions generated",
+        "failed": "Failed to generate test suggestions"
       }
     }
   },
