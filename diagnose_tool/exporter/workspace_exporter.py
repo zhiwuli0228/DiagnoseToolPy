@@ -36,6 +36,7 @@ class WorkspaceExporter:
         task_id: str,
         workspace_dir: Path,
         user_context: dict[str, str] | None = None,
+        thread_evidence_md: str | None = None,
     ) -> list[str]:
         """Export workspace from a task ID and user context.
 
@@ -89,6 +90,7 @@ class WorkspaceExporter:
                 evidence_pack=evidence_pack,
                 similar_cases=similar_cases,
                 user_context=ctx,
+                thread_evidence_md=thread_evidence_md,
             )
             self._write_file(workspace_structure.prompt_path, prompt_content, created_files)
 
@@ -111,6 +113,7 @@ class WorkspaceExporter:
         workspace_dir: Path,
         selections: list[dict[str, Any]],
         user_context: dict[str, str] | None = None,
+        thread_evidence_md: str | None = None,
     ) -> list[str]:
         """Export workspace from search/cluster cache and user selections.
 
@@ -169,6 +172,7 @@ class WorkspaceExporter:
                 evidence_pack=evidence_md,
                 similar_cases=[],
                 user_context=ctx,
+                thread_evidence_md=thread_evidence_md,
             )
             self._write_file(workspace_structure.prompt_path, prompt_content, created_files)
 
@@ -189,6 +193,7 @@ class WorkspaceExporter:
         cache_key: str,
         selections: list[dict[str, Any]],
         user_context: dict[str, str] | None = None,
+        thread_evidence_md: str | None = None,
     ) -> str:
         """Generate diagnosis prompt from cache without exporting.
 
@@ -231,6 +236,7 @@ class WorkspaceExporter:
             evidence_pack=evidence_md,
             similar_cases=[],
             user_context=ctx,
+            thread_evidence_md=thread_evidence_md,
         )
 
         return prompt_content
@@ -476,6 +482,7 @@ class WorkspaceExporter:
         evidence_pack: str,
         similar_cases: list[tuple[str, float, dict]],
         user_context: dict[str, str],
+        thread_evidence_md: str | None = None,
     ) -> str:
         """Build diagnosis prompt with all placeholders replaced.
 
@@ -523,7 +530,13 @@ class WorkspaceExporter:
             "# User Provided Context\n\n"
             + user_context_md,
             "# Current Fault Evidence\n\n" + evidence_pack,
-            "# Similar Historical Cases\n\n" + similar_cases_md,
+        ]
+
+        if thread_evidence_md:
+            prompt_parts.append("# Thread Stack Evidence\n\n" + thread_evidence_md)
+
+        prompt_parts.append("# Similar Historical Cases\n\n" + similar_cases_md)
+        prompt_parts.append(
             "# Diagnosis Instructions\n\n"
             "Please analyze the evidence and provide:\n"
             "1. Preliminary diagnosis (most likely root cause)\n"
@@ -532,8 +545,8 @@ class WorkspaceExporter:
             "# Constraints\n\n"
             "- Be specific and actionable\n"
             "- Distinguish between confirmed facts and hypotheses\n"
-            "- If information is insufficient, state what additional data would help\n",
-        ]
+            "- If information is insufficient, state what additional data would help\n"
+        )
 
         return "\n\n".join(prompt_parts)
 

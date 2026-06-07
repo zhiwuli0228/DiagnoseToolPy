@@ -5,6 +5,7 @@ import type {
   SelectionItem,
   BugfixPromptExportRequest,
   BugfixPromptExportResponse,
+  ThreadResultsResponse,
 } from '../types/api';
 
 export interface UserContextModel {
@@ -142,6 +143,15 @@ export async function exportBugfixPrompt(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request),
   });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ detail: 'Unknown error' }));
+    throw new Error(err.detail || `HTTP ${response.status}`);
+  }
+  return response.json();
+}
+
+export async function getThreadResults(taskId: string): Promise<ThreadResultsResponse> {
+  const response = await fetch(`/api/diagnosis/thread-results/${taskId}`);
   if (!response.ok) {
     const err = await response.json().catch(() => ({ detail: 'Unknown error' }));
     throw new Error(err.detail || `HTTP ${response.status}`);

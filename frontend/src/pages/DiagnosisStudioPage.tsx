@@ -175,6 +175,7 @@ function DiagnosisStudioPage() {
         if (sel.type === 'log' && sel.id) return sel.id;
         if (sel.type === 'group' && sel.group_key) return sel.group_key;
         if (sel.type === 'cluster' && sel.cluster_index !== undefined) return `cluster:${sel.cluster_index}`;
+        if (sel.type === 'thread' && sel.id) return sel.id;
         return '';
       }).filter(Boolean);
 
@@ -417,6 +418,7 @@ function DiagnosisStudioPage() {
       if (sel.type === 'log' && sel.id) return sel.id;
       if (sel.type === 'group' && sel.group_key) return sel.group_key;
       if (sel.type === 'cluster' && sel.cluster_index !== undefined) return `cluster:${sel.cluster_index}`;
+      if (sel.type === 'thread' && sel.id) return sel.id;
       return '';
     }).filter(Boolean);
 
@@ -463,6 +465,9 @@ function DiagnosisStudioPage() {
     if (sel.type === 'cluster') {
       return `${t('diagnosis.evidence.cluster')} #${sel.cluster_index}`;
     }
+    if (sel.type === 'thread') {
+      return `${t('diagnosis.evidence.thread', 'Thread')} (${sel.id?.slice(7, 15)}...)`;
+    }
     return t('diagnosis.evidence.unknown');
   };
 
@@ -472,14 +477,16 @@ function DiagnosisStudioPage() {
       group_all: 'cyan',
       log: 'green',
       cluster: 'purple',
+      thread: 'orange',
     };
     const labelKeyMap: Record<string, string> = {
       group: 'diagnosis.evidence.group',
       group_all: 'diagnosis.evidence.allGroups',
       log: 'diagnosis.evidence.logEntry',
       cluster: 'diagnosis.evidence.cluster',
+      thread: 'diagnosis.evidence.thread',
     };
-    return <Tag color={colorMap[sel.type]}>{t(labelKeyMap[sel.type])}</Tag>;
+    return <Tag color={colorMap[sel.type]}>{t(labelKeyMap[sel.type], sel.type)}</Tag>;
   };
 
   return (

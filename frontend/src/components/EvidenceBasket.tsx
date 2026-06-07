@@ -58,6 +58,9 @@ export default function EvidenceBasket({
     if (sel.type === 'cluster') {
       return `${t('diagnosis.evidence.cluster')} #${sel.cluster_index}`;
     }
+    if (sel.type === 'thread') {
+      return `${t('diagnosis.evidence.thread', 'Thread')} (${sel.id?.slice(7, 15)}...)`;
+    }
     return t('diagnosis.evidence.unknown');
   };
 
@@ -67,14 +70,16 @@ export default function EvidenceBasket({
       group_all: 'cyan',
       log: 'green',
       cluster: 'purple',
+      thread: 'orange',
     };
     const labelKeyMap: Record<string, string> = {
       group: 'diagnosis.evidence.group',
       group_all: 'diagnosis.evidence.allGroups',
       log: 'diagnosis.evidence.logEntry',
       cluster: 'diagnosis.evidence.cluster',
+      thread: 'diagnosis.evidence.thread',
     };
-    return <Tag color={colorMap[sel.type]}>{t(labelKeyMap[sel.type])}</Tag>;
+    return <Tag color={colorMap[sel.type]}>{t(labelKeyMap[sel.type], sel.type)}</Tag>;
   };
 
   const handleClear = () => {

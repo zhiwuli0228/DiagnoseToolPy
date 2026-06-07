@@ -18,10 +18,38 @@ data/output/{task_id}/
 ├── case-draft.md
 ├── case-metadata-draft.yaml
 ├── retrieval-query.json
+├── thread-stack-summary.md          # NEW: human-readable thread summary
 └── artifacts/
     ├── timeline.json
-    └── raw-samples.jsonl
+    ├── raw-samples.jsonl
+    └── thread-stack-results.jsonl   # NEW: machine-readable thread results
 ```
+
+### thread-stack-results.jsonl
+
+One JSON object per parsed thread block. Each line contains:
+
+```json
+{
+  "thread_ref": "thread:<task_id>:<index>:<name_hash8>",
+  "thread_name": "http-nio-8080-exec-1",
+  "thread_state": "WAITING",
+  "parse_status": "FULL",
+  "frame_count": 8,
+  "lock_count": 1,
+  "frames_summary": ["com.demo.Service.process", "com.demo.Controller.handle"],
+  "raw_text": "..."
+}
+```
+
+- ``thread_ref``: stable opaque reference for downstream resolution. Encodes task scope and a name-derived hash.
+- ``parse_status``: one of ``FULL``, ``PARTIAL``, ``RAW``.
+- ``raw_text``: complete raw thread dump block for this thread.
+- Rebuildable from source logs and parser output. Overwritten on task rerun.
+
+### thread-stack-summary.md
+
+Human-readable markdown summary of parsed threads. Contains a table of thread names, states, parse statuses, and frame counts. Used for UI/debugging display.
 
 ## task.yaml
 

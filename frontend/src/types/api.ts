@@ -35,10 +35,28 @@ export interface DiagnosisResponse {
 
 // Custom diagnosis from search/cluster results
 export interface SelectionItem {
-  type: 'group' | 'group_all' | 'log' | 'cluster';
+  type: 'group' | 'group_all' | 'log' | 'cluster' | 'thread';
   group_key?: string;
   id?: string;
   cluster_index?: number;
+}
+
+// Thread stack results
+export interface ThreadResultItem {
+  thread_ref: string;
+  thread_name: string | null;
+  thread_state: string | null;
+  parse_status: string;
+  frame_count: number;
+  lock_count: number;
+  frames_summary: string[];
+}
+
+export interface ThreadResultsResponse {
+  task_id: string;
+  total_threads: number;
+  status_counts: Record<string, number>;
+  threads: ThreadResultItem[];
 }
 
 export interface CompressionOptions {

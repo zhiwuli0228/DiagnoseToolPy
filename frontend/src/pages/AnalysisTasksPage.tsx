@@ -12,9 +12,10 @@ import {
   exportBugfixPrompt,
   previewPrompt,
   isDegradedResponse,
+  getThreadResults,
   type DegradedResponse,
 } from '../api/diagnosisApi';
-import type { SourceCheckResponse, ScanResult, LogSearchResponse, LogSearchResult, AggregatedGroup, ClusterStatusResponse, SelectionItem } from '../types/api';
+import type { SourceCheckResponse, ScanResult, LogSearchResponse, LogSearchResult, AggregatedGroup, ClusterStatusResponse, SelectionItem, ThreadResultsResponse, ThreadResultItem } from '../types/api';
 import { useDiagnosis } from '../context/DiagnosisContext';
 import ClusterProgress from '../components/ClusterProgress';
 import ClusterResultComponent from '../components/ClusterResult';
@@ -51,6 +52,11 @@ function AnalysisTasksPage() {
   const [clusterTaskId, setClusterTaskId] = useState<string | null>(null);
   const [clusterStatus, setClusterStatus] = useState<ClusterStatusResponse | null>(null);
   const [clusterLoading, setClusterLoading] = useState(false);
+
+  // Thread results state
+  const [threadResults, setThreadResults] = useState<ThreadResultsResponse | null>(null);
+  const [threadLoading, setThreadLoading] = useState(false);
+  const [threadTaskId, setThreadTaskId] = useState<string | null>(null);
 
   // Diagnosis drawer state
   const [diagnosisLoading, setDiagnosisLoading] = useState(false);
@@ -145,6 +151,35 @@ function AnalysisTasksPage() {
     }
   };
 
+  const fetchThreadResults = async (taskId: string) => {
+    setThreadLoading(true);
+    try {
+      const result = await getThreadResults(taskId);
+      setThreadResults(result);
+      setThreadTaskId(taskId);
+    } catch {
+      // Thread results are optional — silently ignore if not available
+      setThreadResults(null);
+      setThreadTaskId(null);
+    } finally {
+      setThreadLoading(false);
+    }
+  };
+
+  // Thread selection helpers
+  const addAllThreads = () => {
+    if (!threadResults) return;
+    const newSelections: SelectionItem[] = threadResults.threads.map(t => ({
+      type: 'thread' as const,
+      id: t.thread_ref,
+    }));
+    setSelections(prev => {
+      const existingIds = new Set(prev.filter(s => s.type === 'thread').map(s => s.id));
+      const toAdd = newSelections.filter(s => !existingIds.has(s.id));
+      return [...prev, ...toAdd];
+    });
+  };
+
   const handleSearch = async () => {
     if (!path.trim()) return;
     setSearchLoading(true);
@@ -216,6 +251,7 @@ function AnalysisTasksPage() {
       if (sel.type === 'log' && s.id !== sel.id) return false;
       if (sel.type === 'cluster' && s.cluster_index !== sel.cluster_index) return false;
       if ((sel.type === 'group' || sel.type === 'group_all') && s.group_key !== sel.group_key) return false;
+      if (sel.type === 'thread' && s.id !== sel.id) return false;
       return true;
     });
   };
@@ -324,7 +360,8 @@ function AnalysisTasksPage() {
     try {
       const result = await previewPrompt({
         cache_key: searchResults ? `search-${Date.now()}` : undefined,
-        selections: selections.filter(s => s.type === 'log' || s.type === 'group' || s.type === 'group_all'),
+        task_id: threadTaskId || undefined,
+        selections: selections.filter(s => s.type === 'log' || s.type === 'group' || s.type === 'group_all' || s.type === 'thread'),
       });
 
       setPreviewExportType('search');
@@ -350,8 +387,9 @@ function AnalysisTasksPage() {
     try {
       const result = await exportWorkspace({
         cache_key: searchResults ? `search-${Date.now()}` : undefined,
+        task_id: threadTaskId || undefined,
         workspace_dir: dir,
-        selections: selections.filter(s => s.type === 'log' || s.type === 'group' || s.type === 'group_all'),
+        selections: selections.filter(s => s.type === 'log' || s.type === 'group' || s.type === 'group_all' || s.type === 'thread'),
       });
 
       setWorkspaceDir(result.workspace_dir);
@@ -682,6 +720,43 @@ function AnalysisTasksPage() {
                 <Statistic title="Warning Count" value={scanResult.warn_count} valueStyle={{ color: '#faad14' }} />
               </Col>
             </Row>
+          </Card>
+
+          {/* Thread Results Loader */}
+          <Card
+            title={t('analysisTasks.threadResults', 'Thread Stack Results')}
+            size="small"
+            style={{ marginBottom: 24 }}
+            extra={
+              <Space>
+                <Input
+                  placeholder={t('analysisTasks.enterTaskId', 'Enter task ID')}
+                  size="small"
+                  style={{ width: 200 }}
+                  onPressEnter={(e) => {
+                    const val = (e.target as HTMLInputElement).value.trim();
+                    if (val) fetchThreadResults(val);
+                  }}
+                />
+                <Button
+                  size="small"
+                  onClick={() => {
+                    const input = document.querySelector<HTMLInputElement>('input[placeholder*="task ID"]');
+                    if (input?.value.trim()) fetchThreadResults(input.value.trim());
+                  }}
+                >
+                  {t('analysisTasks.loadThreadResults', 'Load')}
+                </Button>
+              </Space>
+            }
+          >
+            {threadLoading && <Spin size="small" />}
+            {!threadLoading && !threadResults && (
+              <span style={{ color: '#999' }}>{t('analysisTasks.noThreadResults', 'Enter a task ID to load thread stack results.')}</span>
+            )}
+            {!threadLoading && threadResults && threadResults.total_threads === 0 && (
+              <span style={{ color: '#999' }}>{t('analysisTasks.noThreadResultsFound', 'No thread results found for this task.')}</span>
+            )}
           </Card>
 
           <Collapse
@@ -1027,6 +1102,94 @@ function AnalysisTasksPage() {
               selectedItems={selections}
             />
           )}
+        </Card>
+      )}
+
+      {/* Thread Stack Results */}
+      {threadResults && threadResults.total_threads > 0 && (
+        <Card
+          title={
+            <Space>
+              <span>{t('analysisTasks.threadResults', 'Thread Stack Results')}</span>
+              <Tag>{threadResults.total_threads} {t('analysisTasks.threads', 'threads')}</Tag>
+              {threadResults.status_counts.FULL && <Tag color="green">FULL {threadResults.status_counts.FULL}</Tag>}
+              {threadResults.status_counts.PARTIAL && <Tag color="orange">PARTIAL {threadResults.status_counts.PARTIAL}</Tag>}
+            </Space>
+          }
+          size="small"
+          style={{ marginTop: 16 }}
+          extra={
+            <Space>
+              <Button
+                size="small"
+                onClick={addAllThreads}
+                disabled={threadResults.threads.every(t => isSelected({ type: 'thread', id: t.thread_ref }))}
+              >
+                {t('analysisTasks.addAllThreads', 'Add All')}
+              </Button>
+            </Space>
+          }
+        >
+          <Table
+            dataSource={threadResults.threads}
+            rowKey="thread_ref"
+            size="small"
+            pagination={threadResults.threads.length > 20 ? { pageSize: 20 } : false}
+            columns={[
+              {
+                title: '',
+                width: 40,
+                render: (_: unknown, record: ThreadResultItem) => (
+                  <Checkbox
+                    checked={isSelected({ type: 'thread', id: record.thread_ref })}
+                    onChange={() => {
+                      const sel: SelectionItem = { type: 'thread', id: record.thread_ref };
+                      if (isSelected(sel)) {
+                        setSelections(prev => prev.filter(s => !(s.type === 'thread' && s.id === record.thread_ref)));
+                      } else {
+                        setSelections(prev => [...prev, sel]);
+                      }
+                    }}
+                  />
+                ),
+              },
+              {
+                title: t('analysisTasks.threadName', 'Thread Name'),
+                dataIndex: 'thread_name',
+                render: (name: string | null) => name || <span style={{ color: '#999' }}>(unnamed)</span>,
+              },
+              {
+                title: t('analysisTasks.threadState', 'State'),
+                dataIndex: 'thread_state',
+                width: 140,
+                render: (state: string | null) => {
+                  const colorMap: Record<string, string> = {
+                    RUNNABLE: 'green', BLOCKED: 'red', WAITING: 'blue', TIMED_WAITING: 'cyan',
+                  };
+                  return state ? <Tag color={colorMap[state] || 'default'}>{state}</Tag> : '-';
+                },
+              },
+              {
+                title: t('analysisTasks.parseStatus', 'Parse'),
+                dataIndex: 'parse_status',
+                width: 90,
+                render: (status: string) => {
+                  const colorMap: Record<string, string> = { FULL: 'green', PARTIAL: 'orange', RAW: 'red' };
+                  return <Tag color={colorMap[status] || 'default'}>{status}</Tag>;
+                },
+              },
+              {
+                title: t('analysisTasks.frames', 'Frames'),
+                dataIndex: 'frame_count',
+                width: 70,
+              },
+            ]}
+          />
+        </Card>
+      )}
+      {threadLoading && (
+        <Card size="small" style={{ marginTop: 16 }}>
+          <Spin size="small" /> {t('analysisTasks.loadingThreadResults', 'Loading thread results...')}
         </Card>
       )}
 

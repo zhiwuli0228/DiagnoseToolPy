@@ -1,4 +1,10 @@
-## ADDED Requirements
+# Thread Stack Parsing
+
+## Purpose
+
+Parse JVM thread dump blocks into structured thread results so downstream consumers can reuse thread metadata, ordered stack frames, lock hints, and parse status without re-parsing raw text. The parser is conservative and returns RAW or PARTIAL output on malformed input rather than raising.
+
+## Requirements
 
 ### Requirement: Thread Dump Block Recognition
 The system SHALL recognize common JVM thread dump blocks and parse them as structured thread content instead of treating every line as unrelated text.

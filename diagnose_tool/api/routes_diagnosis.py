@@ -24,6 +24,10 @@ from diagnose_tool.analyzer.evidence_compressor import (
 )
 from diagnose_tool.core.llm_client import LLMClient, LLMClientError
 from diagnose_tool.core.llm_config import AppLLMConfig, load_llm_config
+from diagnose_tool.analyzer.thread_artifact import (
+    format_thread_entries_markdown,
+    resolve_thread_refs,
+)
 from diagnose_tool.exporter import (
     BugfixPromptExportError,
     BugfixPromptExporter,
@@ -333,6 +337,68 @@ def diagnose_from_cluster(request: CustomDiagnosisRequest) -> CustomDiagnosisRes
     return CustomDiagnosisResponse(diagnosis=diagnosis)
 
 
+# --- Thread Stack Results Models ---
+
+
+class ThreadResultItem(BaseModel):
+    """A single thread result for frontend rendering."""
+    thread_ref: str
+    thread_name: str | None = None
+    thread_state: str | None = None
+    parse_status: str = "RAW"
+    frame_count: int = 0
+    lock_count: int = 0
+    frames_summary: list[str] = Field(default_factory=list)
+
+
+class ThreadResultsResponse(BaseModel):
+    """Response containing thread results for a task."""
+    task_id: str
+    total_threads: int
+    status_counts: dict[str, int] = Field(default_factory=dict)
+    threads: list[ThreadResultItem] = Field(default_factory=list)
+
+
+@router.get("/diagnosis/thread-results/{task_id}", response_model=ThreadResultsResponse)
+def get_thread_results(task_id: str) -> ThreadResultsResponse:
+    """Get parsed thread stack results for an analysis task.
+
+    Returns thread metadata for rendering in the frontend.
+    Does not include raw thread text — only metadata and opaque refs.
+    """
+    llm_config = _get_llm_config()
+    output_dir = llm_config.data_dir / "output" / task_id
+
+    if not output_dir.exists():
+        raise HTTPException(status_code=404, detail=f"Task not found: {task_id}")
+
+    from diagnose_tool.analyzer.thread_artifact import load_thread_artifact
+
+    entries = load_thread_artifact(output_dir)
+
+    threads = []
+    status_counts: dict[str, int] = {}
+    for entry in entries:
+        status = entry.get("parse_status", "RAW")
+        status_counts[status] = status_counts.get(status, 0) + 1
+        threads.append(ThreadResultItem(
+            thread_ref=entry.get("thread_ref", ""),
+            thread_name=entry.get("thread_name"),
+            thread_state=entry.get("thread_state"),
+            parse_status=status,
+            frame_count=entry.get("frame_count", 0),
+            lock_count=entry.get("lock_count", 0),
+            frames_summary=entry.get("frames_summary", []),
+        ))
+
+    return ThreadResultsResponse(
+        task_id=task_id,
+        total_threads=len(threads),
+        status_counts=status_counts,
+        threads=threads,
+    )
+
+
 @router.post("/diagnosis/export-workspace", response_model=ExportWorkspaceResponse)
 def export_workspace(request: ExportWorkspaceRequest) -> ExportWorkspaceResponse:
     """Export complete diagnostic workspace to user-specified directory.
@@ -373,12 +439,20 @@ def export_workspace(request: ExportWorkspaceRequest) -> ExportWorkspaceResponse
 
     exporter = WorkspaceExporter(llm_config)
 
+    # Resolve thread evidence selections if present
+    thread_evidence_md = None
+    if request.task_id and request.selections:
+        thread_evidence_md = _resolve_thread_selections(
+            request.selections, request.task_id, llm_config.data_dir
+        )
+
     try:
         if request.task_id:
             files_written = exporter.export_from_task_id(
                 task_id=request.task_id,
                 workspace_dir=workspace_dir,
                 user_context=user_context,
+                thread_evidence_md=thread_evidence_md,
             )
         elif request.session_id:
             files_written = exporter.export_from_session(
@@ -392,6 +466,7 @@ def export_workspace(request: ExportWorkspaceRequest) -> ExportWorkspaceResponse
                 workspace_dir=workspace_dir,
                 selections=selections,
                 user_context=user_context,
+                thread_evidence_md=thread_evidence_md,
             )
         else:
             raise HTTPException(
@@ -444,6 +519,13 @@ def preview_prompt(request: PreviewPromptRequest) -> PreviewPromptResponse:
 
     exporter = WorkspaceExporter(llm_config)
 
+    # Resolve thread evidence selections if present
+    thread_evidence_md = None
+    if request.task_id and request.selections:
+        thread_evidence_md = _resolve_thread_selections(
+            request.selections, request.task_id, llm_config.data_dir
+        )
+
     try:
         if request.cache_key and selections:
             # For cache-based preview (from search or cluster)
@@ -451,6 +533,7 @@ def preview_prompt(request: PreviewPromptRequest) -> PreviewPromptResponse:
                 cache_key=request.cache_key,
                 selections=selections,
                 user_context=user_context,
+                thread_evidence_md=thread_evidence_md,
             )
         elif request.session_id:
             # For session-based preview (from diagnosis studio)
@@ -704,6 +787,51 @@ def _resolve_cluster_selections(
                         break
 
     return selected
+
+
+def _resolve_thread_selections(
+    selections: list[SelectionItem],
+    task_id: str,
+    data_dir: Path,
+) -> str | None:
+    """Resolve thread selections and return formatted markdown.
+
+    Extracts task_id from each thread_ref (format: ``thread:<task_id>:...``)
+    and resolves against the corresponding artifact. Falls back to the
+    provided ``task_id`` if the ref does not encode one.
+
+    Returns thread evidence markdown if any thread selections exist,
+    or ``None`` if no thread selections are present.
+
+    Raises:
+        HTTPException: If a thread reference cannot be resolved.
+    """
+    thread_refs = [sel.id for sel in selections if sel.type == "thread" and sel.id]
+    if not thread_refs:
+        return None
+
+    # Group refs by the task_id encoded in the ref itself
+    refs_by_task: dict[str, list[str]] = {}
+    for ref in thread_refs:
+        parts = ref.split(":")
+        ref_task_id = parts[1] if len(parts) >= 2 else task_id
+        refs_by_task.setdefault(ref_task_id, []).append(ref)
+
+    all_resolved = []
+    all_missing = []
+    for ref_task_id, refs in refs_by_task.items():
+        output_dir = data_dir / "output" / ref_task_id
+        resolved, missing = resolve_thread_refs(output_dir, refs)
+        all_resolved.extend(resolved)
+        all_missing.extend(missing)
+
+    if all_missing:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Thread reference(s) not found in task artifact: {', '.join(all_missing)}",
+        )
+
+    return format_thread_entries_markdown(all_resolved)
 
 
 def _call_llm(llm_config: AppLLMConfig, evidence_md: str) -> str:
