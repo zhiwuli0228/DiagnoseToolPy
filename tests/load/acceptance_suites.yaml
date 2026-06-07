@@ -1,0 +1,11 @@
+version: 1
+suites:
+  - id: smoke_acceptance
+    description: Minimal acceptance suite validating the benchmark pipeline only
+    profiles:
+      - smoke_scan_sample
+  - id: current_large_log_cluster_requirement
+    description: Acceptance suite for the current large-log cluster scaling requirement
+    profiles:
+      - smoke_scan_sample
+      - directory_concurrency_baseline

@@ -14,6 +14,9 @@ throughput, latency, and error rate of the DiagnoseToolPy backend.
 | `analysis_benchmark.py` | yes | Automated runner for large-log scan and cluster benchmarks |
 | `prepare_analysis_datasets.py` | yes | Prepares declared benchmark datasets, including ZIP-to-directory extraction |
 | `run_analysis_bench.ps1` | yes | PowerShell entrypoint for agents to execute the analysis benchmark standard |
+| `acceptance_suites.yaml` | yes | Canonical acceptance suite definitions that map requirement-level acceptance to benchmark profiles |
+| `requirement_acceptance.py` | yes | Acceptance suite helper for resolving profiles and generating acceptance summaries |
+| `run_requirement_acceptance.ps1` | yes | One-command requirement acceptance entrypoint |
 | `collect_process_stats.ps1` | yes | Background sampler for Python/uvicorn process CPU and memory evidence |
 | `results_baseline_stats.csv` | gitignored | Raw Locust stats for the baseline run |
 | `results_baseline_failures.csv` | gitignored | Raw Locust failure details for the baseline run |
@@ -154,6 +157,7 @@ PowerShell:
 .\tests\load\run_analysis_bench.ps1
 .\tests\load\run_analysis_bench.ps1 -Profile cluster_baseline
 .\tests\load\run_analysis_bench.ps1 -Profile directory_concurrency_heavy
+.\tests\load\run_requirement_acceptance.ps1
 ```
 
 Direct Python:
@@ -186,6 +190,17 @@ For each profile:
 - `index.json` — run index for all executed profiles
 - `process-stats.csv` — sampled backend/runtime process CPU and memory snapshots
 - `run-meta.json` — execution metadata (host, config, run id, exit code)
+
+Requirement acceptance runs add:
+
+- `acceptance-summary.json` - suite-level pass/fail and profile aggregation
+- `acceptance-summary.md` - suite-level review summary
+- `acceptance-run-meta.json` - acceptance entrypoint metadata
+
+`acceptance-summary.json` and `acceptance-summary.md` are generated only when the
+benchmark run itself succeeds. If the benchmark runner exits non-zero, the
+finalizer skips summary generation and the run meta records the benchmark and
+acceptance exit codes.
 
 ### Standard Semantics
 
@@ -232,6 +247,35 @@ This verifies:
 Only after the smoke profile works should heavier profiles such as
 `directory_concurrency_baseline` or `directory_concurrency_heavy` be used as
 evidence.
+
+## Requirement Acceptance
+
+The benchmark standard is necessary but not sufficient for sign-off. The
+canonical acceptance entrypoint is:
+
+```powershell
+.\tests\load\run_requirement_acceptance.ps1
+```
+
+This executes the suite defined in:
+
+```text
+tests/load/acceptance_suites.yaml
+```
+
+The default suite for the current requirement is:
+
+- `smoke_scan_sample`
+- `directory_concurrency_baseline`
+
+This means every acceptance run automatically:
+
+1. validates the wrapper and artifact flow at small scale
+2. validates the real current requirement against the large-directory baseline
+3. emits a suite-level acceptance summary
+
+Reviewers should treat `acceptance-summary.json` and `acceptance-summary.md`
+as the top-level acceptance artifacts for the current requirement.
 
 ### Agent Workflow
 
