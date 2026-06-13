@@ -176,3 +176,21 @@ export async function generateTestSuggestions(taskId: string): Promise<TestSugge
   }
   return response.json();
 }
+
+export interface MonitorSuggestionsResponse {
+  content: string;
+  path: string;
+}
+
+export async function generateMonitorSuggestions(taskId: string): Promise<MonitorSuggestionsResponse> {
+  const response = await fetch('/api/diagnosis/monitor-suggestions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ task_id: taskId }),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ detail: 'Unknown error' }));
+    throw new Error(err.detail || `HTTP ${response.status}`);
+  }
+  return response.json();
+}

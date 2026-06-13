@@ -54,3 +54,10 @@ export async function getTaskTestSuggestions(taskId: string): Promise<string | n
   );
   return response.data.content;
 }
+
+export async function getTaskMonitorSuggestions(taskId: string): Promise<string | null> {
+  const response = await api.get<TaskTextPayload>(
+    `/source/task/${encodeURIComponent(taskId)}/monitor-suggestions`,
+  );
+  return response.data.content;
+}
