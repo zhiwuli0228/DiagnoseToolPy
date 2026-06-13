@@ -321,3 +321,19 @@ def get_task_test_suggestions(task_id: str) -> dict[str, object]:
     except task_reader.InvalidTaskIdError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"content": content}
+
+
+@router.get("/task/{task_id}/monitor-suggestions")
+def get_task_monitor_suggestions(task_id: str) -> dict[str, object]:
+    """Return the text of ``monitor-suggestions.md`` for ``task_id`` or ``null``.
+
+    The file is produced by the ``MonitorSuggester`` (either the auto-hook
+    at the end of ``DiagnosisOrchestrator.run()`` or the manual
+    ``POST /api/diagnosis/monitor-suggestions`` endpoint).
+    """
+
+    try:
+        content = task_reader.read_monitor_suggestions(task_id)
+    except task_reader.InvalidTaskIdError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"content": content}
