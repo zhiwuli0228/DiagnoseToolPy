@@ -3,13 +3,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Tabs, Card, Button, Space, Modal, message, Alert, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { getTaskProgress, getTaskEvidencePack, getTaskKeyLogs, getTaskCaseDraft } from '../api/taskApi';
-import { exportWorkspace, previewPrompt, generateTestSuggestions } from '../api/diagnosisApi';
+import { exportWorkspace, previewPrompt, generateTestSuggestions, generateMonitorSuggestions } from '../api/diagnosisApi';
 import { deleteTempDir } from '../api/sourceApi';
 import { useDiagnosis } from '../context/DiagnosisContext';
 import TaskOverview from '../components/TaskOverview';
 import ThreadResultsPanel from '../components/ThreadResultsPanel';
 import KeyLogsList from '../components/KeyLogsList';
 import TestSuggestionsPanel from '../components/TestSuggestionsPanel';
+import MonitorSuggestionsPanel from '../components/MonitorSuggestionsPanel';
 import type { SelectionItem } from '../types/api';
 
 type LoadState<T> = { status: 'loading' } | { status: 'ok'; data: T } | { status: 'error'; error: string };
@@ -57,6 +58,8 @@ function TaskDetailPage() {
   const [exporting, setExporting] = useState(false);
   const [generatingSuggestions, setGeneratingSuggestions] = useState(false);
   const [testSuggestionsKey, setTestSuggestionsKey] = useState(0);
+  const [generatingMonitors, setGeneratingMonitors] = useState(false);
+  const [monitorSuggestionsKey, setMonitorSuggestionsKey] = useState(0);
 
   const generateSuggestions = async () => {
     setGeneratingSuggestions(true);
@@ -69,6 +72,20 @@ function TaskDetailPage() {
       message.error(errObj.message || t('taskDetail.actions.generateTests.failed', 'Failed to generate test suggestions'));
     } finally {
       setGeneratingSuggestions(false);
+    }
+  };
+
+  const generateMonitors = async () => {
+    setGeneratingMonitors(true);
+    try {
+      await generateMonitorSuggestions(taskId);
+      message.success(t('taskDetail.actions.generateMonitors.success', 'Monitor suggestions generated'));
+      setMonitorSuggestionsKey(k => k + 1);
+    } catch (err: unknown) {
+      const errObj = err as { message?: string };
+      message.error(errObj.message || t('taskDetail.actions.generateMonitors.failed', 'Failed to generate monitor suggestions'));
+    } finally {
+      setGeneratingMonitors(false);
     }
   };
 
@@ -285,6 +302,16 @@ function TaskDetailPage() {
               ),
             },
             {
+              key: 'monitorSuggestions',
+              label: t('taskDetail.tabs.monitorSuggestions', 'Monitor Suggestions'),
+              children: (
+                <MonitorSuggestionsPanel
+                  taskId={taskId}
+                  refreshKey={monitorSuggestionsKey}
+                />
+              ),
+            },
+            {
               key: 'actions',
               label: t('taskDetail.tabs.actions', 'Actions'),
               children: (
@@ -298,6 +325,13 @@ function TaskDetailPage() {
                     data-testid="action-generate-tests"
                   >
                     {t('taskDetail.actions.generateTests.label', 'Generate test suggestions')}
+                  </Button>
+                  <Button
+                    onClick={generateMonitors}
+                    loading={generatingMonitors}
+                    data-testid="action-generate-monitors"
+                  >
+                    {t('taskDetail.actions.generateMonitors.label', 'Generate monitor suggestions')}
                   </Button>
                   <Button onClick={doExport} loading={exporting} data-testid="action-export-workspace">
                     {t('taskDetail.actions.export.label', 'Export workspace')}
