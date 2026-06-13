@@ -16,6 +16,9 @@ from diagnose_tool.exporter.bugfix_prompt_exporter import (
     BugfixPromptExportError,
     BugfixPromptTaskNotFoundError,
 )
+from diagnose_tool.analyzer.monitor_suggester import (
+    DiagnosisNotFoundError as MonitorDiagnosisNotFoundError,
+)
 
 
 @pytest.fixture
@@ -593,3 +596,130 @@ class TestBugfixPromptExportEndpoint:
 
         assert response.status_code == 400
         assert "Invalid YAML in task artifact" in response.json()["detail"]
+
+
+class TestMonitorSuggestionsEndpoint:
+    """Tests for POST /api/diagnosis/monitor-suggestions endpoint."""
+
+    def test_returns_503_when_llm_disabled(
+        self, app_client: TestClient, tmp_path: Path
+    ) -> None:
+        with patch(
+            "diagnose_tool.api.routes_diagnosis._get_llm_config"
+        ) as mock_get_config:
+            from diagnose_tool.core.llm_config import AppLLMConfig
+
+            mock_config = AppLLMConfig(
+                enabled=False,
+                model="gpt-4o-mini",
+                base_url="https://api.openai.com/v1",
+                api_key="",
+                timeout=60,
+                data_dir=tmp_path / "data",
+            )
+            mock_get_config.return_value = mock_config
+
+            response = app_client.post(
+                "/api/diagnosis/monitor-suggestions",
+                json={"task_id": "task-001"},
+            )
+
+        assert response.status_code == 503
+        assert "not enabled" in response.json()["detail"]
+
+    def test_returns_404_when_diagnosis_missing(
+        self, app_client: TestClient, tmp_path: Path
+    ) -> None:
+        with patch(
+            "diagnose_tool.api.routes_diagnosis._get_llm_config"
+        ) as mock_get_config, patch(
+            "diagnose_tool.api.routes_diagnosis.MonitorSuggester"
+        ) as mock_suggester_cls:
+            from diagnose_tool.core.llm_config import AppLLMConfig
+
+            mock_config = AppLLMConfig(
+                enabled=True,
+                model="gpt-4o-mini",
+                base_url="https://api.openai.com/v1",
+                api_key="test-key",
+                timeout=60,
+                data_dir=tmp_path / "data",
+            )
+            mock_get_config.return_value = mock_config
+            mock_suggester_cls.return_value.run_and_save.side_effect = (
+                MonitorDiagnosisNotFoundError("Diagnosis not found for task 't1'")
+            )
+
+            response = app_client.post(
+                "/api/diagnosis/monitor-suggestions",
+                json={"task_id": "t1"},
+            )
+
+        assert response.status_code == 404
+        assert "Diagnosis not found" in response.json()["detail"]
+
+    def test_returns_404_when_task_missing(
+        self, app_client: TestClient, tmp_path: Path
+    ) -> None:
+        with patch(
+            "diagnose_tool.api.routes_diagnosis._get_llm_config"
+        ) as mock_get_config, patch(
+            "diagnose_tool.api.routes_diagnosis.MonitorSuggester"
+        ) as mock_suggester_cls:
+            from diagnose_tool.core.llm_config import AppLLMConfig
+
+            mock_config = AppLLMConfig(
+                enabled=True,
+                model="gpt-4o-mini",
+                base_url="https://api.openai.com/v1",
+                api_key="test-key",
+                timeout=60,
+                data_dir=tmp_path / "data",
+            )
+            mock_get_config.return_value = mock_config
+            mock_suggester_cls.return_value.run_and_save.side_effect = (
+                TaskNotFoundError("Task output directory not found")
+            )
+
+            response = app_client.post(
+                "/api/diagnosis/monitor-suggestions",
+                json={"task_id": "missing"},
+            )
+
+        assert response.status_code == 404
+        assert "Task output directory not found" in response.json()["detail"]
+
+    def test_returns_200_on_success(
+        self, app_client: TestClient, tmp_path: Path
+    ) -> None:
+        with patch(
+            "diagnose_tool.api.routes_diagnosis._get_llm_config"
+        ) as mock_get_config, patch(
+            "diagnose_tool.api.routes_diagnosis.MonitorSuggester"
+        ) as mock_suggester_cls:
+            from diagnose_tool.core.llm_config import AppLLMConfig
+
+            mock_config = AppLLMConfig(
+                enabled=True,
+                model="gpt-4o-mini",
+                base_url="https://api.openai.com/v1",
+                api_key="test-key",
+                timeout=60,
+                data_dir=tmp_path / "data",
+            )
+            mock_get_config.return_value = mock_config
+            output_path = tmp_path / "data" / "output" / "task-001" / "monitor-suggestions.md"
+            mock_suggester_cls.return_value.run_and_save.return_value = (
+                "## Metrics\n### Monitor: heap usage",
+                output_path,
+            )
+
+            response = app_client.post(
+                "/api/diagnosis/monitor-suggestions",
+                json={"task_id": "task-001"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert "Metrics" in data["content"]
+        assert "monitor-suggestions.md" in data["path"]
