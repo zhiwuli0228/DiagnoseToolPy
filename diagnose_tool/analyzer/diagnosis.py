@@ -145,6 +145,17 @@ class DiagnosisOrchestrator:
                     exc,
                 )
 
+        if getattr(self, "_auto_generate_monitors", True):
+            try:
+                from diagnose_tool.analyzer.monitor_suggester import MonitorSuggester
+                MonitorSuggester(self._llm, self._data_dir).run_and_save(task_id)
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(
+                    "monitor suggestion auto-generation failed for %s: %s",
+                    task_id,
+                    exc,
+                )
+
         return case_id, diagnosis_text
 
     def run_with_context(

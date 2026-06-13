@@ -28,6 +28,7 @@ _EVIDENCE_PACK_FILENAME = "evidence-pack.md"
 _KEY_LOGS_FILENAME = "key-logs.txt"
 _CASE_DRAFT_FILENAME = "case-draft.md"
 _TEST_SUGGESTIONS_FILENAME = "test-suggestions.md"
+_MONITOR_SUGGESTIONS_FILENAME = "monitor-suggestions.md"
 
 
 class InvalidTaskIdError(ValueError):
@@ -153,6 +154,12 @@ def read_test_suggestions(task_id: str) -> str | None:
     """Return the text of ``test-suggestions.md`` or ``None`` if missing."""
 
     return _read_text(task_id, _TEST_SUGGESTIONS_FILENAME)
+
+
+def read_monitor_suggestions(task_id: str) -> str | None:
+    """Return the text of ``monitor-suggestions.md`` or ``None`` if missing."""
+
+    return _read_text(task_id, _MONITOR_SUGGESTIONS_FILENAME)
 
 
 def _read_text(task_id: str, filename: str) -> str | None:
