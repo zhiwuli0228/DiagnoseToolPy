@@ -3,13 +3,10 @@
 
 from __future__ import annotations
 
-import tempfile
 from pathlib import Path
 
-import pytest
-
 from diagnose_tool.analyzer.thread_dump_hook import scan_and_parse_thread_dumps
-from diagnose_tool.analyzer.thread_stack_parser import ThreadDumpResult, ParseStatus
+from diagnose_tool.analyzer.thread_stack_parser import ParseStatus
 
 
 SAMPLE_THREAD_HEADER = '"worker-1" #42 daemon prio=5 os_prio=0 tid=0x00007f8b4c128000 nid=0x1a2b waiting on condition [0x00007f8b3c0fe000]\n'
