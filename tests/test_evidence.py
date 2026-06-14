@@ -305,6 +305,7 @@ class TestThreadDumpSection:
                 ],
                 lock_hints=[
                     LockHint(raw_text="    - waiting to lock <0x0007> (a java.lang.Object)", hint_type="waiting_to_lock", lock_address="0x0007", lock_class="java.lang.Object"),
+                    LockHint(raw_text="    - locked <0x0009> (a java.util.HashMap)", hint_type="locked", lock_address="0x0009", lock_class="java.util.HashMap"),
                 ],
                 parse_status=ThreadParseStatus.FULL,
             ),
@@ -326,6 +327,9 @@ class TestThreadDumpSection:
         assert "线程总数" in content
         assert "BLOCKED" in content
         assert "worker-1" in content
+        assert "持有锁" in content
+        assert "0x0009" in content
+        assert "java.util.HashMap" in content
 
     def test_evidence_pack_no_thread_section_when_no_results(self, tmp_path: Path) -> None:
         """Evidence pack should not include thread section when no results provided."""

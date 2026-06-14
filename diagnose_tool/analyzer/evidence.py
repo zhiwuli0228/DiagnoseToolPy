@@ -311,6 +311,11 @@ def _build_thread_dump_section(
                         lines.append(f"- 等待锁: {lock_info}")
                     elif h.hint_type == "parking":
                         lines.append(f"- 等待 (parking): {lock_info}")
+                elif h.hint_type == "locked":
+                    lock_info = f"`<{h.lock_address}>`" if h.lock_address else ""
+                    if h.lock_class:
+                        lock_info += f" ({h.lock_class})"
+                    lines.append(f"- 持有锁: {lock_info}")
 
             # Show top frames
             if t.frames:
