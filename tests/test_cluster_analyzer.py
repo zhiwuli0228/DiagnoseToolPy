@@ -488,3 +488,39 @@ class TestAtomicProgressWrite:
         data = json.loads((task_output / "progress.json").read_text(encoding="utf-8"))
         assert data["processed_bytes"] == 199 * 1024
         assert data["current_file"] == "file-199.log"
+
+
+def test_cluster_result_includes_thread_dump_group(tmp_path: Path) -> None:
+    """Cluster analysis should include a thread dump group when dumps are present."""
+    # Create a log file with a thread dump block
+    log_file = tmp_path / "app.log"
+    thread_block = '"worker-1" #1 daemon prio=5\n   java.lang.Thread.State: BLOCKED\n\tat com.Lock.acquire(Lock.java:20)\n'
+    log_content = '2026-06-14 10:01:01 ERROR [main] com.demo.OrderService - query failed\n' * 5
+    log_file.write_text(log_content + thread_block, encoding="utf-8")
+
+    analyzer = ClusterAnalyzer(tmp_path)
+    task_id, task_output = analyzer.create_task(str(tmp_path))
+
+    # Run with the log directory
+    result = analyzer.run(task_id, str(tmp_path))
+
+    # Should have at least one cluster group (the error clusters)
+    # and the thread dump group at the end
+    thread_groups = [c for c in result.clusters if c.exception_class.startswith("[Thread Dump]")]
+    assert len(thread_groups) == 1
+    assert thread_groups[0].count >= 1
+    assert thread_groups[0].matched_cases == []
+
+
+def test_cluster_result_no_thread_dump_group_when_no_dumps(tmp_path: Path) -> None:
+    """Cluster analysis should not include thread dump group when no dumps present."""
+    log_file = tmp_path / "app.log"
+    log_content = '2026-06-14 10:01:01 ERROR [main] com.demo.OrderService - query failed\n' * 5
+    log_file.write_text(log_content, encoding="utf-8")
+
+    analyzer = ClusterAnalyzer(tmp_path)
+    task_id, task_output = analyzer.create_task(str(tmp_path))
+    result = analyzer.run(task_id, str(tmp_path))
+
+    thread_groups = [c for c in result.clusters if c.exception_class.startswith("[Thread Dump]")]
+    assert len(thread_groups) == 0

@@ -314,15 +314,33 @@ class ClusterAnalyzer:
             total_bytes=total_bytes,
         )
 
-        if not aggregated_groups:
+        # Phase 2: Match historical cases (only if there are error groups)
+        if aggregated_groups:
+            self._update_progress(task_output, PHASE_MATCH, 80)
+            clusters = self._match_historical_cases(aggregated_groups)
+        else:
+            clusters = []
+
+        # Phase 2.5: Scan thread dumps
+        try:
+            from diagnose_tool.analyzer.thread_dump_hook import scan_and_parse_thread_dumps
+
+            thread_results = scan_and_parse_thread_dumps(
+                files=files,
+                output_dir=task_output,
+                task_id=task_id,
+            )
+            if thread_results:
+                thread_group = self._build_thread_cluster_group(thread_results)
+                clusters.append(thread_group)
+        except Exception as exc:
+            logger.warning("Thread dump scanning failed: %s", exc)
+
+        if not clusters:
             result = ClusterResult(task_id=task_id, clusters=[], total_errors=0)
             self._write_result(task_output, result)
             self._update_progress(task_output, PHASE_DONE, 100)
             return result
-
-        # Phase 2: Match historical cases
-        self._update_progress(task_output, PHASE_MATCH, 80)
-        clusters = self._match_historical_cases(aggregated_groups)
 
         # Phase 3: Write result
         self._update_progress(task_output, PHASE_DONE, 100)
@@ -951,6 +969,43 @@ class ClusterAnalyzer:
         # Filter out common non-meaningful words
         filtered = [w for w in words if len(w) > 3 and w not in ("INFO", "DEBUG", "TRACE", "ERROR", "WARN", "SEVERE")]
         return filtered[:5]
+
+    def _build_thread_cluster_group(self, thread_results: list) -> ClusterGroup:
+        """Build a ClusterGroup representing thread dump analysis."""
+        from collections import Counter
+
+        state_counts: Counter[str] = Counter()
+        for r in thread_results:
+            state = r.thread_state or "UNKNOWN"
+            state_counts[state] += 1
+
+        total = len(thread_results)
+        state_summary = " / ".join(f"{k} {v}" for k, v in state_counts.most_common())
+
+        sample_messages = [state_summary]
+
+        # Add key blocked threads as sample messages
+        for r in thread_results:
+            if r.thread_state == "BLOCKED" or any(h.hint_type == "waiting_to_lock" for h in r.lock_hints):
+                name = r.thread_name or "(unnamed)"
+                lock_info = ""
+                for h in r.lock_hints:
+                    if h.hint_type == "waiting_to_lock":
+                        lock_info = f" waiting for <{h.lock_address}>"
+                        if h.lock_class:
+                            lock_info += f" ({h.lock_class})"
+                        break
+                sample_messages.append(f"BLOCKED: {name}{lock_info}")
+                if len(sample_messages) >= 5:
+                    break
+
+        return ClusterGroup(
+            exception_class=f"[Thread Dump] {total} threads",
+            count=total,
+            sample_messages=sample_messages,
+            time_distribution={},
+            matched_cases=[],
+        )
 
     def _compute_time_distribution(self, group: AggregatedGroup) -> dict:
         """Compute time distribution for a cluster group."""
