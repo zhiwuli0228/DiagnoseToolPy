@@ -52,6 +52,11 @@ class TestStateDetection:
         )
         assert len(results) >= 1
         assert any(r.thread_name == "worker-1" for r in results)
+        # Verify parsing quality
+        worker = [r for r in results if r.thread_name == "worker-1"][0]
+        assert worker.thread_state == "WAITING"
+        assert len(worker.frames) > 0
+        assert worker.parse_status in (ParseStatus.FULL, ParseStatus.PARTIAL)
 
     def test_mixed_file_log_then_dump(self, tmp_path: Path) -> None:
         """A file with log lines followed by a thread dump should detect the dump."""
@@ -104,6 +109,15 @@ class TestStateDetection:
             task_id="test-006",
         )
         assert len(results) == 2
+        # Verify parsing quality for each thread
+        w1 = [r for r in results if r.thread_name == "worker-1"][0]
+        assert w1.thread_state == "RUNNABLE"
+        assert len(w1.frames) > 0
+        assert w1.parse_status in (ParseStatus.FULL, ParseStatus.PARTIAL)
+        w2 = [r for r in results if r.thread_name == "worker-2"][0]
+        assert w2.thread_state == "BLOCKED"
+        assert len(w2.frames) > 0
+        assert w2.parse_status in (ParseStatus.FULL, ParseStatus.PARTIAL)
 
 
 def _make_scanned_file(path: Path):
