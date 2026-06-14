@@ -137,3 +137,81 @@ def _make_scanned_file(path: Path):
         size=path.stat().st_size,
         type="log",
     )
+
+
+class TestMultiFile:
+    """Test scanning across multiple files."""
+
+    def test_partial_files_contain_dumps(self, tmp_path: Path) -> None:
+        """Only files with thread dumps should contribute results."""
+        log_file = tmp_path / "app.log"
+        dump_file = tmp_path / "jstack.log"
+        _write_file(log_file, SAMPLE_LOG_LINE * 3)
+        _write_file(dump_file, SAMPLE_THREAD_HEADER + SAMPLE_THREAD_STATE + SAMPLE_FRAME)
+
+        results = scan_and_parse_thread_dumps(
+            files=[_make_scanned_file(log_file), _make_scanned_file(dump_file)],
+            output_dir=tmp_path / "output",
+            task_id="test-multi-001",
+        )
+        assert len(results) >= 1
+
+    def test_multiple_dump_files(self, tmp_path: Path) -> None:
+        """Thread dumps from multiple files should all be collected."""
+        dump1 = tmp_path / "jstack1.log"
+        dump2 = tmp_path / "jstack2.log"
+        thread1 = '"worker-1" #1 daemon prio=5\n   java.lang.Thread.State: RUNNABLE\n\tat com.Main.run(Main.java:10)\n'
+        thread2 = '"worker-2" #2 daemon prio=5\n   java.lang.Thread.State: BLOCKED\n\tat com.Lock.acquire(Lock.java:20)\n'
+        _write_file(dump1, thread1)
+        _write_file(dump2, thread2)
+
+        results = scan_and_parse_thread_dumps(
+            files=[_make_scanned_file(dump1), _make_scanned_file(dump2)],
+            output_dir=tmp_path / "output",
+            task_id="test-multi-002",
+        )
+        assert len(results) == 2
+
+
+class TestErrorTolerance:
+    """Test that errors in individual files don't abort the pipeline."""
+
+    def test_nonexistent_file_skipped(self, tmp_path: Path) -> None:
+        """A file that doesn't exist should be skipped without raising."""
+        from dataclasses import dataclass
+
+        @dataclass
+        class FakeScannedFile:
+            path: str
+            name: str
+            size: int
+            type: str
+
+        missing = tmp_path / "missing.log"
+        fake = FakeScannedFile(
+            path=str(missing),
+            name=missing.name,
+            size=0,
+            type="log",
+        )
+        results = scan_and_parse_thread_dumps(
+            files=[fake],
+            output_dir=tmp_path / "output",
+            task_id="test-err-001",
+        )
+        assert results == []
+
+    def test_corrupted_dump_block_skipped(self, tmp_path: Path) -> None:
+        """A file with garbage between valid thread headers should still parse what it can."""
+        bad_file = tmp_path / "bad.log"
+        valid_thread = '"worker-1" #1 daemon prio=5\n   java.lang.Thread.State: RUNNABLE\n\tat com.Main.run(Main.java:10)\n'
+        garbage = "this is not a valid thread dump block at all\n" * 10
+        _write_file(bad_file, valid_thread + garbage)
+
+        results = scan_and_parse_thread_dumps(
+            files=[_make_scanned_file(bad_file)],
+            output_dir=tmp_path / "output",
+            task_id="test-err-002",
+        )
+        # Should still get at least the valid thread
+        assert len(results) >= 1
