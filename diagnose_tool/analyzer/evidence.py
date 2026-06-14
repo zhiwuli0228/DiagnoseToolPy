@@ -5,10 +5,13 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from collections import Counter
+
 from diagnose_tool.analyzer.classifier import ClassificationResult
 from diagnose_tool.analyzer.header_parser import ParsedLogRecord
 from diagnose_tool.analyzer.output_context import OutputContext
 from diagnose_tool.analyzer.sampling import BoundedSamples
+from diagnose_tool.analyzer.thread_stack_parser import ThreadDumpResult
 
 
 MAX_SAMPLES_PER_CATEGORY = 20
@@ -21,6 +24,8 @@ def generate_evidence_pack(
     error_count: int,
     warn_count: int,
     timeline_buckets: list[dict],
+    *,
+    thread_results: list[ThreadDumpResult] | None = None,
 ) -> None:
     output_context.ensure_directories()
 
@@ -29,7 +34,8 @@ def generate_evidence_pack(
     key_features = _extract_key_features(classifications)
 
     content = _build_evidence_pack_markdown(
-        output_context, stats, error_count, warn_count, timeline_buckets, key_features, top_exceptions
+        output_context, stats, error_count, warn_count, timeline_buckets, key_features, top_exceptions,
+        thread_results=thread_results,
     )
 
     (output_context.output_dir() / "evidence-pack.md").write_text(content, encoding="utf-8")
@@ -119,6 +125,8 @@ def _build_evidence_pack_markdown(
     timeline_buckets: list[dict],
     key_features: dict[str, Any],
     top_exceptions: list[tuple[str, str, int]],
+    *,
+    thread_results: list[ThreadDumpResult] | None = None,
 ) -> str:
     lines = [
         "# 日志诊断证据包",
@@ -195,12 +203,34 @@ def _build_evidence_pack_markdown(
 
     lines.extend([
         "```",
-        "",
-        "## 6. 相似案例召回",
-        "",
-        "以下案例仅作为参考，不代表当前故障一定相同。",
-        "",
-        "## 7. 诊断要求",
+    ])
+
+    # Thread dump section (section 6 when present)
+    thread_section = _build_thread_dump_section(thread_results)
+    if thread_section:
+        lines.extend(["", thread_section])
+
+    # Remaining sections: renumbered based on whether thread section exists
+    if thread_section:
+        lines.extend([
+            "",
+            "## 7. 相似案例召回",
+            "",
+            "以下案例仅作为参考，不代表当前故障一定相同。",
+            "",
+            "## 8. 诊断要求",
+        ])
+    else:
+        lines.extend([
+            "",
+            "## 6. 相似案例召回",
+            "",
+            "以下案例仅作为参考，不代表当前故障一定相同。",
+            "",
+            "## 7. 诊断要求",
+        ])
+
+    lines.extend([
         "",
         "请判断：",
         "",
@@ -210,6 +240,90 @@ def _build_evidence_pack_markdown(
         "4. 建议优先排查哪些模块？",
         "5. 有哪些临时规避和长期优化建议？",
     ])
+
+    return "\n".join(lines)
+
+
+def _build_thread_dump_section(
+    thread_results: list[ThreadDumpResult] | None,
+    *,
+    max_key_threads: int = 10,
+    max_frames_per_thread: int = 5,
+) -> str | None:
+    """Build the thread dump analysis section for the evidence pack.
+
+    Returns None if thread_results is empty or None.
+    """
+    if not thread_results:
+        return None
+
+    lines: list[str] = []
+    lines.append("## 6. 线程 Dump 分析")
+    lines.append("")
+
+    # Summary counts
+    total = len(thread_results)
+    lines.append(f"**线程总数**: {total}")
+
+    # Parse status counts
+    status_counts = Counter(t.parse_status.value for t in thread_results)
+    status_parts = [f"{status} {count}" for status, count in sorted(status_counts.items())]
+    lines.append(f"**解析状态**: {' / '.join(status_parts)}")
+    lines.append("")
+
+    # Thread state distribution
+    state_counts = Counter(t.thread_state or "UNKNOWN" for t in thread_results)
+    lines.append("### 线程状态分布")
+    lines.append("")
+    lines.append("| 状态 | 数量 |")
+    lines.append("|---|---:|")
+    for state, count in state_counts.most_common():
+        lines.append(f"| {state} | {count} |")
+    lines.append("")
+
+    # Key threads: BLOCKED or waiting_to_lock / parking
+    key_threads: list[ThreadDumpResult] = []
+    for t in thread_results:
+        is_blocked = t.thread_state == "BLOCKED"
+        has_wait_lock = any(
+            h.hint_type in ("waiting_to_lock", "parking") for h in t.lock_hints
+        )
+        if is_blocked or has_wait_lock:
+            key_threads.append(t)
+            if len(key_threads) >= max_key_threads:
+                break
+
+    if key_threads:
+        lines.append("### 关键线程（BLOCKED / 等待锁）")
+        lines.append("")
+        for t in key_threads:
+            state = t.thread_state or "UNKNOWN"
+            name = t.thread_name or "(unnamed)"
+            lines.append(f"**Thread: {name}** ({state})")
+
+            # Show lock hints that indicate waiting
+            for h in t.lock_hints:
+                if h.hint_type in ("waiting_to_lock", "parking"):
+                    lock_info = f"`<{h.lock_address}>`" if h.lock_address else ""
+                    if h.lock_class:
+                        lock_info += f" ({h.lock_class})"
+                    if h.hint_type == "waiting_to_lock":
+                        lines.append(f"- 等待锁: {lock_info}")
+                    elif h.hint_type == "parking":
+                        lines.append(f"- 等待 (parking): {lock_info}")
+
+            # Show top frames
+            if t.frames:
+                lines.append("- 帧:")
+                lines.append("  ```")
+                for frame in t.frames[:max_frames_per_thread]:
+                    # Clean up raw_text: strip leading whitespace/tab for display
+                    text = frame.raw_text.strip()
+                    lines.append(f"  {text}")
+                lines.append("  ```")
+            lines.append("")
+
+        lines.append("> 仅展示 BLOCKED 和等待锁的线程（最多 10 个）")
 
     return "\n".join(lines)
 

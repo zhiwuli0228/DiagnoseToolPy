@@ -17,6 +17,12 @@ from diagnose_tool.analyzer.evidence import (
 )
 from diagnose_tool.analyzer.header_parser import ParsedLogRecord, ParseStatus
 from diagnose_tool.analyzer.output_context import OutputContext
+from diagnose_tool.analyzer.thread_stack_parser import (
+    ThreadDumpResult,
+    ThreadFrame,
+    LockHint,
+    ParseStatus as ThreadParseStatus,
+)
 
 
 class TestEvidencePack:
@@ -266,3 +272,65 @@ class TestGetTopExceptions:
         assert len(top) == 2
         assert top[0][0] == "a"
         assert top[0][2] == 2
+
+
+def _make_output_context(task_id: str = "test-task") -> OutputContext:
+    """Create a minimal OutputContext for testing."""
+    return OutputContext(
+        task_id=task_id,
+        source_path="/data/logs",
+        created_at="2026-05-17 10:00:00",
+        total_files=5,
+        total_bytes=1024,
+        error_count=3,
+        warn_count=10,
+    )
+
+
+class TestThreadDumpSection:
+    def test_evidence_pack_includes_thread_dump_section(self, tmp_path: Path) -> None:
+        """Evidence pack should include thread dump analysis section when results provided."""
+        ctx = _make_output_context()
+        records: list[ParsedLogRecord] = []
+        classifications: list[ClassificationResult] = []
+        timeline: list[dict] = []
+
+        thread_results = [
+            ThreadDumpResult(
+                thread_name="worker-1",
+                thread_state="BLOCKED",
+                frames=[
+                    ThreadFrame(raw_text="\tat com.Lock.acquire(Lock.java:20)", class_name="com.Lock", method="acquire"),
+                    ThreadFrame(raw_text="\tat com.Worker.run(Worker.java:10)", class_name="com.Worker", method="run"),
+                ],
+                lock_hints=[
+                    LockHint(raw_text="    - waiting to lock <0x0007> (a java.lang.Object)", hint_type="waiting_to_lock", lock_address="0x0007", lock_class="java.lang.Object"),
+                ],
+                parse_status=ThreadParseStatus.FULL,
+            ),
+            ThreadDumpResult(
+                thread_name="worker-2",
+                thread_state="RUNNABLE",
+                frames=[
+                    ThreadFrame(raw_text="\tat com.Main.main(Main.java:5)", class_name="com.Main", method="main"),
+                ],
+                lock_hints=[],
+                parse_status=ThreadParseStatus.FULL,
+            ),
+        ]
+
+        generate_evidence_pack(ctx, records, classifications, 0, 0, timeline, thread_results=thread_results)
+
+        content = (ctx.output_dir() / "evidence-pack.md").read_text(encoding="utf-8")
+        assert "线程 Dump 分析" in content
+        assert "线程总数" in content
+        assert "BLOCKED" in content
+        assert "worker-1" in content
+
+    def test_evidence_pack_no_thread_section_when_no_results(self, tmp_path: Path) -> None:
+        """Evidence pack should not include thread section when no results provided."""
+        ctx = _make_output_context()
+        generate_evidence_pack(ctx, [], [], 0, 0, [])
+
+        content = (ctx.output_dir() / "evidence-pack.md").read_text(encoding="utf-8")
+        assert "线程 Dump 分析" not in content
